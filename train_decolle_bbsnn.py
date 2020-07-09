@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     # Training arguments
     parser.add_argument('--where', default='local')
-    parser.add_argument('--temperate', type=float, default=0.1)
+    parser.add_argument('--temperature', type=float, default=0.1)
 
     args = parser.parse_args()
 
