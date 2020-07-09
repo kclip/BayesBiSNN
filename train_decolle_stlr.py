@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     # Training arguments
     parser.add_argument('--where', default='local')
-    parser.add_argument('--temperature', type=float, default=0.1)
+    parser.add_argument('--lr', type=float, default=0.1)
 
     args = parser.parse_args()
 
@@ -59,7 +59,7 @@ latent_model = deepcopy(binary_model)
 criterion = torch.nn.SmoothL1Loss()
 
 # specify optimizer
-optimizer = BiSGD(binary_model.parameters(), latent_model.parameters(), lr=0.1, binarizer=binarize)
+optimizer = BiSGD(binary_model.parameters(), latent_model.parameters(), lr=args.lr, binarizer=binarize)
 scheduler = StepLR(optimizer, step_size=500, gamma=0.5)
 
 binary_model.init_parameters()
