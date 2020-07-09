@@ -15,6 +15,7 @@ if __name__ == "__main__":
 
     # Training arguments
     parser.add_argument('--where', default='local')
+    parser.add_argument('--temperate', type=float, default=0.1)
 
     args = parser.parse_args()
 
@@ -55,7 +56,7 @@ latent_model = deepcopy(binary_model)
 criterion = torch.nn.SmoothL1Loss()
 
 # specify optimizer
-optimizer = BayesBiSNN(binary_model.parameters(), latent_model.parameters(), lr=0.1)
+optimizer = BayesBiSNN(binary_model.parameters(), latent_model.parameters(), lr=0.1, temperature=args.temperature)
 
 binary_model.init_parameters()
 torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
