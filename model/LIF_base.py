@@ -198,11 +198,18 @@ class LIFNetwork(nn.Module):
             l.init_parameters()
 
 
+    # def reset_lc_parameters(self, layer, lc_ampl):
+    #     stdv = lc_ampl / np.sqrt(layer.weight.size(1))
+    #     layer.weight.data.uniform_(-stdv, stdv)
+    #     if layer.bias is not None:
+    #         layer.bias.data.uniform_(-stdv, stdv)
+
+
+    # todo check if this works
     def reset_lc_parameters(self, layer, lc_ampl):
-        stdv = lc_ampl / np.sqrt(layer.weight.size(1))
-        layer.weight.data.uniform_(-stdv, stdv)
+        layer.weight.data = 2 * torch.bernoulli(torch.ones_like(layer.weight.data) * 0.5) - 1
         if layer.bias is not None:
-            layer.bias.data.uniform_(-stdv, stdv)
+            layer.bias.data = 2 * torch.bernoulli(torch.ones_like(layer.bias.data) * 0.5) - 1
 
 
     def get_input_layer_device(self):

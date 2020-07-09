@@ -10,6 +10,7 @@ import os
 from torch.optim.lr_scheduler import StepLR
 
 n_epochs = 5000
+test_period = 1
 batch_size = 64
 sample_length = 2000  # length of samples during training in ms
 dt = 5000  # us
@@ -71,21 +72,3 @@ for epoch in range(n_epochs):
     acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels, dim=0).argmax(dim=1)).float() / batch_size
     # backward pass: compute gradient of the loss with respect to model parameters
     print(acc)
-
-    if (epoch + 1) % 100 == 0:
-        torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
-
-#     if (i + 1) % 100 == 0:
-#         # print(list(model.parameters())[0])
-#         # print(list(latent_model.parameters())[0])
-#
-#         acc = 0
-#         for j, sample_test in enumerate(test_data):
-#             output = model(sample_test)
-#             pred = torch.argmax(output)
-# #
-# #             print(j, pred, test_label[j])
-#             if pred.data.numpy() == test_label[j].numpy():
-#                 acc += 1
-#         acc /= len(test_data)
-#         print(i, acc)
