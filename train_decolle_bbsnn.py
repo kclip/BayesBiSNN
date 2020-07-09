@@ -7,6 +7,27 @@ from optimizer.BBSNN import BayesBiSNN
 from copy import deepcopy
 import os
 from torch.optim.lr_scheduler import StepLR
+import argparse
+
+if __name__ == "__main__":
+    # setting the hyper parameters
+    parser = argparse.ArgumentParser(description='Train probabilistic multivalued SNNs using Pytorch')
+
+    # Training arguments
+    parser.add_argument('--where', default='local')
+
+    args = parser.parse_args()
+
+
+if args.where == 'local':
+    home = r'C:/Users/K1804053/PycharmProjects'
+elif args.where == 'rosalind':
+    home = r'/users/k1804053'
+elif args.where == 'jade':
+    home = r'/jmain01/home/JAD014/mxm09/nxs94-mxm09'
+elif args.where == 'gcloud':
+    home = r'/home/k1804053'
+
 
 n_epochs = 5000
 batch_size = 64
@@ -15,8 +36,8 @@ dt = 5000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
 input_size = 1352
 
-gen_train, gen_test = create_data(path_to_hdf5=r'C:/Users/K1804053/PycharmProjects/datasets/mnist-dvs/mnist_dvs_events.hdf5',
-                                  path_to_data=r'C:/Users/K1804053/PycharmProjects/datasets/mnist-dvs/processed_polarity',
+gen_train, gen_test = create_data(path_to_hdf5=home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5',
+                                  path_to_data=home + r'/datasets/mnist-dvs/processed_polarity',
                                   batch_size=batch_size,
                                   chunk_size=sample_length,
                                   n_inputs=1352,

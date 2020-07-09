@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="" />
+    <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/binary_model_weights.pt" beforeDir="false" afterPath="$PROJECT_DIR$/results/binary_model_weights.pt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_decolle_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_bbsnn.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,8 +56,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train_decolle_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="298">
-              <caret line="71" selection-start-line="71" selection-end-line="71" />
+            <state relative-caret-position="125">
+              <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -107,6 +111,9 @@
       <replace>w_r</replace>
     </replaceStrings>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -135,8 +142,8 @@
         <option value="$PROJECT_DIR$/optimizer/bayesbisnn.py" />
         <option value="$PROJECT_DIR$/optimizer/BiSGD.py" />
         <option value="$PROJECT_DIR$/optimizer/BBSNN.py" />
-        <option value="$PROJECT_DIR$/train_decolle_bbsnn.py" />
         <option value="$PROJECT_DIR$/utils/binarize.py" />
+        <option value="$PROJECT_DIR$/train_decolle_bbsnn.py" />
       </list>
     </option>
   </component>
@@ -146,6 +153,7 @@
     <option name="width" value="1944" />
     <option name="height" value="1044" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -269,12 +277,12 @@
       <workItem from="1592220158866" duration="43793000" />
       <workItem from="1592824151094" duration="46475000" />
       <workItem from="1593431270619" duration="29033000" />
-      <workItem from="1594027146911" duration="40657000" />
+      <workItem from="1594027146911" duration="41963000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="176003000" />
+    <option name="totallyTimeSpent" value="177309000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -287,6 +295,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19109312" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -536,8 +545,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="71" selection-start-line="71" selection-end-line="71" />
+        <state relative-caret-position="125">
+          <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
