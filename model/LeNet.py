@@ -1,8 +1,12 @@
+from model.LIF_base import *
+from utils.activations import smooth_step
+
+
 class LenetLIF(LIFNetwork):
     def __init__(self,
                  input_shape,
-                 Nhid=[1],
-                 Mhid=[128],
+                 Nhid_conv=[1],
+                 Nhid_mlp=[128],
                  out_channels=1,
                  kernel_size=[7],
                  stride=[1],
@@ -15,7 +19,8 @@ class LenetLIF(LIFNetwork):
                  num_conv_layers=2,
                  num_mlp_layers=1,
                  lc_ampl=.5,
-                 lif_layer_type=LIFLayer):
+                 lif_layer_type=LIFLayer
+                 ):
 
         num_layers = num_conv_layers + num_mlp_layers
         # If only one value provided, then it is duplicated for each layer
@@ -26,17 +31,17 @@ class LenetLIF(LIFNetwork):
         if len(pool_size) == 1:
             pool_size = pool_size * num_conv_layers
         if len(tau_mem) == 1:
-            tau_mem = tau_mem * (num_layers + 1)
+            tau_mem = tau_mem * num_layers
         if len(tau_syn) == 1:
-            tau_syn = tau_syn * (num_layers + 1)
+            tau_syn = tau_syn * num_layers
         if len(tau_ref) == 1:
-            tau_ref = tau_ref * (num_layers + 1)
+            tau_ref = tau_ref * num_layers
         if len(dropout) == 1:
-            self.dropout = dropout = dropout * num_layers
-        if len(Nhid) == 1:
-            self.Nhid = Nhid = Nhid * num_conv_layers
-        if len(Mhid) == 1:
-            self.Mhid = Mhid = Mhid * num_mlp_layers
+            dropout = dropout * num_layers
+        if len(Nhid_conv) == 1:
+            Nhid_conv = Nhid_conv * num_conv_layers
+        if len(Nhid_mlp) == 1:
+            Nhid_mlp = Nhid_mlp * num_mlp_layers
 
         super(LenetLIF, self).__init__()
         # Computing padding to preserve feature size
@@ -49,7 +54,8 @@ class LenetLIF(LIFNetwork):
         self.pool_layers = nn.ModuleList()
         self.dropout_layers = nn.ModuleList()
         self.input_shape = input_shape
-        Nhid = [input_shape[0]] + Nhid
+        Nhid_conv = [input_shape[0]] + Nhid_conv
+
         self.num_conv_layers = num_conv_layers
         self.num_mlp_layers = num_mlp_layers
 
@@ -62,14 +68,15 @@ class LenetLIF(LIFNetwork):
                 dilation=1)
             feature_height //= pool_size[i]
             feature_width //= pool_size[i]
-            base_layer = nn.Conv2d(Nhid[i], Nhid[i + 1], kernel_size[i], stride[i], padding[i])
+            base_layer = nn.Conv2d(Nhid_conv[i], Nhid_conv[i + 1], kernel_size[i], stride[i], padding[i])
             layer = lif_layer_type(base_layer,
-                                   alpha=alpha[i],
-                                   beta=beta[i],
-                                   alpharp=alpharp[i],
-                                   deltat=deltat)
+                                   activation=activation,
+                                   tau_mem=tau_mem[i],
+                                   tau_syn=tau_syn[i],
+                                   tau_ref=tau_ref[i]
+                                   )
             pool = nn.MaxPool2d(kernel_size=pool_size[i])
-            readout = nn.Linear(int(feature_height * feature_width * Nhid[i + 1]), out_channels)
+            readout = nn.Linear(int(feature_height * feature_width * Nhid_conv[i + 1]), out_channels)
 
             # Readout layer has random fixed weights
             for param in readout.parameters():
@@ -83,16 +90,17 @@ class LenetLIF(LIFNetwork):
             self.readout_layers.append(readout)
             self.dropout_layers.append(dropout_layer)
 
-        mlp_in = int(feature_height * feature_width * Nhid[-1])
-        Mhid = [mlp_in] + Mhid
+        mlp_in = int(feature_height * feature_width * Nhid_conv[-1])
+        Nhid_mlp = [mlp_in] + Nhid_mlp
         for i in range(num_mlp_layers):
-            base_layer = nn.Linear(Mhid[i], Mhid[i + 1])
+            base_layer = nn.Linear(Nhid_mlp[i], Nhid_mlp[i + 1])
             layer = lif_layer_type(base_layer,
-                                   alpha=alpha[i],
-                                   beta=beta[i],
-                                   alpharp=alpharp[i],
-                                   deltat=deltat)
-            readout = nn.Linear(Mhid[i + 1], out_channels)
+                                   activation=activation,
+                                   tau_mem=tau_mem[i],
+                                   tau_syn=tau_syn[i],
+                                   tau_ref=tau_ref[i]
+                                   )
+            readout = nn.Linear(Nhid_mlp[i + 1], out_channels)
 
             # Readout layer has random fixed weights
             for param in readout.parameters():
@@ -106,15 +114,15 @@ class LenetLIF(LIFNetwork):
             self.readout_layers.append(readout)
             self.dropout_layers.append(dropout_layer)
 
-    def forward(self, input):
+    def forward(self, inputs):
         s_out = []
         r_out = []
         u_out = []
         i = 0
         for lif, pool, ro, do in zip(self.LIF_layers, self.pool_layers, self.readout_layers, self.dropout_layers):
             if i == self.num_conv_layers:
-                input = input.view(input.size(0), -1)
-            s, u = lif(input)
+                inputs = inputs.view(inputs.size(0), -1)
+            s, u = lif(inputs)
             u_p = pool(u)
             s_ = smooth_step(u_p)
             sd_ = do(s_)
@@ -122,7 +130,7 @@ class LenetLIF(LIFNetwork):
             s_out.append(s_)
             r_out.append(r_)
             u_out.append(u_p)
-            input = s_.detach()
+            inputs = s_.detach()
             i += 1
 
         return s_out, r_out, u_out

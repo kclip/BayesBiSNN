@@ -7,7 +7,7 @@ device = 'cpu'
 from collections import namedtuple
 from itertools import chain
 import warnings
-from utils.misc import get_output_shape, state_detach
+from utils.misc import get_output_shape
 
 """"
 LIF SNN with local errors
@@ -20,7 +20,7 @@ dtype = torch.float32
 class LIFLayer(nn.Module):
     NeuronState = namedtuple('NeuronState', ['P', 'Q', 'R', 'S'])
 
-    def __init__(self, layer, activation, tau_mem=10, tau_syn=2, tau_ref=8, do_detach=True):
+    def __init__(self, layer, activation, tau_mem=10, tau_syn=2, tau_ref=8):
         super(LIFLayer, self).__init__()
         self.base_layer = layer
 
@@ -29,7 +29,6 @@ class LIFLayer(nn.Module):
         self.alpharp = torch.exp(torch.FloatTensor([-1/tau_ref]))
 
         self.state = None
-        self.do_detach = do_detach
         self.activation = activation
 
 
@@ -124,10 +123,7 @@ class LIFLayer(nn.Module):
         R = self.alpharp * self.state.R + self.state.S
         U = self.base_layer(P) - R
         S = self.activation(U)
-        self.state = self.NeuronState(P=P, Q=Q, R=R, S=S)
-
-        if self.do_detach:
-            state_detach(self.state)
+        self.state = self.NeuronState(P=P.detach(), Q=Q.detach(), R=R.detach(), S=S.detach())
         return S, U
 
 

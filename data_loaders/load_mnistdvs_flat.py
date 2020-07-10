@@ -119,6 +119,8 @@ def chunk_evs_pol(times, addrs, deltat=1000, n_inputs=676):
         if idx_end > idx_start:
             ee = addrs[idx_start:idx_end]
             pol, x, y = ee[:, 2], ee[:, 0], ee[:, 1]
+            print((1 + pol)/2)
+            print(type(pol))
             addr = ((1 + pol)/2 + 2 * (x * 26 + y)).astype(int)
             try:
                 chunks[i, addr] = 1

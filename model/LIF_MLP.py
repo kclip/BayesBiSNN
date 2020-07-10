@@ -13,8 +13,8 @@ class LIFMLP(LIFNetwork):
                  activation=smooth_step,
                  num_layers=1,
                  lif_layer_type=LIFLayer,
-                 lc_ampl=.5,
-                 method='rtrl'):
+                 lc_ampl=.5
+                 ):
 
         num_layers = max(num_layers, max([len(n_neurons), len(tau_mem), len(tau_syn), len(tau_ref)]))
         if len(n_neurons) == 1:
@@ -39,8 +39,8 @@ class LIFMLP(LIFNetwork):
                                    activation=activation,
                                    tau_mem=tau_mem[i],
                                    tau_syn=tau_syn[i],
-                                   tau_ref=tau_ref[i],
-                                   do_detach=True if method == 'rtrl' else False)
+                                   tau_ref=tau_ref[i]
+                                   )
 
 
             readout = nn.Linear(Mhid[i+1], output_shape)

@@ -20,18 +20,6 @@ import torch
 
 dcll_folder = os.path.dirname(__file__)
 
-mapping = {0: 'Hand Clapping',
-           1: 'Right Hand Wave',
-           2: 'Left Hand Wave',
-           3: 'Right Arm CW',
-           4: 'Right Arm CCW',
-           5: 'Left Arm CW',
-           6: 'Left Arm CCW',
-           7: 'Arm Roll',
-           8: 'Air Drums',
-           9: 'Air Guitar',
-           10: 'Other'}
-
 
 class SequenceGenerator(object):
     def __init__(self,
