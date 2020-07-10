@@ -112,6 +112,7 @@ for epoch in range(n_epochs):
         _, r, _ = binary_model(inputs[t])
 
         for l, ro_h in enumerate(readout_hist):
+            print(ro_h, r[l])
             readout_hist[l] = torch.cat((ro_h, r[l].unsqueeze(0)), dim=0)
 
         # calculate the loss
