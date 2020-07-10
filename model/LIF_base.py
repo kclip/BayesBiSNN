@@ -116,6 +116,10 @@ class LIFLayer(nn.Module):
         if self.state is None:
             self.init_state(list(Sin_t.shape))
 
+        print(self.state)
+        print(Sin_t)
+        print(self.alpha)
+
         P = self.alpha * self.state.P + self.state.Q
         Q = self.beta * self.state.Q + Sin_t
         R = self.alpharp * self.state.R + self.state.S
