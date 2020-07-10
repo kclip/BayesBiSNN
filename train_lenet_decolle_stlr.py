@@ -10,6 +10,16 @@ import os
 from torch.optim.lr_scheduler import StepLR
 import argparse
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 
 if __name__ == "__main__":
     # setting the hyper parameters
@@ -32,6 +42,8 @@ elif args.where == 'jade':
 elif args.where == 'gcloud':
     home = r'/home/k1804053'
 
+
+args.disable_cuda = str2bool(args.disable_cuda)
 if not args.disable_cuda and torch.cuda.is_available():
     args.device = torch.device('cuda')
 else:
@@ -80,6 +92,7 @@ scheduler = StepLR(optimizer, step_size=500, gamma=0.5)
 binary_model.init_parameters()
 torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
 
+print(binary_model)
 
 for epoch in range(n_epochs):
     loss = 0
