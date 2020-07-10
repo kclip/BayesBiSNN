@@ -23,9 +23,9 @@ class LIFLayer(nn.Module):
         super(LIFLayer, self).__init__()
         self.base_layer = layer
 
-        self.alpha = torch.exp(torch.FloatTensor([-1/tau_mem]))
-        self.beta = torch.exp(torch.FloatTensor([-1/tau_syn]))
-        self.alpharp = torch.exp(torch.FloatTensor([-1/tau_ref]))
+        self.alpha = torch.exp(torch.FloatTensor([-1/tau_mem])).to(self.base_layer.weight.device)
+        self.beta = torch.exp(torch.FloatTensor([-1/tau_syn])).to(self.base_layer.weight.device)
+        self.alpharp = torch.exp(torch.FloatTensor([-1/tau_ref])).to(self.base_layer.weight.device)
 
         self.state = None
         self.activation = activation
@@ -115,9 +115,6 @@ class LIFLayer(nn.Module):
     def forward(self, Sin_t):
         if self.state is None:
             self.init_state(list(Sin_t.shape))
-
-        print(self.state)
-        print(Sin_t)
 
         P = self.alpha * self.state.P + self.state.Q
         Q = self.beta * self.state.Q + Sin_t
