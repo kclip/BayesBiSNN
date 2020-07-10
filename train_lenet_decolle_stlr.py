@@ -92,9 +92,6 @@ scheduler = StepLR(optimizer, step_size=500, gamma=0.5)
 binary_model.init_parameters()
 torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
 
-for l in binary_model.LIF_layers:
-    print(l.base_layer.weight.device)
-
 for epoch in range(n_epochs):
     loss = 0
 
@@ -104,7 +101,7 @@ for epoch in range(n_epochs):
 
     binary_model.init(inputs, burnin=100)
 
-    readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
+    readout_hist = [torch.Tensor().to(args.device) for _ in range(len(binary_model.readout_layers))]
 
     print('Epoch %d/%d' % (epoch, n_epochs))
     for t in tqdm(range(T)):
@@ -112,7 +109,6 @@ for epoch in range(n_epochs):
         _, r, _ = binary_model(inputs[t])
 
         for l, ro_h in enumerate(readout_hist):
-            print(ro_h, r[l])
             readout_hist[l] = torch.cat((ro_h, r[l].unsqueeze(0)), dim=0)
 
         # calculate the loss
