@@ -108,6 +108,11 @@ class LIFLayer(nn.Module):
                                       R=torch.zeros([input_shape[0], out_ch] + out_shape).type(dtype).to(device),
                                       S=torch.zeros([input_shape[0], out_ch] + out_shape).type(dtype).to(device))
 
+        self.alpha = self.alpha.to(self.base_layer.weight.device)
+        self.beta = self.beta.to(self.base_layer.weight.device)
+        self.alpharp = self.alpharp.to(self.base_layer.weight.device)
+
+
     def init_parameters(self):
         self.reset_parameters(self.base_layer)
 
