@@ -3,7 +3,6 @@ from torch.nn import functional as F
 import torch
 import numpy as np
 import pylab as plt
-device = 'cpu'
 from collections import namedtuple
 from itertools import chain
 import warnings
@@ -151,6 +150,7 @@ class LIFNetwork(nn.Module):
         super(LIFNetwork, self).__init__()
         self.LIF_layers = nn.ModuleList()
         self.readout_layers = nn.ModuleList()
+
 
 
     def __len__(self):

@@ -18,6 +18,7 @@ if __name__ == "__main__":
     # Training arguments
     parser.add_argument('--where', default='local')
     parser.add_argument('--lr', type=float, default=0.1)
+    parser.add_argument('--disable-cuda', type=str, default='true', help='Disable CUDA')
 
     args = parser.parse_args()
 
@@ -31,6 +32,11 @@ elif args.where == 'jade':
 elif args.where == 'gcloud':
     home = r'/home/k1804053'
 
+if not args.disable_cuda and torch.cuda.is_available():
+    args.device = torch.device('cuda')
+else:
+    args.device = torch.device('cpu')
+
 
 n_epochs = 5000
 test_period = 1
@@ -39,6 +45,7 @@ sample_length = 2000  # length of samples during training in ms
 dt = 5000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
 input_size = [2, 26, 26]
+
 
 gen_train, gen_test = create_data(path_to_hdf5=home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5',
                                   path_to_data=home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5',
@@ -58,9 +65,9 @@ binary_model = LenetLIF(input_size,
                         dropout=[0.5],
                         num_conv_layers=3,
                         num_mlp_layers=0
-                        )
+                        ).to(args.device)
 
-latent_model = deepcopy(binary_model)
+latent_model = deepcopy(binary_model).to(args.device)
 
 
 # specify loss function
@@ -78,8 +85,8 @@ for epoch in range(n_epochs):
     loss = 0
 
     inputs, labels = gen_train.next()
-    inputs = torch.Tensor(inputs)
-    labels = torch.Tensor(labels)
+    inputs = torch.Tensor(inputs).to(args.device)
+    labels = torch.Tensor(labels).to(args.device)
 
     binary_model.init(inputs, burnin=100)
 

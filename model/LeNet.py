@@ -19,7 +19,8 @@ class LenetLIF(LIFNetwork):
                  num_conv_layers=2,
                  num_mlp_layers=1,
                  lc_ampl=.5,
-                 lif_layer_type=LIFLayer
+                 lif_layer_type=LIFLayer,
+                 device='cpu'
                  ):
 
         num_layers = num_conv_layers + num_mlp_layers
@@ -89,6 +90,8 @@ class LenetLIF(LIFNetwork):
             self.pool_layers.append(pool)
             self.readout_layers.append(readout)
             self.dropout_layers.append(dropout_layer)
+
+
 
         mlp_in = int(feature_height * feature_width * Nhid_conv[-1])
         Nhid_mlp = [mlp_in] + Nhid_mlp
