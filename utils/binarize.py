@@ -11,7 +11,7 @@ def binarize_stochastic(x):
     x.data = hard_sigmoid(x)
 
 def clip(x):
-    x = torch.max(torch.ones(x.shape) * (-1), torch.min(torch.ones(x.shape), x))
+    x = torch.max(torch.ones(x.shape).to(x.device) * (-1), torch.min(torch.ones(x.shape).to(x.device), x))
 
 
 
