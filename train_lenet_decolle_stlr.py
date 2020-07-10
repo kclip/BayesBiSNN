@@ -92,7 +92,8 @@ scheduler = StepLR(optimizer, step_size=500, gamma=0.5)
 binary_model.init_parameters()
 torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
 
-print(binary_model)
+for l in binary_model.LIF_layers:
+    print(l.base_layer.weight.device)
 
 for epoch in range(n_epochs):
     loss = 0
