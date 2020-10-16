@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_mlp_decolle_stlr.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_mlp_decolle_stlr.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,20 +18,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="261">
-              <caret line="179" column="52" lean-forward="true" selection-start-line="179" selection-start-column="41" selection-end-line="179" selection-end-column="52" />
-              <folding>
-                <element signature="e#0#12#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="147" column="62" selection-start-line="147" selection-start-column="62" selection-end-line="147" selection-end-column="62" />
+            <state relative-caret-position="2318">
+              <caret line="177" selection-start-line="177" selection-end-line="177" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -42,6 +28,18 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="295">
+              <caret line="50" column="110" selection-start-line="50" selection-start-column="110" selection-end-line="50" selection-end-column="110" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_mlp_decolle_stlr.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="159">
@@ -204,9 +202,9 @@
         <option value="$PROJECT_DIR$/model/LIF_base.py" />
         <option value="$PROJECT_DIR$/utils/binarize.py" />
         <option value="$PROJECT_DIR$/optimizer/BBSNN.py" />
+        <option value="$PROJECT_DIR$/train_mlp_decolle_stlr.py" />
         <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" />
         <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py" />
-        <option value="$PROJECT_DIR$/train_mlp_decolle_stlr.py" />
       </list>
     </option>
   </component>
@@ -354,12 +352,12 @@
       <workItem from="1601983407510" duration="49438000" />
       <workItem from="1602497227134" duration="611000" />
       <workItem from="1602579441226" duration="596000" />
-      <workItem from="1602751003435" duration="31285000" />
+      <workItem from="1602751003435" duration="32957000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="432898000" />
+    <option name="totallyTimeSpent" value="434570000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -651,10 +649,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/train_mlp_decolle_stlr.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="159">
+          <caret line="140" column="62" selection-start-line="140" selection-start-column="62" selection-end-line="140" selection-end-column="62" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="179" column="52" lean-forward="true" selection-start-line="179" selection-start-column="41" selection-end-line="179" selection-end-column="52" />
+        <state relative-caret-position="2318">
+          <caret line="177" selection-start-line="177" selection-end-line="177" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
@@ -663,18 +671,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="147" column="62" selection-start-line="147" selection-start-column="62" selection-end-line="147" selection-end-column="62" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/train_mlp_decolle_stlr.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="140" column="62" selection-start-line="140" selection-start-column="62" selection-end-line="140" selection-end-column="62" />
+        <state relative-caret-position="295">
+          <caret line="50" column="110" selection-start-line="50" selection-start-column="110" selection-end-line="50" selection-end-column="110" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>

@@ -48,7 +48,7 @@ if len(prelist) == 0:
 else:
     expDirN = "%03d" % (int((prelist[len(prelist) - 1].split("__"))[0]) + 1)
 
-results_path = time.strftime(pre + expDirN + "__" + "%d-%m-%Y", time.localtime()) + '_' + 'mnist_dvs_bbsnnrp' + r'_%d_epochs' % args.n_epochs
+results_path = time.strftime(pre + expDirN + "__" + "%d-%m-%Y", time.localtime()) + '_' + 'mnist_dvs_bbsnnstgs' + r'_%d_epochs' % args.n_epochs
 os.makedirs(results_path)
 
 args.disable_cuda = str2bool(args.disable_cuda)
