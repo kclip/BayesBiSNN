@@ -15,6 +15,8 @@ from utils.activations import smooth_sigmoid, smooth_step
 from collections import Counter
 import pickle
 
+
+
 def str2bool(v):
     if isinstance(v, bool):
         return v
@@ -41,6 +43,8 @@ if __name__ == "__main__":
 
 
 results_path = args.home + r'/results/' + 'mnist_dvs_stlr' + r'_%d_epochs' % args.n_epochs
+os.makedirs(results_path)
+
 
 args.disable_cuda = str2bool(args.disable_cuda)
 if not args.disable_cuda and torch.cuda.is_available():

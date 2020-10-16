@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_mlp_decolle_stlr.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_mlp_decolle_stlr.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,8 +30,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train_mlp_decolle_stlr.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="125">
-              <caret line="127" column="51" lean-forward="true" selection-start-line="127" selection-end-line="128" />
+            <state relative-caret-position="221">
+              <caret line="46" lean-forward="true" selection-start-line="46" selection-end-line="46" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -341,12 +340,12 @@
       <workItem from="1601983407510" duration="49438000" />
       <workItem from="1602497227134" duration="611000" />
       <workItem from="1602579441226" duration="596000" />
-      <workItem from="1602751003435" duration="27600000" />
+      <workItem from="1602751003435" duration="28373000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="429213000" />
+    <option name="totallyTimeSpent" value="429986000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -666,8 +665,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train_mlp_decolle_stlr.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="125">
-          <caret line="127" column="51" lean-forward="true" selection-start-line="127" selection-end-line="128" />
+        <state relative-caret-position="221">
+          <caret line="46" lean-forward="true" selection-start-line="46" selection-end-line="46" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
