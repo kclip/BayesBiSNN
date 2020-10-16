@@ -17,12 +17,14 @@ class BiSGD(BiOptimizer):
         for i, group in enumerate(self.binary_param_groups):
             for j, p in enumerate(group['params']):
                 if p.grad is None:
-                    group['binarizer'](p, magnitude=0.01)
+                    group['binarizer'](p)
                     continue
 
                 d_p = p.grad
                 clip(d_p)
+                # print(p.grad.shape, torch.max(torch.abs(d_p)), torch.max(torch.abs(self.param_groups[i]['params'][j])))
+
                 self.param_groups[i]['params'][j].add_(d_p, alpha=-group['lr'])
 
                 p.data.copy_(self.param_groups[i]['params'][j])
-                group['binarizer'](p, magnitude=0.01)
+                group['binarizer'](p)

@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     # Training arguments
     parser.add_argument('--where', default='local')
-    parser.add_argument('--lr', type=float, default=1e-2)
+    parser.add_argument('--lr', type=float, default=1000)
     parser.add_argument('--disable-cuda', type=str, default='true', help='Disable CUDA')
 
     args = parser.parse_args()
@@ -103,7 +103,7 @@ for epoch in range(n_epochs):
 
     binary_model.init(inputs, burnin=burnin)
 
-    readout_hist = [torch.Tensor().to(args.device) for _ in range(len(binary_model.readout_layers))]
+    readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
 
 
     print('Epoch %d/%d' % (epoch, n_epochs))
@@ -112,10 +112,9 @@ for epoch in range(n_epochs):
         s, r, u = binary_model(inputs[t])
 
         for l, ro_h in enumerate(readout_hist):
-            readout_hist[l] = torch.cat((ro_h, r[l].unsqueeze(0)), dim=0)
+            readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
         # calculate the loss
-
         loss = decolle_loss(s, r, u, target=labels[:, :, t])
         loss.backward()
         optimizer.step()
@@ -129,6 +128,6 @@ for epoch in range(n_epochs):
         # print(torch.sum(readout_hist[-1], dim=0))
         print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
         print(torch.sum(labels, dim=-1).argmax(dim=1))
-        acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels, dim=-1).argmax(dim=1)).float() / batch_size
+        acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / batch_size
         # backward pass: compute gradient of the loss with respect to model parameters
         print(acc)

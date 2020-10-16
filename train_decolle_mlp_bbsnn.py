@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # working: {lr:1000, t:0.1}, {lr:10, t:1e-3}
     parser.add_argument('--lr', type=float, default=1000)
     parser.add_argument('--temperature', type=float, default=1e-1)
-    parser.add_argument('--disable-cuda', type=str, default='true', help='Disable CUDA')
+    parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
     args = parser.parse_args()
 
@@ -125,7 +125,7 @@ for epoch in range(n_epochs):
         s, r, u = binary_model(inputs[t])
 
         for l, ro_h in enumerate(readout_hist):
-            readout_hist[l] = torch.cat((ro_h, r[l].unsqueeze(0)), dim=0)
+            readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
         # calculate the loss
         loss = decolle_loss(s, r, u, target=labels[:, :, t])
@@ -141,48 +141,48 @@ for epoch in range(n_epochs):
         # print(Counter(list(binary_model.parameters())[-3].numpy().flatten()), Counter(list(binary_model.parameters())[-4].numpy().flatten()))
         # print(list(binary_model.parameters()))
 
-        print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
-        print(torch.sum(labels, dim=-1).argmax(dim=1))
-        acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels, dim=-1).argmax(dim=1)).float() / batch_size
+        # print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
+        # print(torch.sum(labels, dim=-1).argmax(dim=1))
+        acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / batch_size
         # backward pass: compute gradient of the loss with respect to model parameters
         print(acc)
 
-    # if (epoch + 1) % 100 == 0:
-    #     torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
-    # if (epoch + 1) % 10 == 0:
-    #     with torch.no_grad():
-    #         n_batchs_test = 1000 // batch_size
-    #         idx_avail = [i for i in range(1000)]
-    #         labels_test = torch.LongTensor()
-    #         predictions = torch.LongTensor()
-    #
-    #         for i in range(n_batchs_test):
-    #             idxs_test = np.random.choice(idx_avail, [batch_size], replace=False)
-    #             idx_avail = [i for i in idx_avail if i not in idxs_test]
-    #
-    #             inputs, labels = get_batch_example(test_data, idxs_test, batch_size, T, n_classes, input_size, dt, 26, False)
-    #             inputs = inputs.permute(1, 0, 2).to(args.device)
-    #             labels = labels.to(args.device)
-    #
-    #             binary_model.init(inputs, burnin=burnin)
-    #
-    #             readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
-    #
-    #             print('Batch %d/%d' % (i, n_batchs_test))
-    #             for t in tqdm(range(burnin, T)):
-    #                 # forward pass: compute new pseudo-binary weights
-    #                 optimizer.update_concrete_weights()
-    #
-    #                 # forward pass: compute predicted outputs by passing inputs to the model
-    #                 s, r, u = binary_model(inputs[t])
-    #
-    #                 for l, ro_h in enumerate(readout_hist):
-    #                     readout_hist[l] = torch.cat((ro_h, r[l].unsqueeze(0)), dim=0)
-    #
-    #             predictions = torch.cat((predictions, torch.sum(readout_hist[-1], dim=0).argmax(dim=1)))
-    #             labels_test = torch.cat((labels_test, torch.sum(labels, dim=-1).argmax(dim=1)))
-    #
-    #         acc = torch.sum(predictions == labels_test).float() / (batch_size * n_batchs_test)
-    #         print('Epoch %d/ test acc %f' % (epoch, acc))
+    if (epoch + 1) % 100 == 0:
+        torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
+
+        with torch.no_grad():
+            n_batchs_test = 1000 // batch_size
+            idx_avail = [i for i in range(1000)]
+            labels_test = torch.LongTensor()
+            predictions = torch.LongTensor()
+
+            for i in range(n_batchs_test):
+                idxs_test = np.random.choice(idx_avail, [batch_size], replace=False)
+                idx_avail = [i for i in idx_avail if i not in idxs_test]
+
+                inputs, labels = get_batch_example(test_data, idxs_test, batch_size, T, n_classes, input_size, dt, 26, False)
+                inputs = inputs.permute(1, 0, 2).to(args.device)
+                labels = labels.to(args.device)
+
+                binary_model.init(inputs, burnin=burnin)
+
+                readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
+
+                print('Batch %d/%d' % (i, n_batchs_test))
+                for t in tqdm(range(burnin, T)):
+                    # forward pass: compute new pseudo-binary weights
+                    optimizer.update_concrete_weights()
+
+                    # forward pass: compute predicted outputs by passing inputs to the model
+                    s, r, u = binary_model(inputs[t])
+
+                    for l, ro_h in enumerate(readout_hist):
+                        readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
+
+                predictions = torch.cat((predictions, torch.sum(readout_hist[-1], dim=0).argmax(dim=1)))
+                labels_test = torch.cat((labels_test, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
+
+            acc = torch.sum(predictions == labels_test).float() / (batch_size * n_batchs_test)
+            print('Epoch %d/ test acc %f' % (epoch, acc))
 
 
