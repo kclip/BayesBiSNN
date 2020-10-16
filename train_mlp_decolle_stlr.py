@@ -13,6 +13,7 @@ import numpy as np
 from data_preprocessing.load_data import get_batch_example
 from utils.activations import smooth_sigmoid, smooth_step
 from collections import Counter
+import pickle
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -30,22 +31,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train probabilistic multivalued SNNs using Pytorch')
 
     # Training arguments
-    parser.add_argument('--where', default='local')
+    parser.add_argument('--home', default='/home')
+    parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
+    parser.add_argument('--n_epochs', type=int, default=10000)
     parser.add_argument('--lr', type=float, default=1000)
-    parser.add_argument('--disable-cuda', type=str, default='true', help='Disable CUDA')
+    parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
     args = parser.parse_args()
 
 
-if args.where == 'local':
-    home = r'C:/Users/K1804053/PycharmProjects'
-elif args.where == 'rosalind':
-    home = r'/users/k1804053'
-elif args.where == 'jade':
-    home = r'/jmain01/home/JAD014/mxm09/nxs94-mxm09'
-elif args.where == 'gcloud':
-    home = r'/home/k1804053'
-
+results_path = args.home + r'/results/' + 'mnist_dvs_stlr' + r'_%d_epochs' % args.n_epochs
 
 args.disable_cuda = str2bool(args.disable_cuda)
 if not args.disable_cuda and torch.cuda.is_available():
@@ -53,8 +48,9 @@ if not args.disable_cuda and torch.cuda.is_available():
 else:
     args.device = torch.device('cpu')
 
+args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
+args.train_accs[args.n_epochs] = []
 
-n_epochs = 5000
 test_period = 1
 batch_size = 32
 sample_length = 2000  # length of samples during training in ms
@@ -64,7 +60,7 @@ input_size = [676]
 n_classes = 10
 burnin = 100
 
-dataset = tables.open_file(home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
+dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
 train_data = dataset.root.train
 test_data = dataset.root.test
 
@@ -85,13 +81,14 @@ decolle_loss = DECOLLELoss(criterion, latent_model)
 
 # specify optimizer
 optimizer = BiSGD(binary_model.parameters(), latent_model.parameters(), lr=args.lr, binarizer=binarize)
-scheduler = StepLR(optimizer, step_size=500, gamma=0.5)
 
 binary_model.init_parameters()
-torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
 optimizer.step()  # binarize weights
 
-for epoch in range(n_epochs):
+
+for epoch in range(args.n_epochs):
+    torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
+
     loss = 0
 
     idxs = np.random.choice(np.arange(9000), [batch_size], replace=False)
@@ -106,7 +103,7 @@ for epoch in range(n_epochs):
     readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
 
 
-    print('Epoch %d/%d' % (epoch, n_epochs))
+    print('Epoch %d/%d' % (epoch, args.n_epochs))
     for t in tqdm(range(burnin, T)):
         # forward pass: compute predicted outputs by passing inputs to the model
         s, r, u = binary_model(inputs[t])
@@ -120,14 +117,50 @@ for epoch in range(n_epochs):
         optimizer.step()
         optimizer.zero_grad()
 
-    scheduler.step()
-
     with torch.no_grad():
-        # print(torch.sum(readout_hist[-2], dim=0).argmax(dim=1))
-        # print([set(w.detach().numpy().flatten().tolist()) for w in binary_model.parameters()])
-        # print(torch.sum(readout_hist[-1], dim=0))
-        print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
-        print(torch.sum(labels, dim=-1).argmax(dim=1))
+        # print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
+        # print(torch.sum(labels, dim=-1).argmax(dim=1))
         acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / batch_size
         # backward pass: compute gradient of the loss with respect to model parameters
         print(acc)
+
+
+    if (epoch + 1) % 100 == 0:
+        torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
+        with torch.no_grad():
+            n_batchs_test = 1000 // batch_size
+            idx_avail = [i for i in range(1000)]
+            labels_test = torch.LongTensor()
+            predictions = torch.LongTensor()
+
+            for i in range(n_batchs_test):
+                idxs_test = np.random.choice(idx_avail, [batch_size], replace=False)
+                idx_avail = [i for i in idx_avail if i not in idxs_test]
+
+                inputs, labels = get_batch_example(test_data, idxs_test, batch_size, T, n_classes, input_size, dt, 26, False)
+                inputs = inputs.permute(1, 0, 2).to(args.device)
+                labels = labels.to(args.device)
+
+                binary_model.init(inputs, burnin=burnin)
+
+                readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
+
+                print('Batch %d/%d' % (i, n_batchs_test))
+                for t in tqdm(range(burnin, T)):
+                    # forward pass: compute predicted outputs by passing inputs to the model
+                    s, r, u = binary_model(inputs[t])
+
+                    for l, ro_h in enumerate(readout_hist):
+                        readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
+
+                predictions = torch.cat((predictions, torch.sum(readout_hist[-1], dim=0).argmax(dim=1)))
+                labels_test = torch.cat((labels_test, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
+
+            acc = torch.sum(predictions == labels_test).float() / (batch_size * n_batchs_test)
+            args.train_accs[epoch + 1] = acc
+
+            with open(results_path + '/test_accs.pkl', 'wb') as f:
+                pickle.dump(args.train_accs, f, pickle.HIGHEST_PROTOCOL)
+
+            print('Epoch %d/ test acc %f' % (epoch, acc))
+
