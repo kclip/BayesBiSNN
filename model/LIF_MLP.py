@@ -1,5 +1,5 @@
 from model.LIF_base import *
-from utils.activations import smooth_step
+from utils.activations import smooth_step, smooth_sigmoid
 
 
 class LIFMLP(LIFNetwork):
@@ -13,10 +13,20 @@ class LIFMLP(LIFNetwork):
                  activation=smooth_step,
                  num_layers=1,
                  lif_layer_type=LIFLayer,
-                 lc_ampl=.5
+                 lc_ampl=.5,
+                 with_output_layer=True,
+                 with_bias=True,
+                 scaling=True
                  ):
 
+        self.scales = []
+        self.with_output_layer = with_output_layer
+        if with_output_layer:
+            n_neurons += [output_shape]
+
         num_layers = max(num_layers, max([len(n_neurons), len(tau_mem), len(tau_syn), len(tau_ref)]))
+        self.num_layers = num_layers
+
         if len(n_neurons) == 1:
             n_neurons = n_neurons * num_layers
         if len(tau_mem) == 1:
@@ -34,24 +44,30 @@ class LIFMLP(LIFNetwork):
         Mhid = input_shape + n_neurons
 
         for i in range(num_layers):
-            base_layer = nn.Linear(Mhid[i], Mhid[i+1])
+            base_layer = nn.Linear(Mhid[i], Mhid[i+1], bias=with_bias)
             layer = lif_layer_type(base_layer,
                                    activation=activation,
                                    tau_mem=tau_mem[i],
                                    tau_syn=tau_syn[i],
-                                   tau_ref=tau_ref[i]
+                                   tau_ref=tau_ref[i],
+                                   scaling=scaling
                                    )
 
-
-            readout = nn.Linear(Mhid[i+1], output_shape)
-            for param in readout.parameters():
-                param.requires_grad = False
-            self.reset_lc_parameters(readout, lc_ampl)
+            if self.with_output_layer and (i+1 == num_layers):
+                readout = nn.Identity()
+                # layer.activation = torch.sigmoid
+            else:
+                readout = nn.Linear(Mhid[i+1], output_shape, bias=False)
+                for param in readout.parameters():
+                    param.requires_grad = False
+                self.reset_lc_parameters(readout, lc_ampl)
 
             self.LIF_layers.append(layer)
             self.readout_layers.append(readout)
-
-        self.activation = activation
+            if scaling:
+                self.scales.append(1. / np.prod(readout.in_features))
+            else:
+                self.scales.append(1.)
 
     def forward(self, inputs):
         s_out = []
@@ -59,14 +75,13 @@ class LIFMLP(LIFNetwork):
         u_out = []
 
         inputs = inputs.view(inputs.size(0), -1)
-        for lif, ro in zip(self.LIF_layers, self.readout_layers):
+        for lif, ro, scale in zip(self.LIF_layers, self.readout_layers, self.scales):
             s, u = lif(inputs)
-            s_ = self.activation(u)
-            r_ = ro(s_)
+            r_ = ro(s) * scale
 
-            inputs = s_.detach() if lif.do_detach else s_
+            inputs = s.detach()
 
-            s_out.append(s_)
+            s_out.append(s)
             r_out.append(r_)
             u_out.append(u)
 

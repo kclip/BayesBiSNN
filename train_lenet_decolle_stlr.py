@@ -1,7 +1,6 @@
 import torch
-from utils.loss import decolle_loss
+from utils.loss import DECOLLELoss
 from model.LeNet import LenetLIF
-from data_loaders.load_mnistdvs_2d import create_data
 from tqdm import tqdm
 from optimizer.BiSGD import BiSGD
 from copy import deepcopy
@@ -9,6 +8,9 @@ from utils.binarize import binarize, binarize_stochastic
 import os
 from torch.optim.lr_scheduler import StepLR
 import argparse
+import tables
+import numpy as np
+from data_preprocessing.load_data import get_batch_example
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -27,7 +29,7 @@ if __name__ == "__main__":
 
     # Training arguments
     parser.add_argument('--where', default='local')
-    parser.add_argument('--lr', type=float, default=0.1)
+    parser.add_argument('--lr', type=float, default=1e-1)
     parser.add_argument('--disable-cuda', type=str, default='true', help='Disable CUDA')
 
     args = parser.parse_args()
@@ -52,20 +54,16 @@ else:
 
 n_epochs = 5000
 test_period = 1
-batch_size = 64
+batch_size = 32
 sample_length = 2000  # length of samples during training in ms
 dt = 5000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
 input_size = [2, 26, 26]
+n_classes = 10
 
-
-gen_train, gen_test = create_data(path_to_hdf5=home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5',
-                                  path_to_data=home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5',
-                                  batch_size=batch_size,
-                                  chunk_size=sample_length,
-                                  n_inputs=input_size,
-                                  dt=dt)
-
+dataset = tables.open_file(home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
+train_data = dataset.root.train
+test_data = dataset.root.test
 
 binary_model = LenetLIF(input_size,
                         Nhid_conv=[64, 128, 128],
@@ -83,7 +81,8 @@ latent_model = deepcopy(binary_model).to(args.device)
 
 
 # specify loss function
-criterion = torch.nn.SmoothL1Loss()
+criterion = [torch.nn.SmoothL1Loss()]
+decolle_loss = DECOLLELoss(criterion, latent_model)
 
 # specify optimizer
 optimizer = BiSGD(binary_model.parameters(), latent_model.parameters(), lr=args.lr, binarizer=binarize)
@@ -95,29 +94,34 @@ torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weigh
 for epoch in range(n_epochs):
     loss = 0
 
-    inputs, labels = gen_train.next()
-    inputs = torch.Tensor(inputs).to(args.device)
-    labels = torch.Tensor(labels).to(args.device)
+    idxs = np.random.choice(np.arange(9000), [batch_size], replace=False)
+
+    inputs, labels = get_batch_example(train_data, idxs, batch_size, T, n_classes, input_size, dt, 26, False)
+
+    inputs = inputs.permute(1, 0, 2, 3, 4).to(args.device)
+    labels = labels.to(args.device)
 
     binary_model.init(inputs, burnin=100)
 
     readout_hist = [torch.Tensor().to(args.device) for _ in range(len(binary_model.readout_layers))]
 
     print('Epoch %d/%d' % (epoch, n_epochs))
-    for t in tqdm(range(T)):
+    for t in tqdm(range(100, T)):
         # forward pass: compute predicted outputs by passing inputs to the model
-        _, r, _ = binary_model(inputs[t])
+        s, r, u = binary_model(inputs[t])
 
         for l, ro_h in enumerate(readout_hist):
             readout_hist[l] = torch.cat((ro_h, r[l].unsqueeze(0)), dim=0)
 
         # calculate the loss
-        loss = torch.mean(decolle_loss(r, labels[t], criterion))
+        loss = decolle_loss(s, r, u, target=labels[:, :, t])
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
 
     scheduler.step()
-    acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels, dim=0).argmax(dim=1)).float() / batch_size
+
+    print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1),  torch.sum(labels, dim=-1).argmax(dim=1))
+    acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels, dim=-1).argmax(dim=1)).float() / batch_size
     # backward pass: compute gradient of the loss with respect to model parameters
     print(acc)

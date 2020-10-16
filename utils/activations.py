@@ -19,4 +19,17 @@ class SmoothStep(torch.autograd.Function):
         return grad_input
 
 
+class SigmoidStep(torch.autograd.Function):
+    @staticmethod
+    def forward(aux, x):
+        aux.save_for_backward(x)
+        return (x >= 0).type(x.dtype)
+
+    def backward(aux, grad_output):
+        input, = aux.saved_tensors
+        res = torch.sigmoid(input)
+        return res*(1-res)*grad_output
+
+
 smooth_step = SmoothStep().apply
+smooth_sigmoid = SigmoidStep().apply

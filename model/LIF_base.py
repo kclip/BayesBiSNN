@@ -19,7 +19,7 @@ dtype = torch.float32
 class LIFLayer(nn.Module):
     NeuronState = namedtuple('NeuronState', ['P', 'Q', 'R', 'S'])
 
-    def __init__(self, layer, activation, tau_mem=10, tau_syn=2, tau_ref=8):
+    def __init__(self, layer, activation, tau_mem=10, tau_syn=2, tau_ref=8, scaling=True):
         super(LIFLayer, self).__init__()
         self.base_layer = layer
 
@@ -29,6 +29,10 @@ class LIFLayer(nn.Module):
 
         self.state = None
         self.activation = activation
+        if scaling:
+            self.scale = 1. / np.prod(self.base_layer.in_features)
+        else:
+            self.scale = 1.
 
 
     def cuda(self, device=None):
@@ -60,12 +64,13 @@ class LIFLayer(nn.Module):
             conv_layer.weight.data.uniform_(-stdv * 1e-2, stdv * 1e-2)
             if conv_layer.bias is not None:
                 conv_layer.bias.data.uniform_(-stdv, stdv)
-        elif hasattr(layer, 'out_features'):
-            layer.weight.data[:] *= 0
-            if layer.bias is not None:
-                layer.bias.data.uniform_(-1e-3, 1e-3)
-        else:
-            warnings.warn('Unhandled data type, not resetting parameters')
+        # elif hasattr(layer, 'out_features'):
+        #     layer.weight.data[:] *= 0
+        #     if layer.bias is not None:
+        #         layer.bias.data[:] *= 0
+        # layer.bias.data.uniform_(-1e-3, 1e-3)
+        # else:
+        #     warnings.warn('Unhandled data type, not resetting parameters')
 
 
     @staticmethod
@@ -124,8 +129,9 @@ class LIFLayer(nn.Module):
         P = self.alpha * self.state.P + self.state.Q
         Q = self.beta * self.state.Q + Sin_t
         R = self.alpharp * self.state.R + self.state.S
-        U = self.base_layer(P) - R
+        U = self.base_layer(P) * self.scale - R
         S = self.activation(U)
+
         self.state = self.NeuronState(P=P.detach(), Q=Q.detach(), R=R.detach(), S=S.detach())
         return S, U
 
@@ -198,18 +204,11 @@ class LIFNetwork(nn.Module):
             l.init_parameters()
 
 
-    # def reset_lc_parameters(self, layer, lc_ampl):
-    #     stdv = lc_ampl / np.sqrt(layer.weight.size(1))
-    #     layer.weight.data.uniform_(-stdv, stdv)
-    #     if layer.bias is not None:
-    #         layer.bias.data.uniform_(-stdv, stdv)
-
-
-    # todo check if this works
     def reset_lc_parameters(self, layer, lc_ampl):
-        layer.weight.data = 2 * torch.bernoulli(torch.ones_like(layer.weight.data) * 0.5) - 1
+        stdv = lc_ampl / np.sqrt(layer.weight.size(1))
+        layer.weight.data.uniform_(-stdv, stdv)
         if layer.bias is not None:
-            layer.bias.data = 2 * torch.bernoulli(torch.ones_like(layer.bias.data) * 0.5) - 1
+            layer.bias.data.uniform_(-stdv, stdv)
 
 
     def get_input_layer_device(self):

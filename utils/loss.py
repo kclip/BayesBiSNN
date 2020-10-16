@@ -20,8 +20,37 @@ class VRDistance(_Loss):
         return vrdistance(input, target, self.tau)
 
 
-def decolle_loss(r, tgt, loss):
-    loss_tv = 0
-    for i in range(len(r)):
-        loss_tv += loss(r[i], tgt)
-    return loss_tv
+def one_hot_crossentropy(input, label):
+    label = torch.argmax(label, dim=-1)
+    return torch.nn.CrossEntropyLoss()(input, label)
+
+class DECOLLELoss(object):
+    def __init__(self, loss_fn, net, reg_l=None):
+        self.nlayers = len(net)
+        if len(loss_fn) == 1:
+            loss_fn *= self.nlayers
+        self.loss_fn = loss_fn
+        self.num_losses = len([l for l in loss_fn if l is not None])
+        assert len(loss_fn) == self.nlayers, "Mismatch is in number of loss functions and layers. You need to specify one loss functino per layer"
+        self.reg_l = reg_l
+        if self.reg_l is None:
+            self.reg_l = [0 for _ in range(self.nlayers)]
+
+    def __len__(self):
+        return self.nlayers
+
+    def __call__(self, s, r, u, target, mask=1, sum_=True):
+        loss_tv = []
+        for i, loss_layer in enumerate(self.loss_fn):
+            if loss_layer is not None:
+                loss_tv.append(loss_layer(r[i] * mask, target * mask))
+                if self.reg_l[i] > 0:
+                    uflat = u[i].reshape(u[i].shape[0], -1)
+                    reg1_loss = self.reg_l[i] * 1e-2 * (torch.nn.functional.relu(uflat + .01)).mean()
+                    reg2_loss = self.reg_l[i] * 6e-5 * torch.nn.functional.relu((.1-torch.sigmoid(uflat)).mean())
+                    loss_tv[-1] += reg1_loss + reg2_loss
+        # print(loss_tv)
+        if sum_:
+            return sum(loss_tv)
+        else:
+            return loss_tv

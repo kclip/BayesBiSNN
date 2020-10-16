@@ -1,8 +1,8 @@
 import torch
 
-def binarize(x):
-    x.data[x.data >= 0] = 1.
-    x.data[x.data < 0] = -1.
+def binarize(x, magnitude=1.):
+    x.data[x.data >= 0] = magnitude
+    x.data[x.data < 0] = - magnitude
 
 def hard_sigmoid(x):
     return torch.max(torch.zeros(x.shape), torch.min(torch.ones(x.shape), (x + 1)/2))
