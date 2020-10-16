@@ -14,7 +14,8 @@ from data_preprocessing.load_data import get_batch_example
 from utils.activations import smooth_sigmoid, smooth_step
 from collections import Counter
 import pickle
-
+import fnmatch
+import time
 
 
 def str2bool(v):
@@ -42,7 +43,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
 
-results_path = args.home + r'/results/' + 'mnist_dvs_stlr' + r'_%d_epochs' % args.n_epochs
+pre = args.home + r'/results/'
+prelist = np.sort(fnmatch.filter(os.listdir(pre), '[0-9][0-9][0-9]__*'))
+if len(prelist) == 0:
+    expDirN = "001"
+else:
+    expDirN = "%03d" % (int((prelist[len(prelist) - 1].split("__"))[0]) + 1)
+
+results_path = time.strftime(pre + expDirN + "__" + "%d-%m-%Y", time.localtime()) + '_' + 'mnist_dvs_stlr' + r'_%d_epochs' % args.n_epochs
 os.makedirs(results_path)
 
 
