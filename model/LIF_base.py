@@ -2,7 +2,6 @@ import torch.nn as nn
 from torch.nn import functional as F
 import torch
 import numpy as np
-import pylab as plt
 from collections import namedtuple
 from itertools import chain
 import warnings

@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/optimizer/BiSGD.py" beforeDir="false" afterPath="$PROJECT_DIR$/optimizer/BiSGD.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/binary_model_weights.pt" beforeDir="false" afterPath="$PROJECT_DIR$/results/binary_model_weights.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_mlp_decolle_stlr.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_mlp_decolle_stlr.py" afterDir="false" />
-    </list>
+    <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -332,12 +326,12 @@
       <workItem from="1601983407510" duration="49438000" />
       <workItem from="1602497227134" duration="611000" />
       <workItem from="1602579441226" duration="596000" />
-      <workItem from="1602751003435" duration="25564000" />
+      <workItem from="1602751003435" duration="26158000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="427177000" />
+    <option name="totallyTimeSpent" value="427771000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -350,6 +344,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17813765" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
