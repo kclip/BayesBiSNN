@@ -95,7 +95,6 @@ decolle_loss = DECOLLELoss(criterion, latent_model)
 optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, device=args.device)
 
 binary_model.init_parameters()
-torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
 
 # print(binary_model.scales)
 # print([layer.scale for layer in binary_model.LIF_layers])
@@ -144,7 +143,7 @@ for epoch in range(args.n_epochs):
         print(acc)
 
     if (epoch + 1) % 100 == 0:
-        torch.save(binary_model.state_dict(), results_path + '/results/binary_model_weights.pt')
+        torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')
         with torch.no_grad():
             n_batchs_test = 1000 // batch_size
             idx_avail = [i for i in range(1000)]
@@ -178,7 +177,7 @@ for epoch in range(args.n_epochs):
                 labels_test = torch.cat((labels_test, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
 
             acc = torch.sum(predictions == labels_test).float() / (batch_size * n_batchs_test)
-            args.train_accs[epoch + 1] = acc
+            args.train_accs[epoch + 1] = acc.numpy()
 
             with open(results_path + '/test_accs.pkl', 'wb') as f:
                 pickle.dump(args.train_accs, f, pickle.HIGHEST_PROTOCOL)
