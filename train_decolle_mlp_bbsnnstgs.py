@@ -92,7 +92,7 @@ if binary_model.with_output_layer:
 decolle_loss = DECOLLELoss(criterion, latent_model)
 
 # specify optimizer
-optimizer = BayesBiSNNSTGS(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature)
+optimizer = BayesBiSNNSTGS(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, device=args.device)
 
 binary_model.init_parameters()
 torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')

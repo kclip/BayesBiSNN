@@ -4,12 +4,13 @@ from torch.optim.optimizer import required
 from utils.binarize import binarize
 
 class BayesBiSNNRP(BiOptimizer):
-    def __init__(self, concrete_binary_params, latent_params, lr=required, temperature=required):
+    def __init__(self, concrete_binary_params, latent_params, lr=required, temperature=required, device=required):
         if lr is not required and lr < 0.0:
             raise ValueError("Invalid learning rate: {}".format(lr))
 
         defaults = dict(lr=lr, temperature=temperature)
         super(BayesBiSNNRP, self).__init__(concrete_binary_params, latent_params, defaults)
+        self.device = device
 
     @torch.no_grad()
     def step(self):
@@ -30,7 +31,7 @@ class BayesBiSNNRP(BiOptimizer):
         for i, group in enumerate(self.binary_param_groups):
             for j, w in enumerate(group['params']):
                 if w.requires_grad:
-                    epsilon = torch.rand(w.data.shape)
+                    epsilon = torch.rand(w.data.shape).to(self.device)
                     delta = torch.log(epsilon / (1 - epsilon)) / 2
 
                     w.data = torch.tanh((delta + self.param_groups[i]['params'][j]) / group['temperature'])
@@ -40,9 +41,10 @@ class BayesBiSNNRP(BiOptimizer):
 
 
 class BayesBiSNNRF(BiOptimizer):
-    def __init__(self, concrete_binary_params, latent_params, lr=required):
+    def __init__(self, concrete_binary_params, latent_params, lr=required, device=required):
         if lr is not required and lr < 0.0:
             raise ValueError("Invalid learning rate: {}".format(lr))
+        self.device = device
 
         defaults = dict(lr=lr)
         super(BayesBiSNNRF, self).__init__(concrete_binary_params, latent_params, defaults)
@@ -55,7 +57,7 @@ class BayesBiSNNRF(BiOptimizer):
                     # print('///')
                     continue
 
-                sign = torch.sign(w)
+                sign = torch.sign(w).to(self.device)
                 grad_log = sign * (1. / 2. / torch.sigmoid(2. * sign * self.param_groups[i]['params'][j]))
                 d_w = loss * grad_log
 
@@ -68,19 +70,20 @@ class BayesBiSNNRF(BiOptimizer):
         for i, group in enumerate(self.binary_param_groups):
             for j, w in enumerate(group['params']):
                 if w.requires_grad:
-                    w.data = 2 * torch.bernoulli(torch.sigmoid(2 * self.param_groups[i]['params'][j])) - 1
+                    w.data = 2 * torch.bernoulli(torch.sigmoid(2 * self.param_groups[i]['params'][j])).to(self.device) - 1
                 else:
                     binarize(w)
 
 
 
 class BayesBiSNNSTGS(BiOptimizer):
-    def __init__(self, concrete_binary_params, latent_params, lr=required, temperature=required):
+    def __init__(self, concrete_binary_params, latent_params, lr=required, temperature=required, device=required):
         if lr is not required and lr < 0.0:
             raise ValueError("Invalid learning rate: {}".format(lr))
 
         defaults = dict(lr=lr, temperature=temperature)
         super(BayesBiSNNSTGS, self).__init__(concrete_binary_params, latent_params, defaults)
+        self.device = device
 
     @torch.no_grad()
     def step(self):
@@ -91,7 +94,7 @@ class BayesBiSNNSTGS(BiOptimizer):
 
                 mu = torch.tanh(self.param_groups[i]['params'][j].data)
 
-                epsilon = torch.rand(w.data.shape)
+                epsilon = torch.rand(w.data.shape).to(self.device)
                 delta = torch.log(epsilon / (1 - epsilon)) / 2
                 w_st = torch.tanh((delta + self.param_groups[i]['params'][j]) / group['temperature'])
                 scale = (1 - w_st * w_st + 1e-10) / group['temperature'] / (1 - mu * mu + 1e-10)
@@ -106,7 +109,7 @@ class BayesBiSNNSTGS(BiOptimizer):
             for j, w in enumerate(group['params']):
                 if w.requires_grad:
                     tau = 1e-7
-                    epsilon = torch.rand(w.data.shape)
+                    epsilon = torch.rand(w.data.shape).to(self.device)
                     delta = torch.log(epsilon / (1 - epsilon)) / 2
                     w.data = torch.tanh((delta + self.param_groups[i]['params'][j]) / tau)
 

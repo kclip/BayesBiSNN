@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/optimizer/BBSNN.py" beforeDir="false" afterPath="$PROJECT_DIR$/optimizer/BBSNN.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_mlp_decolle_stlr.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_mlp_decolle_stlr.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,20 +20,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="52" selection-start-line="43" selection-end-line="52" />
-              <folding>
-                <element signature="e#0#12#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/train_mlp_decolle_stlr.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="54" selection-start-line="54" selection-end-line="54" />
+            <state relative-caret-position="170">
+              <caret line="94" column="139" selection-start-line="94" selection-start-column="119" selection-end-line="94" selection-end-column="139" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -45,7 +33,7 @@
         <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="272">
-              <caret line="52" lean-forward="true" selection-start-line="52" selection-end-line="52" />
+              <caret line="94" column="141" selection-start-line="94" selection-start-column="141" selection-end-line="94" selection-end-column="141" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -68,8 +56,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/optimizer/BBSNN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1683">
-              <caret line="99" column="43" selection-start-line="99" selection-end-line="100" />
+            <state relative-caret-position="380">
+              <caret line="113" column="90" lean-forward="true" selection-start-line="113" selection-start-column="90" selection-end-line="113" selection-end-column="90" />
               <folding>
                 <element signature="e#0#45#0" expanded="true" />
               </folding>
@@ -197,14 +185,14 @@
         <option value="$PROJECT_DIR$/utils/loss.py" />
         <option value="$PROJECT_DIR$/train_decolle_vanilla.py" />
         <option value="$PROJECT_DIR$/utils/activations.py" />
-        <option value="$PROJECT_DIR$/utils/binarize.py" />
         <option value="$PROJECT_DIR$/utils/misc.py" />
         <option value="$PROJECT_DIR$/model/LIF_MLP.py" />
         <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnnrf.py" />
-        <option value="$PROJECT_DIR$/optimizer/BBSNN.py" />
         <option value="$PROJECT_DIR$/optimizer/BiSGD.py" />
         <option value="$PROJECT_DIR$/model/LIF_base.py" />
         <option value="$PROJECT_DIR$/train_mlp_decolle_stlr.py" />
+        <option value="$PROJECT_DIR$/utils/binarize.py" />
+        <option value="$PROJECT_DIR$/optimizer/BBSNN.py" />
         <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" />
         <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py" />
       </list>
@@ -354,12 +342,12 @@
       <workItem from="1601983407510" duration="49438000" />
       <workItem from="1602497227134" duration="611000" />
       <workItem from="1602579441226" duration="596000" />
-      <workItem from="1602751003435" duration="29715000" />
+      <workItem from="1602751003435" duration="30338000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="431328000" />
+    <option name="totallyTimeSpent" value="431951000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -594,13 +582,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils/binarize.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utils/loss.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-179">
@@ -615,16 +596,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
           <caret line="25" selection-start-line="25" selection-end-line="25" />
-          <folding>
-            <element signature="e#0#45#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/optimizer/BBSNN.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1683">
-          <caret line="99" column="43" selection-start-line="99" selection-end-line="100" />
           <folding>
             <element signature="e#0#45#0" expanded="true" />
           </folding>
@@ -661,10 +632,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/utils/binarize.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/optimizer/BBSNN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="113" column="90" lean-forward="true" selection-start-line="113" selection-start-column="90" selection-end-line="113" selection-end-column="90" />
+          <folding>
+            <element signature="e#0#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="52" selection-start-line="43" selection-end-line="52" />
+        <state relative-caret-position="170">
+          <caret line="94" column="139" selection-start-line="94" selection-start-column="119" selection-end-line="94" selection-end-column="139" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
@@ -674,7 +662,7 @@
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
-          <caret line="52" lean-forward="true" selection-start-line="52" selection-end-line="52" />
+          <caret line="94" column="141" selection-start-line="94" selection-start-column="141" selection-end-line="94" selection-end-column="141" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
