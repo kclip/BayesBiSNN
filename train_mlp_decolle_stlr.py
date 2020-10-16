@@ -130,7 +130,7 @@ for epoch in range(args.n_epochs):
 
 
     if (epoch + 1) % 100 == 0:
-        torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
+        torch.save(binary_model.state_dict(), results_path + '/results/binary_model_weights.pt')
         with torch.no_grad():
             n_batchs_test = 1000 // batch_size
             idx_avail = [i for i in range(1000)]

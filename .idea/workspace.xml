@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_mlp_decolle_stlr.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_mlp_decolle_stlr.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,8 +20,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="32" selection-start-line="32" selection-end-line="32" />
+            <state relative-caret-position="207">
+              <caret line="137" column="40" selection-start-line="137" selection-end-line="138" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -30,8 +32,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train_mlp_decolle_stlr.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="46" lean-forward="true" selection-start-line="46" selection-end-line="46" />
+            <state relative-caret-position="17">
+              <caret line="132" column="58" selection-start-line="132" selection-start-column="58" selection-end-line="132" selection-end-column="58" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -187,11 +201,11 @@
         <option value="$PROJECT_DIR$/utils/misc.py" />
         <option value="$PROJECT_DIR$/model/LIF_MLP.py" />
         <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnnrf.py" />
-        <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" />
-        <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py" />
         <option value="$PROJECT_DIR$/optimizer/BBSNN.py" />
         <option value="$PROJECT_DIR$/optimizer/BiSGD.py" />
         <option value="$PROJECT_DIR$/model/LIF_base.py" />
+        <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" />
+        <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py" />
         <option value="$PROJECT_DIR$/train_mlp_decolle_stlr.py" />
       </list>
     </option>
@@ -340,12 +354,12 @@
       <workItem from="1601983407510" duration="49438000" />
       <workItem from="1602497227134" duration="611000" />
       <workItem from="1602579441226" duration="596000" />
-      <workItem from="1602751003435" duration="28373000" />
+      <workItem from="1602751003435" duration="29298000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="429986000" />
+    <option name="totallyTimeSpent" value="430911000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -389,12 +403,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py</url>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -593,16 +601,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="145" column="30" lean-forward="true" selection-start-line="145" selection-start-column="30" selection-end-line="145" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utils/loss.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-179">
@@ -653,10 +651,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnnstgs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="32" selection-start-line="32" selection-end-line="32" />
+        <state relative-caret-position="207">
+          <caret line="137" column="40" selection-start-line="137" selection-end-line="138" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
@@ -665,8 +673,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train_mlp_decolle_stlr.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="46" lean-forward="true" selection-start-line="46" selection-end-line="46" />
+        <state relative-caret-position="17">
+          <caret line="132" column="58" selection-start-line="132" selection-start-column="58" selection-end-line="132" selection-end-column="58" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
