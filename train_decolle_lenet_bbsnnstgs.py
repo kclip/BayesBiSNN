@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # Training arguments
     parser.add_argument('--home', default='/home')
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--n_epochs', type=int, default=10000)
+    parser.add_argument('--n_epochs', type=int, default=5000)
     parser.add_argument('--lr', type=float, default=1000)
     parser.add_argument('--temperature', type=float, default=1e-1)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
@@ -61,7 +61,7 @@ args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
 args.train_accs[args.n_epochs] = []
 
 test_period = 1
-batch_size = 32
+batch_size = 64
 sample_length = 2000  # length of samples during training in ms
 dt = 1000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
@@ -83,7 +83,7 @@ binary_model = LenetLIF(input_size,
                         pool_size=[2, 1, 2],
                         dropout=[0.5],
                         num_conv_layers=3,
-                        num_mlp_layers=0,
+                        num_mlp_layers=1,
                         with_bias=False).to(args.device)
 
 latent_model = deepcopy(binary_model)

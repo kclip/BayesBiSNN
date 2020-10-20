@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/LIF_MLP.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/LIF_MLP.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/LIF_base.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/LIF_base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/LeNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/LeNet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/optimizer/BBSNN.py" beforeDir="false" afterPath="$PROJECT_DIR$/optimizer/BBSNN.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/results/binary_model_weights.pt" beforeDir="false" afterPath="$PROJECT_DIR$/results/binary_model_weights.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnnrf.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnnrf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_decolle_lenet_bbsnnstgs.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_lenet_bbsnnstgs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_lenet_decolle_stlr.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_lenet_decolle_stlr.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,11 +18,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train_lenet_decolle_stlr.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-5">
-              <caret line="171" column="24" lean-forward="true" selection-start-line="171" selection-start-column="24" selection-end-line="171" selection-end-column="24" />
+            <state relative-caret-position="1083">
+              <caret line="91" selection-start-line="91" selection-end-line="91" />
               <folding>
                 <element signature="e#453#465#0" expanded="true" />
               </folding>
@@ -47,11 +42,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnnstgs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="93" selection-start-line="93" selection-end-line="93" />
+            <state relative-caret-position="697">
+              <caret line="85" column="41" selection-start-line="85" selection-start-column="41" selection-end-line="85" selection-end-column="41" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -203,10 +198,10 @@
         <option value="$PROJECT_DIR$/model/LIF_MLP.py" />
         <option value="$PROJECT_DIR$/model/LIF_base.py" />
         <option value="$PROJECT_DIR$/model/LeNet.py" />
-        <option value="$PROJECT_DIR$/train_lenet_decolle_stlr.py" />
         <option value="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" />
         <option value="$PROJECT_DIR$/train_decolle_lenet_bsnnrf.py" />
         <option value="$PROJECT_DIR$/train_decolle_lenet_bbsnnstgs.py" />
+        <option value="$PROJECT_DIR$/train_lenet_decolle_stlr.py" />
       </list>
     </option>
   </component>
@@ -355,12 +350,12 @@
       <workItem from="1602497227134" duration="611000" />
       <workItem from="1602579441226" duration="596000" />
       <workItem from="1602751003435" duration="34304000" />
-      <workItem from="1603051645825" duration="17577000" />
+      <workItem from="1603051645825" duration="20786000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="453494000" />
+    <option name="totallyTimeSpent" value="456703000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -655,16 +650,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/train_lenet_decolle_stlr.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5">
-          <caret line="171" column="24" lean-forward="true" selection-start-line="171" selection-start-column="24" selection-end-line="171" selection-end-column="24" />
-          <folding>
-            <element signature="e#453#465#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/miniconda3/Lib/site-packages/torch/nn/modules/module.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="118">
@@ -692,6 +677,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnnstgs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="697">
+          <caret line="85" column="41" selection-start-line="85" selection-start-column="41" selection-end-line="85" selection-end-column="41" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
@@ -702,12 +697,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnnstgs.py">
+    <entry file="file://$PROJECT_DIR$/train_lenet_decolle_stlr.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="93" selection-start-line="93" selection-end-line="93" />
+        <state relative-caret-position="1083">
+          <caret line="91" selection-start-line="91" selection-end-line="91" />
           <folding>
-            <element signature="e#0#12#0" expanded="true" />
+            <element signature="e#453#465#0" expanded="true" />
           </folding>
         </state>
       </provider>

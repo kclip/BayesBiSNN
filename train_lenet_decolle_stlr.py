@@ -36,7 +36,7 @@ if __name__ == "__main__":
     # Training arguments
     parser.add_argument('--home', default='/home')
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--n_epochs', type=int, default=10000)
+    parser.add_argument('--n_epochs', type=int, default=5000)
     parser.add_argument('--lr', type=float, default=1000)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
@@ -64,7 +64,7 @@ args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
 args.train_accs[args.n_epochs] = []
 
 test_period = 1
-batch_size = 32
+batch_size = 64
 sample_length = 2000  # length of samples during training in ms
 dt = 1000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
@@ -78,7 +78,7 @@ test_data = dataset.root.test
 
 binary_model = LenetLIF(input_size,
                         Nhid_conv=[64, 128, 128],
-                        Nhid_mlp=[128],
+                        Nhid_mlp=[0],
                         out_channels=10,
                         kernel_size=[7],
                         stride=[1],
