@@ -28,8 +28,17 @@ class LIFLayer(nn.Module):
 
         self.state = None
         self.activation = activation
+
         if scaling:
-            self.scale = 1. / np.prod(self.base_layer.in_features)
+            if type(layer) == nn.Conv2d:
+                conv_layer = layer
+                n = conv_layer.in_channels
+                for k in conv_layer.kernel_size:
+                    n *= k
+                self.scale = layer.groups / n
+
+            elif hasattr(layer, 'in_features'):
+                self.scale = 1. / np.prod(self.base_layer.in_features)
         else:
             self.scale = 1.
 

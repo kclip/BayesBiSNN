@@ -20,10 +20,11 @@ class LenetLIF(LIFNetwork):
                  num_mlp_layers=1,
                  lc_ampl=.5,
                  lif_layer_type=LIFLayer,
-                 device='cpu'
+                 with_bias=True,
+                 scaling=True
                  ):
 
-        num_layers = num_conv_layers + num_mlp_layers
+        self.num_layers = num_conv_layers + num_mlp_layers
         # If only one value provided, then it is duplicated for each layer
         if len(kernel_size) == 1:
             kernel_size = kernel_size * num_conv_layers
@@ -32,13 +33,13 @@ class LenetLIF(LIFNetwork):
         if len(pool_size) == 1:
             pool_size = pool_size * num_conv_layers
         if len(tau_mem) == 1:
-            tau_mem = tau_mem * num_layers
+            tau_mem = tau_mem * self.num_layers
         if len(tau_syn) == 1:
-            tau_syn = tau_syn * num_layers
+            tau_syn = tau_syn * self.num_layers
         if len(tau_ref) == 1:
-            tau_ref = tau_ref * num_layers
+            tau_ref = tau_ref * self.num_layers
         if len(dropout) == 1:
-            dropout = dropout * num_layers
+            dropout = dropout * self.num_layers
         if len(Nhid_conv) == 1:
             Nhid_conv = Nhid_conv * num_conv_layers
         if len(Nhid_mlp) == 1:
@@ -52,6 +53,7 @@ class LenetLIF(LIFNetwork):
         feature_width = input_shape[2]
 
         # THe following lists need to be nn.ModuleList in order for pytorch to properly load and save the state_dict
+        self.scales = []
         self.pool_layers = nn.ModuleList()
         self.dropout_layers = nn.ModuleList()
         self.input_shape = input_shape
@@ -74,10 +76,11 @@ class LenetLIF(LIFNetwork):
                                    activation=activation,
                                    tau_mem=tau_mem[i],
                                    tau_syn=tau_syn[i],
-                                   tau_ref=tau_ref[i]
+                                   tau_ref=tau_ref[i],
+                                   scaling=scaling
                                    )
             pool = nn.MaxPool2d(kernel_size=pool_size[i])
-            readout = nn.Linear(int(feature_height * feature_width * Nhid_conv[i + 1]), out_channels)
+            readout = nn.Linear(int(feature_height * feature_width * Nhid_conv[i + 1]), out_channels, bias=with_bias)
 
             # Readout layer has random fixed weights
             for param in readout.parameters():
@@ -90,7 +93,10 @@ class LenetLIF(LIFNetwork):
             self.pool_layers.append(pool)
             self.readout_layers.append(readout)
             self.dropout_layers.append(dropout_layer)
-
+            if scaling:
+                self.scales.append(1. / np.prod(readout.in_features))
+            else:
+                self.scales.append(1.)
 
 
         mlp_in = int(feature_height * feature_width * Nhid_conv[-1])
@@ -116,20 +122,25 @@ class LenetLIF(LIFNetwork):
             self.pool_layers.append(nn.Sequential())
             self.readout_layers.append(readout)
             self.dropout_layers.append(dropout_layer)
+            if scaling:
+                self.scales.append(1. / np.prod(readout.in_features))
+            else:
+                self.scales.append(1.)
+
 
     def forward(self, inputs):
         s_out = []
         r_out = []
         u_out = []
         i = 0
-        for lif, pool, ro, do in zip(self.LIF_layers, self.pool_layers, self.readout_layers, self.dropout_layers):
+        for lif, pool, ro, do, scale in zip(self.LIF_layers, self.pool_layers, self.readout_layers, self.dropout_layers, self.scales):
             if i == self.num_conv_layers:
                 inputs = inputs.view(inputs.size(0), -1)
             s, u = lif(inputs)
             u_p = pool(u)
             s_ = smooth_step(u_p)
             sd_ = do(s_)
-            r_ = ro(sd_.reshape(sd_.size(0), -1))
+            r_ = ro(sd_.reshape(sd_.size(0), -1)) * scale
             s_out.append(s_)
             r_out.append(r_)
             u_out.append(u_p)

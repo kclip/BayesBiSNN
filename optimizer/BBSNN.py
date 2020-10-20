@@ -40,42 +40,6 @@ class BayesBiSNNRP(BiOptimizer):
                     binarize(w)
 
 
-class BayesBiSNNRF(BiOptimizer):
-    def __init__(self, concrete_binary_params, latent_params, lr=required, device=required):
-        if lr is not required and lr < 0.0:
-            raise ValueError("Invalid learning rate: {}".format(lr))
-        self.device = device
-
-        defaults = dict(lr=lr)
-        super(BayesBiSNNRF, self).__init__(concrete_binary_params, latent_params, defaults)
-
-    @torch.no_grad()
-    def step(self, loss):
-        for i, group in enumerate(self.binary_param_groups):
-            for j, w in enumerate(group['params']):
-                if w.grad is None:
-                    # print('///')
-                    continue
-
-                sign = torch.sign(w).to(self.device)
-                grad_log = sign * (1. / 2. / torch.sigmoid(2. * sign * self.param_groups[i]['params'][j]))
-                d_w = loss * grad_log
-
-                # print(w.grad.shape, torch.max(torch.abs(d_w)), torch.max(torch.abs(self.param_groups[i]['params'][j])))
-
-                self.param_groups[i]['params'][j].add_(d_w, alpha=-group['lr'])
-
-
-    def update_concrete_weights(self):
-        for i, group in enumerate(self.binary_param_groups):
-            for j, w in enumerate(group['params']):
-                if w.requires_grad:
-                    w.data = 2 * torch.bernoulli(torch.sigmoid(2 * self.param_groups[i]['params'][j])).to(self.device) - 1
-                else:
-                    binarize(w)
-
-
-
 class BayesBiSNNSTGS(BiOptimizer):
     def __init__(self, concrete_binary_params, latent_params, lr=required, temperature=required, device=required):
         if lr is not required and lr < 0.0:
@@ -115,3 +79,37 @@ class BayesBiSNNSTGS(BiOptimizer):
 
                 else:
                     binarize(w)
+
+
+class BayesBiSNNRF(BiOptimizer):
+    def __init__(self, concrete_binary_params, latent_params, lr=required, device=required):
+        if lr is not required and lr < 0.0:
+            raise ValueError("Invalid learning rate: {}".format(lr))
+        self.device = device
+
+        defaults = dict(lr=lr)
+        super(BayesBiSNNRF, self).__init__(concrete_binary_params, latent_params, defaults)
+
+    @torch.no_grad()
+    def step(self, loss):
+        for i, group in enumerate(self.binary_param_groups):
+            for j, w in enumerate(group['params']):
+                if w.grad is None:
+                    continue
+                sign = torch.sign(w).to(self.device)
+                grad_log = - sign * (1. / 2. / torch.sigmoid(2. * sign * self.param_groups[i]['params'][j]))
+                d_w = loss * grad_log
+
+                # print(w.grad.shape, loss, torch.max(torch.abs(grad_log)), torch.max(torch.abs(self.param_groups[i]['params'][j])))
+
+                self.param_groups[i]['params'][j].add_(d_w, alpha=-group['lr'])
+
+
+    def update_concrete_weights(self):
+        for i, group in enumerate(self.binary_param_groups):
+            for j, w in enumerate(group['params']):
+                if w.requires_grad:
+                    w.data = 2 * torch.bernoulli(torch.sigmoid(2 * self.param_groups[i]['params'][j])).to(self.device) - 1
+                else:
+                    binarize(w)
+

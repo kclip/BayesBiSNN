@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # Training arguments
     parser.add_argument('--where', default='local')
 
-    parser.add_argument('--lr', type=float, default=1e-2)
+    parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--disable-cuda', type=str, default='true', help='Disable CUDA')
 
     args = parser.parse_args()
@@ -56,7 +56,7 @@ else:
 
 n_epochs = 5000
 test_period = 1
-batch_size = 32
+batch_size = 8
 sample_length = 2000  # length of samples during training in ms
 dt = 5000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
@@ -73,7 +73,8 @@ binary_model = LIFMLP(input_size,
                       n_classes,
                       n_neurons=[512, 256],
                       with_output_layer=False,
-                      with_bias=False
+                      with_bias=False,
+                      scaling=True
                       ).to(args.device)
 
 latent_model = deepcopy(binary_model)
@@ -87,7 +88,7 @@ if binary_model.with_output_layer:
 decolle_loss = DECOLLELoss(criterion, latent_model)
 
 # specify optimizer
-optimizer = BayesBiSNNRF(binary_model.parameters(), latent_model.parameters(), lr=args.lr)
+optimizer = BayesBiSNNRF(binary_model.parameters(), latent_model.parameters(), lr=args.lr, device=args.device)
 
 binary_model.init_parameters()
 torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
@@ -107,11 +108,11 @@ for epoch in range(n_epochs):
 
     optimizer.update_concrete_weights()
 
-    # print([Counter(w.detach().numpy().flatten()) for w in binary_model.parameters()])
     binary_model.init(inputs, burnin=burnin)
 
     readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
 
+    # print([Counter(w.detach().numpy().flatten()) for w in binary_model.parameters()])
 
     print('Epoch %d/%d' % (epoch, n_epochs))
     for t in tqdm(range(burnin, T)):
@@ -128,13 +129,14 @@ for epoch in range(n_epochs):
         # calculate the loss
         loss = decolle_loss(s, r, u, target=labels[:, :, t])
         loss.backward()
-        optimizer.step(loss)
+        optimizer.step(loss.detach())
+
         optimizer.zero_grad()
 
     with torch.no_grad():
         # print(u[-1])
         # print(r[-1])
-        # print(torch.sum(readout_hist[-1], dim=0))
+        print(torch.sum(readout_hist[-1], dim=0))
         # print(Counter(list(binary_model.parameters())[-1].numpy().flatten()), Counter(list(binary_model.parameters())[-2].numpy().flatten()))
         # print(Counter(list(binary_model.parameters())[-3].numpy().flatten()), Counter(list(binary_model.parameters())[-4].numpy().flatten()))
         # print(list(binary_model.parameters()))
@@ -182,5 +184,3 @@ for epoch in range(n_epochs):
     #
     #         acc = torch.sum(predictions == labels_test).float() / (batch_size * n_batchs_test)
     #         print('Epoch %d/ test acc %f' % (epoch, acc))
-
-

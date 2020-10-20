@@ -57,7 +57,7 @@ class LIFMLP(LIFNetwork):
                 readout = nn.Identity()
                 # layer.activation = torch.sigmoid
             else:
-                readout = nn.Linear(Mhid[i+1], output_shape, bias=False)
+                readout = nn.Linear(Mhid[i+1], output_shape, bias=with_bias)
                 for param in readout.parameters():
                     param.requires_grad = False
                 self.reset_lc_parameters(readout, lc_ampl)
