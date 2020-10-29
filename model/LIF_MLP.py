@@ -46,9 +46,9 @@ class LIFMLP(LIFNetwork):
 
         for i in range(num_layers):
             base_layer = nn.Linear(Mhid[i], Mhid[i+1], bias=with_bias)
-            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) / Mhid[i]
+            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 10  # / Mhid[i]
             if with_bias:
-                base_layer.bias.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.bias.shape) * prior_p) - 1) / Mhid[i]
+                base_layer.bias.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.bias.shape) * prior_p) - 1) * 10
 
             layer = lif_layer_type(base_layer,
                                    activation=activation,
@@ -63,9 +63,9 @@ class LIFMLP(LIFNetwork):
                 # layer.activation = torch.sigmoid
             else:
                 readout = nn.Linear(Mhid[i+1], output_shape, bias=with_bias)
-                readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1) / Mhid[i]
+                readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1) * 10
                 if with_bias:
-                    readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1) / Mhid[i]
+                    readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1) * 10
 
                 for param in readout.parameters():
                     param.requires_grad = False
