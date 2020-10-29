@@ -37,7 +37,7 @@ if __name__ == "__main__":
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--temperature', type=float, default=1)
     parser.add_argument('--rho', type=float, default=0.0002)
-    parser.add_argument('--prior_p', type=float, default=0.4)
+    parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
     args = parser.parse_args()
@@ -163,8 +163,8 @@ for epoch in range(args.n_epochs):
             optimizer.zero_grad()
 
         with torch.no_grad():
-            preds = torch.cat((preds, torch.sum(readout_hist[-1], dim=0).argmax(dim=1)))
-            true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
+            preds = torch.cat((preds, torch.sum(readout_hist[-1], dim=0).argmax(dim=1).type_as(preds)))
+            true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
 
 
             # print(u[-1])
@@ -175,13 +175,13 @@ for epoch in range(args.n_epochs):
     # print(true_labels)
     # print(preds)
 
-    idxs_wrong = np.where(preds != true_labels)[0]
-    idxs_used = np.array(idxs_used)
+    # idxs_wrong = np.where(preds != true_labels)[0]
+    # idxs_used = np.array(idxs_used)
 
     # print(torch.sum(train_inputs[np.sort(idxs_used[idxs_wrong])], dim=1)/T)
     # print(np.sort(idxs_used[idxs_wrong]))
 
-    acc = torch.sum(preds == true_labels).float() / n_samples_train
+    acc = torch.sum(preds == true_labels.type_as(preds)).float() / n_samples_train
     np.save(os.path.join(results_path, 'train_predictions_latest'), preds.numpy())
     np.save(os.path.join(results_path, 'idxs_train'), np.array(idxs_used))
 
