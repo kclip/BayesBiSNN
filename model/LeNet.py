@@ -71,7 +71,8 @@ class LenetLIF(LIFNetwork):
                 dilation=1)
             feature_height //= pool_size[i]
             feature_width //= pool_size[i]
-            base_layer = nn.Conv2d(Nhid_conv[i], Nhid_conv[i + 1], kernel_size[i], stride[i], padding[i])
+            base_layer = nn.Conv2d(Nhid_conv[i], Nhid_conv[i + 1], kernel_size[i], stride[i], padding[i], bias=with_bias)
+
             layer = lif_layer_type(base_layer,
                                    activation=activation,
                                    tau_mem=tau_mem[i],

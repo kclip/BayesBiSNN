@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # Training arguments
     parser.add_argument('--home', default='/home')
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--n_epochs', type=int, default=10000)
+    parser.add_argument('--n_epochs', type=int, default=1000)
     parser.add_argument('--lr', type=float, default=1000)
     parser.add_argument('--temperature', type=float, default=1e-1)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')

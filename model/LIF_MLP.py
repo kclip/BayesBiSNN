@@ -10,6 +10,7 @@ class LIFMLP(LIFNetwork):
                  tau_mem=[10],
                  tau_syn=[6],
                  tau_ref=[2],
+                 prior_p=0.5,
                  activation=smooth_step,
                  num_layers=1,
                  lif_layer_type=LIFLayer,
@@ -45,12 +46,16 @@ class LIFMLP(LIFNetwork):
 
         for i in range(num_layers):
             base_layer = nn.Linear(Mhid[i], Mhid[i+1], bias=with_bias)
+            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) / Mhid[i]
+            if with_bias:
+                base_layer.bias.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.bias.shape) * prior_p) - 1) / Mhid[i]
+
             layer = lif_layer_type(base_layer,
                                    activation=activation,
                                    tau_mem=tau_mem[i],
                                    tau_syn=tau_syn[i],
                                    tau_ref=tau_ref[i],
-                                   scaling=scaling
+                                   scaling=scaling,
                                    )
 
             if self.with_output_layer and (i+1 == num_layers):
@@ -58,6 +63,10 @@ class LIFMLP(LIFNetwork):
                 # layer.activation = torch.sigmoid
             else:
                 readout = nn.Linear(Mhid[i+1], output_shape, bias=with_bias)
+                readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1) / Mhid[i]
+                if with_bias:
+                    readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1) / Mhid[i]
+
                 for param in readout.parameters():
                     param.requires_grad = False
                 self.reset_lc_parameters(readout, lc_ampl)

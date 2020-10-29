@@ -1,3 +1,6 @@
+import numpy as np
+import torch
+
 def get_output_shape(input_shape, kernel_size=[3,3], stride = [1,1], padding=[1,1], dilation=[0,0]):
     if not hasattr(kernel_size, '__len__'):
         kernel_size = [kernel_size, kernel_size]
@@ -19,4 +22,72 @@ def get_output_shape(input_shape, kernel_size=[3,3], stride = [1,1], padding=[1,
 def state_detach(state):
     for s in state:
         s.detach_()
+
+
+def make_moon_dataset_bin(n_samples, T, noise):
+    from sklearn import datasets
+
+    data = datasets.make_moons(n_samples=n_samples, noise=noise)
+
+    data[0][:, 0] = (data[0][:, 0] - np.min(data[0][:, 0])) / (np.max(data[0][:, 0]) - np.min(data[0][:, 0]))
+    data[0][:, 1] = (data[0][:, 1] - np.min(data[0][:, 1])) / (np.max(data[0][:, 1]) - np.min(data[0][:, 1]))
+
+    binary_inputs = torch.zeros([len(data[0]), T, 2])
+    binary_outputs = torch.zeros([len(data[0]), T, 2])
+
+    for i, sample in enumerate(data[0]):
+        binary_inputs[i, :, 0] = torch.bernoulli(torch.tensor([sample[0]] * T))
+        binary_inputs[i, :, 1] = torch.bernoulli(torch.tensor([sample[1]] * T))
+
+        binary_outputs[i, :, data[1][i]] = 1
+
+    return binary_inputs, binary_outputs
+
+
+def make_moon_dataset_bin_pop_coding(n_samples, T, noise, n_neuron_per_dim, res=100):
+    from sklearn import datasets
+    data = datasets.make_moons(n_samples=n_samples, noise=noise)
+
+    c_intervals = res / max(n_neuron_per_dim - 1, 1)
+    c = np.arange(0, res + c_intervals, c_intervals)
+
+    data[0][:, 0] = (data[0][:, 0] - np.min(data[0][:, 0])) / (np.max(data[0][:, 0]) - np.min(data[0][:, 0]))
+    data[0][:, 1] = (data[0][:, 1] - np.min(data[0][:, 1])) / (np.max(data[0][:, 1]) - np.min(data[0][:, 1]))
+
+    binary_inputs = torch.zeros([len(data[0]), T, 2 * n_neuron_per_dim])
+    binary_outputs = torch.zeros([len(data[0]), T, 2])
+
+    for i, sample in enumerate(data[0]):
+        rates_0 = np.array([0.5 + np.cos(max(-np.pi, min(np.pi, np.pi * (sample[0] * res - c[k]) / c_intervals))) / 2 for k in range(n_neuron_per_dim)]).T
+        binary_inputs[i, :, :n_neuron_per_dim] = torch.bernoulli(torch.tensor(rates_0).unsqueeze(0).repeat(T, 1))
+
+        rates_1 = np.array([0.5 + np.cos(max(-np.pi, min(np.pi, np.pi * (sample[1] * res - c[k]) / c_intervals))) / 2 for k in range(n_neuron_per_dim)]).T
+        binary_inputs[i, :, n_neuron_per_dim:] = torch.bernoulli(torch.tensor(rates_1).unsqueeze(0).repeat(T, 1))
+
+        binary_outputs[i, :, data[1][i]] = 1
+
+    return binary_inputs, binary_outputs, data[0], data[1]
+
+
+def make_moon_test_dataset_bin_pop_coding(n_samples_per_dim, T, n_neuron_per_dim, res=100):
+    n_samples = n_samples_per_dim ** 2
+
+    c_intervals = res / max(n_neuron_per_dim - 1, 1)
+    c = np.arange(0, res + c_intervals, c_intervals)
+
+    binary_inputs = torch.zeros([n_samples, T, 2 * n_neuron_per_dim])
+
+    y, x = np.meshgrid(np.arange(n_samples_per_dim), np.arange(n_samples_per_dim))
+    x = (x / n_samples_per_dim).flatten()
+    y = (y / n_samples_per_dim).flatten()
+
+    for i in range(n_samples):
+        rates_0 = np.array([0.5 + np.cos(max(-np.pi, min(np.pi, np.pi * (x[i] * res - c[k]) / c_intervals))) / 2 for k in range(n_neuron_per_dim)]).T
+        binary_inputs[i, :, :n_neuron_per_dim] = torch.bernoulli(torch.tensor(rates_0).unsqueeze(0).repeat(T, 1))
+
+        rates_1 = np.array([0.5 + np.cos(max(-np.pi, min(np.pi, np.pi * (y[i] * res - c[k]) / c_intervals))) / 2 for k in range(n_neuron_per_dim)]).T
+        binary_inputs[i, :, n_neuron_per_dim:] = torch.bernoulli(torch.tensor(rates_1).unsqueeze(0).repeat(T, 1))
+
+    return binary_inputs, x, y
+
 
