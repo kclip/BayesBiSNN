@@ -4,11 +4,11 @@ from torch.optim.optimizer import required
 from utils.binarize import binarize
 
 class BayesBiSNNRP(BiOptimizer):
-    def __init__(self, concrete_binary_params, latent_params, lr=required, temperature=required, prior_p=required, device=required):
+    def __init__(self, concrete_binary_params, latent_params, lr=required, temperature=required, prior_p=required, rho=required, device=required):
         if lr is not required and lr < 0.0:
             raise ValueError("Invalid learning rate: {}".format(lr))
 
-        defaults = dict(lr=lr, temperature=temperature, prior_wr=0.5 * torch.log(torch.tensor(prior_p / (1 - prior_p))))
+        defaults = dict(lr=lr, temperature=temperature, prior_wr=0.5 * torch.log(torch.tensor(prior_p / (1 - prior_p))), rho=rho)
         super(BayesBiSNNRP, self).__init__(concrete_binary_params, latent_params, defaults)
         self.device = device
 
@@ -23,10 +23,12 @@ class BayesBiSNNRP(BiOptimizer):
                 scale = (1 - w * w + 1e-10) / group['temperature'] / (1 - mu * mu + 1e-10)
 
                 d_w = w.grad
-                # print(w.grad.shape, torch.max(torch.abs(d_w * scale)), torch.max(torch.abs(self.param_groups[i]['params'][j])))
+                # print(w.grad.shape, torch.max(torch.abs(d_w * scale)),
+                #       torch.max(torch.abs(self.param_groups[i]['params'][j])))
                 # self.param_groups[i]['params'][j].add_(d_w * scale, alpha=-group['lr'])
-                self.param_groups[i]['params'][j].add_(d_w * scale - group['prior_wr'], alpha=-group['lr'])
-                # self.param_groups[i]['params'][j] = (1 - group['lr']) * self.param_groups[i]['params'][j] - group['lr'] * (d_w * scale - group['prior_wr'])
+                # print(group['prior_wr'])
+                self.param_groups[i]['params'][j].data = (1 - group['lr']) * self.param_groups[i]['params'][j].data \
+                                                         - group['lr'] / group['rho'] * (d_w * scale - group['rho'] * group['prior_wr'])
 
 
     def update_concrete_weights(self):

@@ -30,24 +30,25 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train probabilistic multivalued SNNs using Pytorch')
 
     # Training arguments
-    parser.add_argument('--home', default='/home')
+    parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
+    parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=3000)
-    parser.add_argument('--lr', type=float, default=5e-1)
-    parser.add_argument('--temperature', type=float, default=0.01)
-    parser.add_argument('--prior_p', type=float, default=0.5)
+    parser.add_argument('--lr', type=float, default=0.0001)
+    parser.add_argument('--temperature', type=float, default=1)
+    parser.add_argument('--rho', type=float, default=0.0002)
+    parser.add_argument('--prior_p', type=float, default=0.4)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
     args = parser.parse_args()
 
-pre = args.home + r'/results/'
-prelist = np.sort(fnmatch.filter(os.listdir(pre), '[0-9][0-9][0-9]__*'))
+prelist = np.sort(fnmatch.filter(os.listdir(args.results), '[0-9][0-9][0-9]__*'))
 if len(prelist) == 0:
     expDirN = "001"
 else:
     expDirN = "%03d" % (int((prelist[len(prelist) - 1].split("__"))[0]) + 1)
 
-results_path = time.strftime(pre + expDirN + "__" + "%d-%m-%Y", time.localtime()) + '_' + 'mnist_dvs_bbsnnrp' + r'_%d_epochs' % args.n_epochs + '_temp_%f' % args.temperature + '_prior_%f' % args.prior_p
+results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y", time.localtime()) + '_' + 'mnist_dvs_bbsnnrp' + r'_%d_epochs' % args.n_epochs + '_temp_%f' % args.temperature + '_prior_%f' % args.prior_p
 os.makedirs(results_path)
 
 args.disable_cuda = str2bool(args.disable_cuda)
@@ -104,7 +105,7 @@ if binary_model.with_output_layer:
 decolle_loss = DECOLLELoss(criterion, latent_model)
 
 # specify optimizer
-optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, device=args.device)
+optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, rho=args.rho, device=args.device)
 
 binary_model.init_parameters()
 
@@ -191,8 +192,8 @@ for epoch in range(args.n_epochs):
     print(acc)
 
     if (epoch + 1) % (args.n_epochs//5) == 0:
-        torch.save(binary_model.state_dict(), results_path + '/binary_model_weights_%d.pt')
-        torch.save(latent_model.state_dict(), results_path + '/latent_model_weights_%d.pt')
+        torch.save(binary_model.state_dict(), results_path + '/binary_model_weights_%d.pt' % (1 + epoch))
+        torch.save(latent_model.state_dict(), results_path + '/latent_model_weights_%d.pt' % (1 + epoch))
 
 
     if (epoch + 1) % test_period == 0:
@@ -277,3 +278,6 @@ for epoch in range(args.n_epochs):
 
             np.save(os.path.join(results_path, 'test_predictions_latest_mean'), predictions_mean.numpy())
             np.save(os.path.join(results_path, 'idxs_test_mean'), np.array(idxs_used_test_mean))
+
+
+
