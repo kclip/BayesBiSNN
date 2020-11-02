@@ -35,10 +35,10 @@ if __name__ == "__main__":
     parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--n_epochs', type=int, default=5000)
-    parser.add_argument('--lr', type=float, default=0.0001)
+    parser.add_argument('--n_epochs', type=int, default=1000)
+    parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=0.0002)
+    parser.add_argument('--rho', type=float, default=5e-7)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
@@ -51,7 +51,7 @@ else:
     expDirN = "%03d" % (int((prelist[len(prelist) - 1].split("__"))[0]) + 1)
 
 results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
-                             time.localtime()) + '_' + 'mnist_dvs_bbsnnrp' + r'_%d_epochs' % args.n_epochs\
+                             time.localtime()) + '_' + 'mnist_dvs_bbsnnrp_lenet_' + r'_%d_epochs' % args.n_epochs\
                + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p + '_rho_%f' % args.rho + '_lr_%f' % args.lr
 os.makedirs(results_path)
 
@@ -98,7 +98,7 @@ criterion = [torch.nn.SmoothL1Loss() for _ in range(binary_model.num_layers)]
 decolle_loss = DECOLLELoss(criterion, latent_model)
 
 # specify optimizer
-optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, device=args.device)
+optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, rho=args.rho, device=args.device)
 
 binary_model.init_parameters()
 
