@@ -182,7 +182,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_test_mode += list(idxs_test)
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mode]
 
-                inputs, labels = get_batch_example(test_data, idxs_test, batch_size, T, n_classes, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(test_data, idxs_test, batch_size_curr, T, n_classes, input_size, dt, 26, False)
                 inputs = inputs.permute(1, 0, 2, 3, 4).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
@@ -218,7 +218,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_train_mode += list(idxs)
                 idx_avail = [i for i in idx_avail if i not in idxs_used_train_mode]
 
-                inputs, labels = get_batch_example(train_data, idxs, batch_size, T, n_classes, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, n_classes, input_size, dt, 26, False)
                 inputs = inputs.permute(1, 0, 2, 3, 4).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
@@ -257,7 +257,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_test_mean += list(idxs_test)
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mean]
 
-                inputs, labels = get_batch_example(test_data, idxs_test, batch_size, T, n_classes, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(test_data, idxs_test, batch_size_curr, T, n_classes, input_size, dt, 26, False)
                 inputs = inputs.permute(1, 0, 2, 3, 4).to(args.device)
                 predictions_batch = torch.zeros([batch_size_curr, 10, 2])
 
@@ -299,7 +299,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_train_mean += list(idxs)
                 idx_avail = [i for i in idx_avail if i not in idxs_used_train_mean]
 
-                inputs, labels = get_batch_example(train_data, idxs, batch_size, T, n_classes, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, n_classes, input_size, dt, 26, False)
                 inputs = inputs.permute(1, 0, 2, 3, 4).to(args.device)
                 predictions_batch = torch.zeros([batch_size_curr, 10, 2])
 
