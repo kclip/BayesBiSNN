@@ -14,6 +14,7 @@ class LenetLIF(LIFNetwork):
                  tau_mem=[10],
                  tau_syn=[6],
                  tau_ref=[2],
+                 prior_p=0.5,
                  activation=smooth_step,
                  dropout=[0.5],
                  num_conv_layers=2,
@@ -72,6 +73,9 @@ class LenetLIF(LIFNetwork):
             feature_height //= pool_size[i]
             feature_width //= pool_size[i]
             base_layer = nn.Conv2d(Nhid_conv[i], Nhid_conv[i + 1], kernel_size[i], stride[i], padding[i], bias=with_bias)
+            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 10  # / Mhid[i]
+            if with_bias:
+                base_layer.bias.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.bias.shape) * prior_p) - 1) * 10
 
             layer = lif_layer_type(base_layer,
                                    activation=activation,
@@ -82,6 +86,9 @@ class LenetLIF(LIFNetwork):
                                    )
             pool = nn.MaxPool2d(kernel_size=pool_size[i])
             readout = nn.Linear(int(feature_height * feature_width * Nhid_conv[i + 1]), out_channels, bias=with_bias)
+            readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1) * 10
+            if with_bias:
+                readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1) * 10
 
             # Readout layer has random fixed weights
             for param in readout.parameters():
