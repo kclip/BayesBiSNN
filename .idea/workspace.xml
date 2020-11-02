@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BBSNN_notebook.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/BBSNN_notebook.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/optimizer/BBSNN.py" beforeDir="false" afterPath="$PROJECT_DIR$/optimizer/BBSNN.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py" afterDir="false" />
-    </list>
+    <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,11 +13,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="363">
-              <caret line="344" selection-start-line="179" selection-end-line="344" />
+            <state relative-caret-position="193">
+              <caret line="337" lean-forward="true" selection-start-line="337" selection-end-line="337" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -32,11 +25,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="281">
-              <caret line="320" lean-forward="true" selection-start-line="320" selection-end-line="320" />
+            <state relative-caret-position="94">
+              <caret line="304" selection-start-line="304" selection-end-line="304" />
             </state>
           </provider>
         </entry>
@@ -369,12 +362,12 @@
       <workItem from="1603898960636" duration="7033000" />
       <workItem from="1603960018440" duration="3738000" />
       <workItem from="1603973433208" duration="3743000" />
-      <workItem from="1603982517301" duration="51632000" />
+      <workItem from="1603982517301" duration="51989000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="592853000" />
+    <option name="totallyTimeSpent" value="593210000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -403,7 +396,7 @@
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.3285968" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.20959148" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.18472469" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.3268206" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -752,20 +745,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py">
+    <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="344" selection-start-line="179" selection-end-line="344" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="94">
+          <caret line="304" selection-start-line="304" selection-end-line="304" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
+    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
-          <caret line="320" lean-forward="true" selection-start-line="320" selection-end-line="320" />
+        <state relative-caret-position="193">
+          <caret line="337" lean-forward="true" selection-start-line="337" selection-end-line="337" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
