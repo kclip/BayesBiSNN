@@ -36,7 +36,7 @@ if __name__ == "__main__":
     parser.add_argument('--n_epochs', type=int, default=3000)
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=0.0002)
+    parser.add_argument('--rho', type=float, default=1e-7)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
@@ -49,7 +49,7 @@ else:
     expDirN = "%03d" % (int((prelist[len(prelist) - 1].split("__"))[0]) + 1)
 
 results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
-                             time.localtime()) + '_' + 'mnist_dvs_bbsnnrp' + r'_%d_epochs' % args.n_epochs\
+                             time.localtime()) + '_' + 'two_moons_mlp_bbsnnrp' + r'_%d_epochs' % args.n_epochs\
                + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p + '_rho_%f' % args.rho + '_lr_%f' % args.lr
 os.makedirs(results_path)
 
@@ -165,51 +165,36 @@ for epoch in range(args.n_epochs):
             optimizer.zero_grad()
 
         with torch.no_grad():
-            preds = torch.cat((preds, torch.sum(readout_hist[-1], dim=0).argmax(dim=1).type_as(preds)))
+            preds = torch.cat((preds, torch.sum(readout_hist[-1], dim=0).type_as(preds)))
             true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
 
 
-            # print(u[-1])
-            # print(torch.sum(readout_hist[-1], dim=0))
-            # print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
-            # print(torch.sum(labels.cpu(), dim=-1).argmax(dim=1))
-    #
-    # print(true_labels)
-    # print(preds)
-
-    # idxs_wrong = np.where(preds != true_labels)[0]
-    # idxs_used = np.array(idxs_used)
-
-    # print(torch.sum(train_inputs[np.sort(idxs_used[idxs_wrong])], dim=1)/T)
-    # print(np.sort(idxs_used[idxs_wrong]))
-
-    acc = torch.sum(preds == true_labels.type_as(preds)).float() / n_samples_train
-    np.save(os.path.join(results_path, 'train_predictions_latest'), preds.numpy())
-    np.save(os.path.join(results_path, 'idxs_train'), np.array(idxs_used))
+    acc = torch.sum(preds.argmax(dim=1).type_as(true_labels) == true_labels).float() / n_samples_train
 
     torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')
     torch.save(latent_model.state_dict(), results_path + '/latent_model_weights.pt')
-
-    # backward pass: compute gradient of the loss with respect to model parameters
     print(acc)
+
+
 
     if (epoch + 1) % (args.n_epochs//5) == 0:
         torch.save(binary_model.state_dict(), results_path + '/binary_model_weights_%d.pt' % (1 + epoch))
         torch.save(latent_model.state_dict(), results_path + '/latent_model_weights_%d.pt' % (1 + epoch))
 
 
+
     if (epoch + 1) % test_period == 0:
         ### Mode testing
         with torch.no_grad():
+            # Compute weights
+            optimizer.get_concrete_weights_mode()
+
             n_batchs_test = n_samples_test // batch_size + (1 - (n_samples_test % batch_size == 0))
             idx_avail_test = np.arange(n_samples_test)
             idxs_used_test_mode = []
 
-            print('Testing epoch %d/%d' % (epoch + 1, args.n_epochs))
+            print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
             predictions_mode = torch.FloatTensor()
-
-            # Compute weights
-            optimizer.get_concrete_weights_mode()
 
             for i in tqdm(range(n_batchs_test)):
                 if (i == (n_batchs_test - 1)) & (n_samples_test % batch_size != 0):
@@ -239,13 +224,50 @@ for epoch in range(args.n_epochs):
             np.save(os.path.join(results_path, 'test_predictions_latest_mode'), predictions_mode.numpy())
             np.save(os.path.join(results_path, 'idxs_test_mode'), np.array(idxs_used_test_mode))
 
+
+            n_batchs = n_samples_train // batch_size + (1 - (n_samples_train % batch_size == 0))
+            idx_avail = np.arange(n_samples_train)
+            idxs_used_train_mode = []
+            preds = torch.FloatTensor()
+
+            print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
+            for i in tqdm(range(n_batchs)):
+                if (i == (n_batchs - 1)) & (n_samples_train % batch_size != 0):
+                    batch_size_curr = n_samples_train % batch_size
+                else:
+                    batch_size_curr = batch_size
+
+                idxs = np.random.choice(idx_avail, [batch_size_curr], replace=False)
+                idxs_used_train_mode += list(idxs)
+                idx_avail = [i for i in idx_avail if i not in idxs_used_train_mode]
+
+                inputs = x_bin_train[idxs].permute(1, 0, 2).to(args.device)
+                labels = y_bin_train[idxs].permute(0, 2, 1).to(args.device)
+
+                binary_model.init(inputs, burnin=burnin)
+
+                readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
+
+                for t in range(burnin, T):
+                    s, r, u = binary_model(inputs[t])
+
+                    for l, ro_h in enumerate(readout_hist):
+                        readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
+
+                preds = torch.cat((preds, torch.sum(readout_hist[-1], dim=0).type_as(preds)))
+
+            np.save(os.path.join(results_path, 'train_predictions_latest_mode'), preds.numpy())
+            np.save(os.path.join(results_path, 'idxs_train_mode'), np.array(idxs_used_train_mode))
+
+
+
         ### Mean testing
         with torch.no_grad():
             n_batchs_test = n_samples_test // batch_size + (1 - (n_samples_test % batch_size == 0))
             idx_avail_test = np.arange(n_samples_test)
             idxs_used_test_mean = []
 
-            print('Mean testing epoch %d/%d' % (epoch + 1, args.n_epochs))
+            print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
             predictions_mean = torch.FloatTensor()
 
             for i in tqdm(range(n_batchs_test)):
@@ -262,7 +284,7 @@ for epoch in range(args.n_epochs):
                 predictions_batch = torch.zeros([batch_size_curr, 10, 2])
 
                 for j in range(10):
-                    optimizer.update_concrete_weights()
+                    optimizer.update_concrete_weights(test=True)
 
                     binary_model.init(inputs, burnin=burnin)
 
@@ -282,4 +304,41 @@ for epoch in range(args.n_epochs):
             np.save(os.path.join(results_path, 'idxs_test_mean'), np.array(idxs_used_test_mean))
 
 
+            n_batchs = n_samples_train // batch_size + (1 - (n_samples_train % batch_size == 0))
+            idx_avail = np.arange(n_samples_train)
+            idxs_used_train_mean = []
+            predictions_mean = torch.FloatTensor()
+
+            print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
+
+            for i in tqdm(range(n_batchs)):
+                if (i == (n_batchs - 1)) & (n_samples_train % batch_size != 0):
+                    batch_size_curr = n_samples_train % batch_size
+                else:
+                    batch_size_curr = batch_size
+
+                idxs = np.random.choice(idx_avail, [batch_size_curr], replace=False)
+                idxs_used_train_mean += list(idxs)
+                idx_avail = [i for i in idx_avail if i not in idxs_used_train_mean]
+
+                inputs = x_bin_train[idxs].permute(1, 0, 2).to(args.device)
+                predictions_batch = torch.zeros([batch_size_curr, 10, 2])
+
+                for j in range(10):
+                    optimizer.update_concrete_weights(test=True)
+                    binary_model.init(inputs, burnin=burnin)
+
+                    readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
+
+                    for t in range(burnin, T):
+                        s, r, u = binary_model(inputs[t])
+
+                        for l, ro_h in enumerate(readout_hist):
+                            readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
+
+                    predictions_batch[:, j] = torch.sum(readout_hist[-1], dim=0)
+
+                predictions_mean = torch.cat((predictions_mean, torch.mean(predictions_batch, dim=1)))
+            np.save(os.path.join(results_path, 'train_predictions_latest_mean'), predictions_mean.numpy())
+            np.save(os.path.join(results_path, 'idxs_train_mean'), np.array(idxs_used_train_mean))
 
