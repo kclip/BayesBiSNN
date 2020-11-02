@@ -65,7 +65,7 @@ args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
 args.train_accs[args.n_epochs] = []
 
 test_period = 1
-batch_size = 32
+batch_size = 16
 sample_length = 2000  # length of samples during training in ms
 dt = 5000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
