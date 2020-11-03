@@ -112,7 +112,7 @@ class LenetLIF(LIFNetwork):
         mlp_in = int(feature_height * feature_width * Nhid_conv[-1])
         Nhid_mlp = [mlp_in] + Nhid_mlp
         for i in range(num_mlp_layers):
-            if self.with_output_layer and (i+1 == self.num_layers):
+            if self.with_output_layer and (i+1 == self.num_mlp_layers):
                 readout = nn.Identity()
                 # layer.activation = torch.sigmoid
             else:

@@ -91,7 +91,7 @@ binary_model = LenetLIF(input_size,
                         num_conv_layers=3,
                         num_mlp_layers=1,
                         with_bias=True,
-                        with_output_layer=False).to(args.device)
+                        with_output_layer=True).to(args.device)
 
 latent_model = deepcopy(binary_model)
 
