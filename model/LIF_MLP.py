@@ -69,7 +69,7 @@ class LIFMLP(LIFNetwork):
 
                 for param in readout.parameters():
                     param.requires_grad = False
-                self.reset_lc_parameters(readout, lc_ampl)
+                # self.reset_lc_parameters(readout, lc_ampl)
 
             self.LIF_layers.append(layer)
             self.readout_layers.append(readout)
