@@ -83,7 +83,7 @@ class BayesBiSNNSTGS(BiOptimizer):
                 scale = (1 - w_st * w_st + 1e-10) / group['temperature'] / (1 - mu * mu + 1e-10)
 
                 d_w = w.grad
-                print(w.grad.shape, torch.max(torch.abs(d_w * scale)), torch.max(torch.abs(self.param_groups[i]['params'][j])))
+                # print(w.grad.shape, torch.max(torch.abs(d_w * scale)), torch.max(torch.abs(self.param_groups[i]['params'][j])))
                 self.param_groups[i]['params'][j].add_(d_w * scale, alpha=-group['lr'])
 
 
