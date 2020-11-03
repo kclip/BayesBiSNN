@@ -38,7 +38,7 @@ if __name__ == "__main__":
     parser.add_argument('--n_epochs', type=int, default=1000)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--temperature', type=float, default=0.1)
-    parser.add_argument('--rho', type=float, default=5e-7)
+    parser.add_argument('--rho', type=float, default=5e-8)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
@@ -94,14 +94,14 @@ test_data = dataset.root.test
 #                         with_output_layer=False).to(args.device)
 
 binary_model = LenetLIF(input_size,
-                        Nhid_conv=[],
+                        Nhid_conv=[64, 128, 128],
                         Nhid_mlp=[512, 256],
                         out_channels=10,
                         kernel_size=[7],
                         stride=[1],
                         pool_size=[2, 1, 2],
                         dropout=[0.],
-                        num_conv_layers=0,
+                        num_conv_layers=3,
                         num_mlp_layers=2,
                         with_bias=True,
                         with_output_layer=False,
