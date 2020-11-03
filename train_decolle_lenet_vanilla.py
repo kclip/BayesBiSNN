@@ -107,7 +107,7 @@ optimizer = torch.optim.Adamax(model.get_trainable_parameters(), lr=args.lr, bet
 model.init_parameters()
 
 # print(binary_model.scales)
-# print([layer.scale for layer in binary_model.LIF_layers])
+print([layer.scale for layer in model.LIF_layers])
 
 for epoch in range(args.n_epochs):
     loss = 0
