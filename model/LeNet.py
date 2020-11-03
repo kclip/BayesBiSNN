@@ -89,9 +89,9 @@ class LenetLIF(LIFNetwork):
                                    )
             pool = nn.MaxPool2d(kernel_size=pool_size[i])
             readout = nn.Linear(int(feature_height * feature_width * Nhid_conv[i + 1]), out_channels, bias=with_bias)
-            readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1)
-            if with_bias:
-                readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1)
+            # readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1)
+            # if with_bias:
+            #     readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1)
 
             # Readout layer has random fixed weights
             for param in readout.parameters():
