@@ -37,9 +37,6 @@ if __name__ == "__main__":
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=1000)
     parser.add_argument('--lr', type=float, default=0.001)
-    parser.add_argument('--temperature', type=float, default=0.1)
-    parser.add_argument('--rho', type=float, default=5e-7)
-    parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
     args = parser.parse_args()
@@ -106,7 +103,7 @@ decolle_loss = DECOLLELoss(criterion, model)
 
 
 # specify optimizer
-optimizer = torch.optim.Adamax(model.get_trainable_parameters(), lr=1e-8, betas=[0., .95])
+optimizer = torch.optim.Adamax(model.get_trainable_parameters(), lr=args.lr, betas=[0., .95])
 
 model.init_parameters()
 
