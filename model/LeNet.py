@@ -26,6 +26,7 @@ class LenetLIF(LIFNetwork):
                  with_output_layer=True):
 
         self.num_layers = num_conv_layers + num_mlp_layers
+        self.activation = activation
         # If only one value provided, then it is duplicated for each layer
         if len(kernel_size) == 1:
             kernel_size = kernel_size * num_conv_layers
