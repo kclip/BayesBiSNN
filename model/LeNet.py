@@ -113,6 +113,7 @@ class LenetLIF(LIFNetwork):
         for i in range(num_mlp_layers):
             if self.with_output_layer and (i+1 == self.num_mlp_layers):
                 readout = nn.Identity()
+                dropout_layer = nn.Identity()
                 # layer.activation = torch.sigmoid
             else:
                 base_layer = nn.Linear(Nhid_mlp[i], Nhid_mlp[i + 1])
@@ -124,16 +125,17 @@ class LenetLIF(LIFNetwork):
                                        )
                 readout = nn.Linear(Nhid_mlp[i + 1], out_channels)
 
-            # Readout layer has random fixed weights
-            for param in readout.parameters():
-                param.requires_grad = False
+                # Readout layer has random fixed weights
+                for param in readout.parameters():
+                    param.requires_grad = False
 
-            dropout_layer = nn.Dropout(dropout[self.num_conv_layers + i])
+                dropout_layer = nn.Dropout(dropout[self.num_conv_layers + i])
 
             self.LIF_layers.append(layer)
             self.pool_layers.append(nn.Sequential())
             self.readout_layers.append(readout)
             self.dropout_layers.append(dropout_layer)
+                
             if scaling and hasattr(readout, 'in_features'):
                 self.scales.append(1. / np.prod(readout.in_features))
             else:
