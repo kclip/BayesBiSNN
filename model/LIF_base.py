@@ -35,7 +35,7 @@ class LIFLayer(nn.Module):
                 n = conv_layer.in_channels
                 for k in conv_layer.kernel_size:
                     n *= k
-                self.scale = layer.groups / n
+                self.scale = layer.groups / np.sqrt(n)
 
             elif hasattr(layer, 'in_features'):
                 self.scale = 1. / np.prod(self.base_layer.in_features)

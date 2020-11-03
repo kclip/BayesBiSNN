@@ -79,14 +79,13 @@ class LenetLIF(LIFNetwork):
             # base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 10  # / Mhid[i]
             # if with_bias:
             #     base_layer.bias.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.bias.shape) * prior_p) - 1) * 10
-            print(torch.mean(torch.abs(base_layer.weight.data[:])))
-            
+
             layer = lif_layer_type(base_layer,
                                    activation=activation,
                                    tau_mem=tau_mem[i],
                                    tau_syn=tau_syn[i],
                                    tau_ref=tau_ref[i],
-                                   scaling=False #todo
+                                   scaling=scaling
                                    )
             pool = nn.MaxPool2d(kernel_size=pool_size[i])
             readout = nn.Linear(int(feature_height * feature_width * Nhid_conv[i + 1]), out_channels, bias=with_bias)
