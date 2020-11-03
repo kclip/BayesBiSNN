@@ -76,20 +76,20 @@ class LenetLIF(LIFNetwork):
             feature_height //= pool_size[i]
             feature_width //= pool_size[i]
             base_layer = nn.Conv2d(Nhid_conv[i], Nhid_conv[i + 1], kernel_size[i], stride[i], padding[i], bias=with_bias)
-            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 10  # / Mhid[i]
-            if with_bias:
-                base_layer.bias.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.bias.shape) * prior_p) - 1) * 10
+            # base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 10  # / Mhid[i]
+            # if with_bias:
+            #     base_layer.bias.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.bias.shape) * prior_p) - 1) * 10
 
             layer = lif_layer_type(base_layer,
                                    activation=activation,
                                    tau_mem=tau_mem[i],
                                    tau_syn=tau_syn[i],
                                    tau_ref=tau_ref[i],
-                                   scaling=scaling
+                                   scaling=False #todo
                                    )
             pool = nn.MaxPool2d(kernel_size=pool_size[i])
             readout = nn.Linear(int(feature_height * feature_width * Nhid_conv[i + 1]), out_channels, bias=with_bias)
-            readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1)
+            readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1)  # todo
             if with_bias:
                 readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1)
 
