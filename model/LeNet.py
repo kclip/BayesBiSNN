@@ -110,14 +110,18 @@ class LenetLIF(LIFNetwork):
         mlp_in = int(feature_height * feature_width * Nhid_conv[-1])
         Nhid_mlp = [mlp_in] + Nhid_mlp
         for i in range(num_mlp_layers):
-            base_layer = nn.Linear(Nhid_mlp[i], Nhid_mlp[i + 1])
-            layer = lif_layer_type(base_layer,
-                                   activation=activation,
-                                   tau_mem=tau_mem[i],
-                                   tau_syn=tau_syn[i],
-                                   tau_ref=tau_ref[i]
-                                   )
-            readout = nn.Linear(Nhid_mlp[i + 1], out_channels)
+            if self.with_output_layer and (i+1 == self.num_layers):
+                readout = nn.Identity()
+                # layer.activation = torch.sigmoid
+            else:
+                base_layer = nn.Linear(Nhid_mlp[i], Nhid_mlp[i + 1])
+                layer = lif_layer_type(base_layer,
+                                       activation=activation,
+                                       tau_mem=tau_mem[i],
+                                       tau_syn=tau_syn[i],
+                                       tau_ref=tau_ref[i]
+                                       )
+                readout = nn.Linear(Nhid_mlp[i + 1], out_channels)
 
             # Readout layer has random fixed weights
             for param in readout.parameters():
