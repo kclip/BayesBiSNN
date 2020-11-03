@@ -15,23 +15,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="102" lean-forward="true" selection-start-line="102" selection-end-line="102" />
-              <folding>
-                <element signature="e#0#12#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="103" lean-forward="true" selection-start-line="103" selection-end-line="103" />
+            <state relative-caret-position="170">
+              <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
             </state>
           </provider>
         </entry>
@@ -39,8 +27,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="98" selection-start-line="95" selection-end-line="98" />
+            <state relative-caret-position="289">
+              <caret line="99" column="30" selection-start-line="99" selection-end-line="100" />
             </state>
           </provider>
         </entry>
@@ -336,12 +324,12 @@
       <workItem from="1603898960636" duration="7033000" />
       <workItem from="1603960018440" duration="3738000" />
       <workItem from="1603973433208" duration="3743000" />
-      <workItem from="1603982517301" duration="62604000" />
+      <workItem from="1603982517301" duration="62799000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="603825000" />
+    <option name="totallyTimeSpent" value="604020000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -356,7 +344,7 @@
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2097166" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2097166" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -370,7 +358,7 @@
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.3285968" />
-      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.26110125" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.26110125" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.3268206" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -675,13 +663,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="98" selection-start-line="95" selection-end-line="98" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2425">
@@ -736,10 +717,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
+    <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
-          <caret line="103" lean-forward="true" selection-start-line="103" selection-end-line="103" />
+          <caret line="99" column="30" selection-start-line="99" selection-end-line="100" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
         </state>
       </provider>
     </entry>

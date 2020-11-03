@@ -102,6 +102,9 @@ criterion = [one_hot_crossentropy for _ in range(binary_model.num_layers)]
 # if binary_model.with_output_layer:
 #     criterion[-1] = one_hot_crossentropy
 
+decolle_loss = DECOLLELoss(criterion, latent_model)
+
+
 # specify optimizer
 optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, rho=args.rho, device=args.device)
 
