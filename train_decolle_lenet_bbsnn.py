@@ -80,18 +80,33 @@ train_data = dataset.root.train
 test_data = dataset.root.test
 
 
+# binary_model = LenetLIF(input_size,
+#                         Nhid_conv=[64, 128, 128],
+#                         Nhid_mlp=[64],
+#                         out_channels=10,
+#                         kernel_size=[7],
+#                         stride=[1],
+#                         pool_size=[2, 1, 2],
+#                         dropout=[0.5],
+#                         num_conv_layers=3,
+#                         num_mlp_layers=1,
+#                         with_bias=True,
+#                         with_output_layer=False).to(args.device)
+
 binary_model = LenetLIF(input_size,
-                        Nhid_conv=[64, 128, 128],
-                        Nhid_mlp=[64],
-                        out_channels=10,
-                        kernel_size=[7],
-                        stride=[1],
-                        pool_size=[2, 1, 2],
-                        dropout=[0.5],
-                        num_conv_layers=3,
-                        num_mlp_layers=1,
-                        with_bias=True,
-                        with_output_layer=False).to(args.device)
+                 Nhid_conv=[],
+                 Nhid_mlp=[512, 256],
+                 out_channels=10,
+                 kernel_size=[7],
+                 stride=[1],
+                 pool_size=[2, 1, 2],
+                 dropout=[0.],
+                 num_conv_layers=0,
+                 num_mlp_layers=2,
+                 with_bias=True,
+                 with_output_layer=False,
+                 scaling=False).to(args.device)
+
 
 latent_model = deepcopy(binary_model)
 
