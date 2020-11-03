@@ -22,8 +22,8 @@ class LenetLIF(LIFNetwork):
                  lc_ampl=.5,
                  lif_layer_type=LIFLayer,
                  with_bias=True,
-                 scaling=True
-                 ):
+                 scaling=True,
+                 with_output_layer = True):
 
         self.num_layers = num_conv_layers + num_mlp_layers
         # If only one value provided, then it is duplicated for each layer
@@ -62,6 +62,8 @@ class LenetLIF(LIFNetwork):
 
         self.num_conv_layers = num_conv_layers
         self.num_mlp_layers = num_mlp_layers
+
+        self.with_output_layer = with_output_layer
 
         for i in range(num_conv_layers):
             feature_height, feature_width = get_output_shape(

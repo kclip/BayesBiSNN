@@ -90,7 +90,8 @@ binary_model = LenetLIF(input_size,
                         dropout=[0.5],
                         num_conv_layers=3,
                         num_mlp_layers=0,
-                        with_bias=True).to(args.device)
+                        with_bias=True,
+                        with_output_layer=True).to(args.device)
 
 latent_model = deepcopy(binary_model)
 
@@ -99,8 +100,8 @@ latent_model = deepcopy(binary_model)
 criterion = [torch.nn.SmoothL1Loss() for _ in range(binary_model.num_layers)]
 # criterion = [one_hot_crossentropy for _ in range(binary_model.num_layers)]
 
-# if binary_model.with_output_layer:
-#     criterion[-1] = one_hot_crossentropy
+if binary_model.with_output_layer:
+    criterion[-1] = one_hot_crossentropy
 
 decolle_loss = DECOLLELoss(criterion, latent_model)
 
