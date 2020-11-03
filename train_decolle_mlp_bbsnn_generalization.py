@@ -1,6 +1,6 @@
 import torch
 from utils.loss import DECOLLELoss, one_hot_crossentropy
-from model.LeNet import LenetLIF
+from model.LIF_MLP import LIFMLP
 from tqdm import tqdm
 from optimizer.BBSNN import BayesBiSNNRP
 from copy import deepcopy
@@ -37,8 +37,8 @@ if __name__ == "__main__":
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=1000)
     parser.add_argument('--lr', type=float, default=0.001)
-    parser.add_argument('--temperature', type=float, default=0.1)
-    parser.add_argument('--rho', type=float, default=5e-7)
+    parser.add_argument('--temperature', type=float, default=1)
+    parser.add_argument('--rho', type=float, default=5e-8)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
@@ -51,7 +51,7 @@ else:
     expDirN = "%03d" % (int((prelist[len(prelist) - 1].split("__"))[0]) + 1)
 
 results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
-                             time.localtime()) + '_' + 'mnist_dvs_bbsnnrp_lenet_' + r'_%d_epochs' % args.n_epochs\
+                             time.localtime()) + '_' + 'mnist_dvs_bbsnnrp' + r'_%d_epochs' % args.n_epochs\
                + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p + '_rho_%f' % args.rho + '_lr_%f' % args.lr
 os.makedirs(results_path)
 
@@ -64,60 +64,61 @@ else:
 args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
 args.train_accs[args.n_epochs] = []
 
-test_period = 100
-batch_size = 16
+test_period = 1000
+batch_size = 32
 sample_length = 2000  # length of samples during training in ms
 dt = 5000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
-input_size = [2, 28, 28]
+input_size = [676]
 n_classes = 10
 burnin = 100
-n_samples_test = 1000
-n_samples_train = 9000
 
 dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
-train_data = dataset.root.train
-test_data = dataset.root.test
+train_data = dataset.root.test
+test_data = dataset.root.train
+
+n_samples_train = dataset.root.stats.test_data[0]
+n_samples_test = dataset.root.stats.train_data[0]
 
 
-binary_model = LenetLIF(input_size,
-                        Nhid_conv=[64, 128, 128],
-                        Nhid_mlp=[],
-                        out_channels=10,
-                        kernel_size=[7],
-                        stride=[1],
-                        pool_size=[2, 1, 2],
-                        dropout=[0.5],
-                        num_conv_layers=3,
-                        num_mlp_layers=0,
-                        with_bias=False).to(args.device)
+binary_model = LIFMLP(input_size,
+                      n_classes,
+                      n_neurons=[512, 256],
+                      with_output_layer=False,
+                      with_bias=False,
+                      prior_p=args.prior_p
+                      ).to(args.device)
 
 latent_model = deepcopy(binary_model)
 
 
 # specify loss function
-# criterion = [torch.nn.SmoothL1Loss() for _ in range(binary_model.num_layers)]
-criterion = [one_hot_crossentropy for _ in range(binary_model.num_layers)]
-
+criterion = [torch.nn.SmoothL1Loss() for _ in range(binary_model.num_layers)]
 if binary_model.with_output_layer:
     criterion[-1] = one_hot_crossentropy
+
+decolle_loss = DECOLLELoss(criterion, latent_model)
 
 # specify optimizer
 optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, rho=args.rho, device=args.device)
 
 binary_model.init_parameters()
 
-# print(binary_model.scales)
-# print([layer.scale for layer in binary_model.LIF_layers])
 
 for epoch in range(args.n_epochs):
     loss = 0
 
-    idxs = np.random.choice(np.arange(9000), [batch_size], replace=False)
+    if (epoch + 1) % 500 == 0:
+        args.lr = args.lr / 1.5
+        optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, rho=args.rho,
+                                 device=args.device)
 
-    inputs, labels = get_batch_example(train_data, idxs, batch_size, T, n_classes, input_size, dt, 26, True)
 
-    inputs = inputs.permute(1, 0, 2, 3, 4).to(args.device)
+    idxs = np.random.choice(np.arange(n_samples_train), [batch_size], replace=False)
+
+    inputs, labels = get_batch_example(train_data, idxs, batch_size, T, n_classes, input_size, dt, 26, False)
+
+    inputs = inputs.permute(1, 0, 2).to(args.device)
     labels = labels.to(args.device)
 
     optimizer.update_concrete_weights()
@@ -147,10 +148,8 @@ for epoch in range(args.n_epochs):
         optimizer.zero_grad()
 
     with torch.no_grad():
-        # print(u)
-        # print(torch.sum(labels.cpu(), dim=-1).argmax(dim=1))
-
-        print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
+        # print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
+        # print(torch.sum(labels, dim=-1).argmax(dim=1))
         acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / batch_size
         # backward pass: compute gradient of the loss with respect to model parameters
         print(acc)
@@ -186,7 +185,7 @@ for epoch in range(args.n_epochs):
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mode]
 
                 inputs, labels = get_batch_example(test_data, idxs_test, batch_size_curr, T, n_classes, input_size, dt, 26, False)
-                inputs = inputs.permute(1, 0, 2, 3, 4).to(args.device)
+                inputs = inputs.permute(1, 0, 2).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
 
@@ -222,7 +221,7 @@ for epoch in range(args.n_epochs):
                 idx_avail = [i for i in idx_avail if i not in idxs_used_train_mode]
 
                 inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, n_classes, input_size, dt, 26, False)
-                inputs = inputs.permute(1, 0, 2, 3, 4).to(args.device)
+                inputs = inputs.permute(1, 0, 2).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
 
@@ -261,7 +260,7 @@ for epoch in range(args.n_epochs):
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mean]
 
                 inputs, labels = get_batch_example(test_data, idxs_test, batch_size_curr, T, n_classes, input_size, dt, 26, False)
-                inputs = inputs.permute(1, 0, 2, 3, 4).to(args.device)
+                inputs = inputs.permute(1, 0, 2).to(args.device)
                 predictions_batch = torch.zeros([batch_size_curr, 10, 2])
 
                 for j in range(10):
@@ -303,7 +302,7 @@ for epoch in range(args.n_epochs):
                 idx_avail = [i for i in idx_avail if i not in idxs_used_train_mean]
 
                 inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, n_classes, input_size, dt, 26, False)
-                inputs = inputs.permute(1, 0, 2, 3, 4).to(args.device)
+                inputs = inputs.permute(1, 0, 2).to(args.device)
                 predictions_batch = torch.zeros([batch_size_curr, 10, 2])
 
                 for j in range(10):
