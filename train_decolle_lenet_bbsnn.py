@@ -151,10 +151,10 @@ for epoch in range(args.n_epochs):
         optimizer.zero_grad()
 
     with torch.no_grad():
-        print(u)
+        # print(u)
         # print(torch.sum(labels.cpu(), dim=-1).argmax(dim=1))
 
-        print(torch.sum(readout_hist[-1], dim=0))
+        # print(torch.sum(readout_hist[-1], dim=0))
         print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
         acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / batch_size
         # backward pass: compute gradient of the loss with respect to model parameters
