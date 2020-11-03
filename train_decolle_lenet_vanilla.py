@@ -48,8 +48,7 @@ else:
     expDirN = "%03d" % (int((prelist[len(prelist) - 1].split("__"))[0]) + 1)
 
 results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
-                             time.localtime()) + '_' + 'mnist_dvs_bbsnnrp_lenet_' + r'_%d_epochs' % args.n_epochs \
-               + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p + '_rho_%f' % args.rho + '_lr_%f' % args.lr
+                             time.localtime()) + '_' + 'mnist_dvs_decolle_lenet_' + r'_%d_epochs' % args.n_epochs + '_lr_%f' % args.lr
 os.makedirs(results_path)
 
 args.disable_cuda = str2bool(args.disable_cuda)
@@ -78,15 +77,15 @@ test_data = dataset.root.test
 
 
 model = LenetLIF(input_size,
-                 Nhid_conv=[64, 128, 128],
-                 Nhid_mlp=[64],
+                 Nhid_conv=[],
+                 Nhid_mlp=[512, 256],
                  out_channels=10,
                  kernel_size=[7],
                  stride=[1],
                  pool_size=[2, 1, 2],
-                 dropout=[0.5],
-                 num_conv_layers=3,
-                 num_mlp_layers=1,
+                 dropout=[0.],
+                 num_conv_layers=0,
+                 num_mlp_layers=2,
                  with_bias=True,
                  with_output_layer=False,
                  scaling=False).to(args.device)

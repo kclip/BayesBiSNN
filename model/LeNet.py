@@ -23,7 +23,7 @@ class LenetLIF(LIFNetwork):
                  lif_layer_type=LIFLayer,
                  with_bias=True,
                  scaling=True,
-                 with_output_layer = True):
+                 with_output_layer=True):
 
         self.num_layers = num_conv_layers + num_mlp_layers
         # If only one value provided, then it is duplicated for each layer
@@ -153,7 +153,7 @@ class LenetLIF(LIFNetwork):
                 inputs = inputs.view(inputs.size(0), -1)
             s, u = lif(inputs)
             u_p = pool(u)
-            s_ = smooth_step(u_p)
+            s_ = self.activation(u_p)
             sd_ = do(s_)
             r_ = ro(sd_.reshape(sd_.size(0), -1)) * scale
             s_out.append(s_)
