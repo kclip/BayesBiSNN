@@ -126,8 +126,8 @@ optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), l
 
 binary_model.init_parameters()
 
-# print(binary_model.scales)
-# print([layer.scale for layer in binary_model.LIF_layers])
+print(binary_model.scales)
+print([layer.scale for layer in binary_model.LIF_layers])
 
 for epoch in range(args.n_epochs):
     loss = 0
