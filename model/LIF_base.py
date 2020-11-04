@@ -7,6 +7,7 @@ from itertools import chain
 import warnings
 from utils.misc import get_output_shape
 import math
+from torch.nn.init import _calculate_correct_fan, calculate_gain
 
 """"
 LIF SNN with local errors
@@ -31,14 +32,19 @@ class LIFLayer(nn.Module):
         self.activation = activation
 
         if scaling:
-            if type(layer) == nn.Conv2d:
-                n = layer.in_channels
-                for k in layer.kernel_size:
-                    n *= k
-                self.scale = np.sqrt(3. * layer.groups / n)
+            fan = _calculate_correct_fan(layer.weight, mode='fan_in')
+            gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
+            std = gain / math.sqrt(fan)
+            self.scales.append(math.sqrt(3.0) * std)
 
-            elif hasattr(layer, 'in_features'):
-                self.scale = 1. / np.prod(self.base_layer.in_features)
+        #     if type(layer) == nn.Conv2d:
+        #         n = layer.in_channels
+        #         for k in layer.kernel_size:
+        #             n *= k
+        #         self.scale = np.sqrt(3. * layer.groups / n)
+        #
+        #     elif hasattr(layer, 'in_features'):
+        #         self.scale = 1. / np.prod(self.base_layer.in_features)
         else:
             self.scale = 1.
 

@@ -105,6 +105,7 @@ class LenetLIF(LIFNetwork):
             self.pool_layers.append(pool)
             self.readout_layers.append(readout)
             self.dropout_layers.append(dropout_layer)
+
             if scaling and hasattr(readout, 'in_features'):
                 fan = _calculate_correct_fan(readout.weight, mode='fan_in')
                 gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
@@ -146,7 +147,10 @@ class LenetLIF(LIFNetwork):
             self.dropout_layers.append(dropout_layer)
 
             if scaling and hasattr(readout, 'in_features'):
-                self.scales.append(1. / np.prod(readout.in_features))
+                fan = _calculate_correct_fan(readout.weight, mode='fan_in')
+                gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
+                std = gain / math.sqrt(fan)
+                self.scales.append(math.sqrt(3.0) * std)
             else:
                 self.scales.append(1.)
 
