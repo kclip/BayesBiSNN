@@ -32,18 +32,17 @@ class LIFLayer(nn.Module):
         self.activation = activation
 
         if scaling:
-            fan = _calculate_correct_fan(layer.weight, mode='fan_in')
-            gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
-            std = gain / math.sqrt(fan)
-            self.scale = (math.sqrt(3.0) * std)
-        #     if type(layer) == nn.Conv2d:
+            if type(layer) == nn.Conv2d:
+                fan = _calculate_correct_fan(layer.weight, mode='fan_in')
+                gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
+                std = gain / math.sqrt(fan)
+                self.scale = (math.sqrt(3.0) * std)
         #         n = layer.in_channels
         #         for k in layer.kernel_size:
         #             n *= k
         #         self.scale = np.sqrt(3. * layer.groups / n)
-        #
-        #     elif hasattr(layer, 'in_features'):
-        #         self.scale = 1. / np.prod(self.base_layer.in_features)
+            elif hasattr(layer, 'in_features'):
+                self.scale = 1. / np.prod(self.base_layer.in_features)
         else:
             self.scale = 1.
 

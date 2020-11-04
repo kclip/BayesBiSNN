@@ -111,7 +111,6 @@ class LenetLIF(LIFNetwork):
                 gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
                 std = gain / math.sqrt(fan)
                 self.scales.append(math.sqrt(3.0) * std)
-
                 # self.scales.append(1. / np.prod(readout.in_features))
             else:
                 self.scales.append(1.)
@@ -121,6 +120,9 @@ class LenetLIF(LIFNetwork):
         Nhid_mlp = [mlp_in] + Nhid_mlp
         for i in range(num_mlp_layers):
             base_layer = nn.Linear(Nhid_mlp[i], Nhid_mlp[i + 1])
+            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 10  # / Mhid[i]
+            if with_bias:
+                base_layer.bias.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.bias.shape) * prior_p) - 1) * 10
             layer = lif_layer_type(base_layer,
                                    activation=activation,
                                    tau_mem=tau_mem[i],
@@ -147,10 +149,11 @@ class LenetLIF(LIFNetwork):
             self.dropout_layers.append(dropout_layer)
 
             if scaling and hasattr(readout, 'in_features'):
-                fan = _calculate_correct_fan(readout.weight, mode='fan_in')
-                gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
-                std = gain / math.sqrt(fan)
-                self.scales.append(math.sqrt(3.0) * std)
+                # fan = _calculate_correct_fan(readout.weight, mode='fan_in')
+                # gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
+                # std = gain / math.sqrt(fan)
+                # self.scales.append(math.sqrt(3.0) * std)
+                self.scales.append(1. / np.prod(self.base_layer.in_features))
             else:
                 self.scales.append(1.)
 
