@@ -74,6 +74,7 @@ class LIFMLP(LIFNetwork):
             self.readout_layers.append(readout)
             if scaling:
                 self.scales.append(1. / np.prod(readout.in_features))
+
             else:
                 self.scales.append(1.)
 
