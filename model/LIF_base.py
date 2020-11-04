@@ -36,7 +36,6 @@ class LIFLayer(nn.Module):
             gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
             std = gain / math.sqrt(fan)
             self.scale = (math.sqrt(3.0) * std)
-
         #     if type(layer) == nn.Conv2d:
         #         n = layer.in_channels
         #         for k in layer.kernel_size:
