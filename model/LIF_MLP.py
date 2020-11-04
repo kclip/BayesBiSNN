@@ -1,5 +1,6 @@
 from model.LIF_base import *
 from utils.activations import smooth_step, smooth_sigmoid
+from torch.nn.init import _calculate_correct_fan, calculate_gain
 
 
 class LIFMLP(LIFNetwork):
@@ -73,7 +74,12 @@ class LIFMLP(LIFNetwork):
             self.LIF_layers.append(layer)
             self.readout_layers.append(readout)
             if scaling:
-                self.scales.append(1. / np.prod(readout.in_features))
+                fan = _calculate_correct_fan(readout.weight, mode='fan_in')
+                gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
+                std = gain / math.sqrt(fan)
+                self.scales.append(math.sqrt(3.0) * std)
+
+                # self.scales.append(1. / np.prod(readout.in_features))
 
             else:
                 self.scales.append(1.)
