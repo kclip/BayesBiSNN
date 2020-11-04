@@ -6,6 +6,8 @@ from collections import namedtuple
 from itertools import chain
 import warnings
 from utils.misc import get_output_shape
+from torch.nn.init import _calculate_correct_fan, calculate_gain
+import math
 
 """"
 LIF SNN with local errors
@@ -31,12 +33,15 @@ class LIFLayer(nn.Module):
 
         if scaling:
             if type(layer) == nn.Conv2d:
-                conv_layer = layer
-                n = conv_layer.in_channels
-                for k in conv_layer.kernel_size:
-                    n *= k
+                # n = layer.in_channels
+                # for k in layer.kernel_size:
+                #     n *= k
+                # self.scale = np.sqrt(3. * layer.groups / n)
 
-                self.scale = np.sqrt(3.0) * layer.groups / np.sqrt(n)
+                fan = _calculate_correct_fan(layer.weight, mode='fan_in')
+                gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
+                std = gain / math.sqrt(fan)
+                self.scale = math.sqrt(3.0) * std  # Calculate uniform bounds from standard deviation
 
             elif hasattr(layer, 'in_features'):
                 self.scale = 1. / np.prod(self.base_layer.in_features)
