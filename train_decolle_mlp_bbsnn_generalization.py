@@ -15,6 +15,7 @@ from collections import Counter
 import pickle
 import fnmatch
 import time
+from snn.utils.misc import find_indices_for_labels
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -38,9 +39,10 @@ if __name__ == "__main__":
     parser.add_argument('--n_epochs', type=int, default=1000)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=5e-8)
+    parser.add_argument('--rho', type=float, default=1e-6)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
+    parser.add_argument('--labels', nargs='+', default=None, type=int, help='Class labels to be used during training')
 
     args = parser.parse_args()
 
@@ -77,8 +79,11 @@ dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hd
 train_data = dataset.root.test
 test_data = dataset.root.train
 
-n_samples_train = dataset.root.stats.test_data[0]
-n_samples_test = dataset.root.stats.train_data[0]
+samples_train = find_indices_for_labels(train_data, args.labels)
+n_samples_train = len(samples_train)
+
+samples_test = find_indices_for_labels(test_data, args.labels)
+n_samples_test = len(samples_test)
 
 
 binary_model = LIFMLP(input_size,
@@ -114,7 +119,7 @@ for epoch in range(args.n_epochs):
                                  device=args.device)
 
 
-    idxs = np.random.choice(np.arange(n_samples_train), [batch_size], replace=False)
+    idxs = np.random.choice(samples_train, [batch_size], replace=False)
 
     inputs, labels = get_batch_example(train_data, idxs, batch_size, T, n_classes, input_size, dt, 26, False)
 
@@ -168,7 +173,7 @@ for epoch in range(args.n_epochs):
             optimizer.get_concrete_weights_mode()
 
             n_batchs_test = n_samples_test // batch_size + (1 - (n_samples_test % batch_size == 0))
-            idx_avail_test = np.arange(n_samples_test)
+            idx_avail_test = samples_test
             idxs_used_test_mode = []
 
             print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
@@ -204,8 +209,9 @@ for epoch in range(args.n_epochs):
             np.save(os.path.join(results_path, 'idxs_test_mode'), np.array(idxs_used_test_mode))
 
 
+            ### Mode testing on train data
             n_batchs = n_samples_train // batch_size + (1 - (n_samples_train % batch_size == 0))
-            idx_avail = np.arange(n_samples_train)
+            idx_avail = samples_train
             idxs_used_train_mode = []
             preds = torch.FloatTensor()
 
@@ -243,7 +249,7 @@ for epoch in range(args.n_epochs):
         ### Mean testing
         with torch.no_grad():
             n_batchs_test = n_samples_test // batch_size + (1 - (n_samples_test % batch_size == 0))
-            idx_avail_test = np.arange(n_samples_test)
+            idx_avail_test = samples_test
             idxs_used_test_mean = []
 
             print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
@@ -285,7 +291,7 @@ for epoch in range(args.n_epochs):
 
 
             n_batchs = n_samples_train // batch_size + (1 - (n_samples_train % batch_size == 0))
-            idx_avail = np.arange(n_samples_train)
+            idx_avail = samples_train
             idxs_used_train_mean = []
             predictions_mean = torch.FloatTensor()
 
