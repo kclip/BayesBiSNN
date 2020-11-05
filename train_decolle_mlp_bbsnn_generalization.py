@@ -66,7 +66,7 @@ else:
 args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
 args.train_accs[args.n_epochs] = []
 
-test_period = 100
+test_period = 1000
 batch_size = 32
 sample_length = 2000  # length of samples during training in ms
 dt = 5000  # us
@@ -112,11 +112,10 @@ binary_model.init_parameters()
 for epoch in range(args.n_epochs):
     loss = 0
 
-    if (epoch + 1) % 500 == 0:
-        args.lr = args.lr / 1.5
-        optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, rho=args.rho,
-                                 device=args.device)
-
+    # if (epoch + 1) % 500 == 0:
+    #     args.lr = args.lr / 1.5
+    #     optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, rho=args.rho,
+    #                              device=args.device)
 
     idxs = np.random.choice(samples_train, [batch_size], replace=False)
 
@@ -227,6 +226,7 @@ for epoch in range(args.n_epochs):
                     batch_size_curr = batch_size
 
                 idxs = np.random.choice(idx_avail, [batch_size_curr], replace=False)
+                print(idxs)
                 idxs_used_train_mode += list(idxs)
                 idx_avail = [i for i in idx_avail if i not in idxs_used_train_mode]
 
@@ -245,6 +245,8 @@ for epoch in range(args.n_epochs):
 
                 preds = torch.cat((preds, torch.sum(readout_hist[-1], dim=0).type_as(preds)))
                 labels_mode = torch.cat((labels_mode, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
+                print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
+                print(torch.sum(labels.cpu(), dim=-1).argmax(dim=1))
 
             print('Acc train mode: ', torch.sum(preds.argmax(dim=1) == labels_mode).float() / len(labels_mode))
 
