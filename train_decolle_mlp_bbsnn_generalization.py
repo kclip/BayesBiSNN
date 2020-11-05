@@ -132,7 +132,7 @@ for epoch in range(args.n_epochs):
     readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
 
 
-    print('Epoch %d/%d' % (epoch, args.n_epochs))
+    # print('Epoch %d/%d' % (epoch, args.n_epochs))
     # for t in tqdm(range(burnin, T)):
     for t in range(burnin, T):
         # forward pass: compute new pseudo-binary weights
@@ -156,7 +156,7 @@ for epoch in range(args.n_epochs):
         # print(torch.sum(labels, dim=-1).argmax(dim=1))
         acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / batch_size
         # backward pass: compute gradient of the loss with respect to model parameters
-        print(acc)
+        # print(acc)
 
 
     if (epoch + 1) % (args.n_epochs//5) == 0:
@@ -205,9 +205,9 @@ for epoch in range(args.n_epochs):
                         readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
                 predictions_mode = torch.cat((predictions_mode, torch.sum(readout_hist[-1], dim=0)))
-                labels_mode = torch.cat((labels_mode, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
+                # labels_mode = torch.cat((labels_mode, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
 
-            print('Acc test mode: ', torch.sum(predictions_mode.argmax(dim=1) == labels_mode).float() / len(labels_mode))
+            # print('Acc test mode: ', torch.sum(predictions_mode.argmax(dim=1) == labels_mode).float() / len(labels_mode))
 
             np.save(os.path.join(results_path, 'test_predictions_latest_mode'), predictions_mode.numpy())
             np.save(os.path.join(results_path, 'idxs_test_mode'), np.array(idxs_used_test_mode))
@@ -247,11 +247,11 @@ for epoch in range(args.n_epochs):
                         readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
                 preds = torch.cat((preds, torch.sum(readout_hist[-1], dim=0).type_as(preds)))
-                labels_mode = torch.cat((labels_mode, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
+                # labels_mode = torch.cat((labels_mode, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
                 # print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
                 # print(torch.sum(labels.cpu(), dim=-1).argmax(dim=1))
 
-            print('Acc train mode: ', torch.sum(preds.argmax(dim=1) == labels_mode).float() / len(labels_mode))
+            # print('Acc train mode: ', torch.sum(preds.argmax(dim=1) == labels_mode).float() / len(labels_mode))
 
             np.save(os.path.join(results_path, 'train_predictions_latest_mode'), preds.numpy())
             np.save(os.path.join(results_path, 'idxs_train_mode'), np.array(idxs_used_train_mode))
@@ -299,9 +299,9 @@ for epoch in range(args.n_epochs):
 
                     predictions_batch[:, j] = torch.sum(readout_hist[-1], dim=0)
                 predictions_mean = torch.cat((predictions_mean, torch.mean(predictions_batch, dim=1)))
-                labels_mean = torch.cat((labels_mean, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
+                # labels_mean = torch.cat((labels_mean, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
 
-            print('Acc test mean: ', torch.sum(predictions_mean.argmax(dim=1) == labels_mean).float() / len(labels_mode))
+            # print('Acc test mean: ', torch.sum(predictions_mean.argmax(dim=1) == labels_mean).float() / len(labels_mode))
 
             np.save(os.path.join(results_path, 'test_predictions_latest_mean'), predictions_mean.numpy())
             np.save(os.path.join(results_path, 'idxs_test_mean'), np.array(idxs_used_test_mean))
@@ -344,9 +344,9 @@ for epoch in range(args.n_epochs):
 
                     predictions_batch[:, j] = torch.sum(readout_hist[-1], dim=0)
                 predictions_mean = torch.cat((predictions_mean, torch.mean(predictions_batch, dim=1)))
-                labels_mean = torch.cat((labels_mean, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
-
-            print('Acc train mean: ', torch.sum(predictions_mean.argmax(dim=1) == labels_mean).float() / len(labels_mode))
+                # labels_mean = torch.cat((labels_mean, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
+            #
+            # print('Acc train mean: ', torch.sum(predictions_mean.argmax(dim=1) == labels_mean).float() / len(labels_mode))
 
             np.save(os.path.join(results_path, 'train_predictions_latest_mean'), predictions_mean.numpy())
             np.save(os.path.join(results_path, 'idxs_train_mean'), np.array(idxs_used_train_mean))
