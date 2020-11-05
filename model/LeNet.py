@@ -110,8 +110,7 @@ class LenetLIF(LIFNetwork):
                 fan = _calculate_correct_fan(readout.weight, mode='fan_in')
                 gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
                 std = gain / math.sqrt(fan)
-                # self.scales.append(math.sqrt(3.0) * std)
-                self.scales.append(1./10)
+                self.scales.append(math.sqrt(3.0) * std)
                 # self.scales.append(1. / np.prod(readout.in_features))
             else:
                 self.scales.append(1.)
