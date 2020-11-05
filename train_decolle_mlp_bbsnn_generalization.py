@@ -118,7 +118,6 @@ for epoch in range(args.n_epochs):
     #                              device=args.device)
 
     idxs = np.random.choice(samples_train, [batch_size], replace=False)
-    print(idxs)
 
     inputs, labels = get_batch_example(train_data, idxs, batch_size, T, args.labels, input_size, dt, 26, True)
 
