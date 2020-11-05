@@ -153,8 +153,8 @@ for epoch in range(args.n_epochs):
         optimizer.zero_grad()
 
     with torch.no_grad():
-        print(u[-1])
-        # print(torch.sum(labels.cpu(), dim=-1).argmax(dim=1))
+        # print(u[-1])
+        # print(torch. sum(labels.cpu(), dim=-1).argmax(dim=1))
 
         print(torch.sum(readout_hist[-1], dim=0))
         print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
