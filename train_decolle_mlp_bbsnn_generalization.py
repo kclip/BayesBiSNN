@@ -118,6 +118,7 @@ for epoch in range(args.n_epochs):
     #                              device=args.device)
 
     idxs = np.random.choice(samples_train, [batch_size], replace=False)
+    print(idxs)
 
     inputs, labels = get_batch_example(train_data, idxs, batch_size, T, args.labels, input_size, dt, 26, True)
 
@@ -167,7 +168,7 @@ for epoch in range(args.n_epochs):
     if (epoch + 1) % test_period == 0:
         ### Mode testing
         with torch.no_grad():
-            # Compute weights
+            # # Compute weights
             optimizer.get_concrete_weights_mode()
 
             n_batchs_test = n_samples_test // batch_size + (1 - (n_samples_test % batch_size == 0))
@@ -188,7 +189,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_test_mode += list(idxs_test)
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mode]
 
-                inputs, labels = get_batch_example(test_data, idxs_test, batch_size_curr, T, args.labels, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(test_data, idxs_test, batch_size_curr, T, args.labels, input_size, dt, 26, True)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
@@ -226,11 +227,11 @@ for epoch in range(args.n_epochs):
                     batch_size_curr = batch_size
 
                 idxs = np.random.choice(idx_avail, [batch_size_curr], replace=False)
-                print(idxs)
+                # print(idxs)
                 idxs_used_train_mode += list(idxs)
                 idx_avail = [i for i in idx_avail if i not in idxs_used_train_mode]
 
-                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, args.labels, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, args.labels, input_size, dt, 26, True)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
@@ -245,8 +246,8 @@ for epoch in range(args.n_epochs):
 
                 preds = torch.cat((preds, torch.sum(readout_hist[-1], dim=0).type_as(preds)))
                 labels_mode = torch.cat((labels_mode, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
-                print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
-                print(torch.sum(labels.cpu(), dim=-1).argmax(dim=1))
+                # print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
+                # print(torch.sum(labels.cpu(), dim=-1).argmax(dim=1))
 
             print('Acc train mode: ', torch.sum(preds.argmax(dim=1) == labels_mode).float() / len(labels_mode))
 
@@ -275,7 +276,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_test_mean += list(idxs_test)
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mean]
 
-                inputs, labels = get_batch_example(test_data, idxs_test, batch_size_curr, T, args.labels, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(test_data, idxs_test, batch_size_curr, T, args.labels, input_size, dt, 26, True)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
                 predictions_batch = torch.zeros([batch_size_curr, 10, len(args.labels)])
 
@@ -321,7 +322,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_train_mean += list(idxs)
                 idx_avail = [i for i in idx_avail if i not in idxs_used_train_mean]
 
-                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, args.labels, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, args.labels, input_size, dt, 26, True)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
                 predictions_batch = torch.zeros([batch_size_curr, 10, len(args.labels)])
 

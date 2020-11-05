@@ -18,7 +18,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="124">
+            <state relative-caret-position="238">
               <caret line="68" column="18" selection-start-line="68" selection-start-column="18" selection-end-line="68" selection-end-column="18" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
@@ -374,12 +374,12 @@
       <workItem from="1604490909378" duration="431000" />
       <workItem from="1604491382010" duration="3796000" />
       <workItem from="1604502095002" duration="7713000" />
-      <workItem from="1604583201761" duration="4300000" />
+      <workItem from="1604583201761" duration="5692000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="645023000" />
+    <option name="totallyTimeSpent" value="646415000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -723,7 +723,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="124">
+        <state relative-caret-position="238">
           <caret line="68" column="18" selection-start-line="68" selection-start-column="18" selection-end-line="68" selection-end-column="18" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
