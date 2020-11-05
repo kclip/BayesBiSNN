@@ -8,7 +8,7 @@ import tables
 from .misc import *
 
 
-def get_batch_example(hdf5_group, idxs, batch_size, T=80, n_classes=10, size=[1, 26, 26], dt=1000, x_max=1, polarity=True):
+def get_batch_example(hdf5_group, idxs, batch_size, T=80, classes=[0], size=[1, 26, 26], dt=1000, x_max=1, polarity=True):
     data = np.zeros([len(idxs), T] + size, dtype='float')
     labels = hdf5_group.labels[idxs, 0]
     start_times = hdf5_group.labels[idxs, 1]
@@ -28,7 +28,7 @@ def get_batch_example(hdf5_group, idxs, batch_size, T=80, n_classes=10, size=[1,
     else:
         data = curr[:, :T]
 
-    return torch.FloatTensor(data), torch.FloatTensor(make_output_from_labels(labels, T, n_classes))
+    return torch.FloatTensor(data), torch.FloatTensor(make_output_from_labels(labels, T, classes))
 
 
 def chunk_evs_pol(times, addrs, batch_size, idx_beg, idx_end, T, dt=1000, size=[2, 304, 240], x_max=1, polarity=True):

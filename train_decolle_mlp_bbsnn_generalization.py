@@ -71,8 +71,7 @@ batch_size = 32
 sample_length = 2000  # length of samples during training in ms
 dt = 5000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
-input_size = [676]
-n_classes = 10
+input_size = [676 * 2]
 burnin = 100
 
 dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
@@ -87,7 +86,7 @@ n_samples_test = len(samples_test)
 
 
 binary_model = LIFMLP(input_size,
-                      n_classes,
+                      len(args.labels),
                       n_neurons=[512, 256],
                       with_output_layer=False,
                       with_bias=False,
@@ -121,7 +120,7 @@ for epoch in range(args.n_epochs):
 
     idxs = np.random.choice(samples_train, [batch_size], replace=False)
 
-    inputs, labels = get_batch_example(train_data, idxs, batch_size, T, n_classes, input_size, dt, 26, False)
+    inputs, labels = get_batch_example(train_data, idxs, batch_size, T, args.labels, input_size, dt, 26, True)
 
     inputs = inputs.permute(1, 0, 2).to(args.device)
     labels = labels.to(args.device)
@@ -189,7 +188,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_test_mode += list(idxs_test)
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mode]
 
-                inputs, labels = get_batch_example(test_data, idxs_test, batch_size_curr, T, n_classes, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(test_data, idxs_test, batch_size_curr, T, args.labels, input_size, dt, 26, False)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
@@ -226,7 +225,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_train_mode += list(idxs)
                 idx_avail = [i for i in idx_avail if i not in idxs_used_train_mode]
 
-                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, n_classes, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, args.labels, input_size, dt, 26, False)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
@@ -265,7 +264,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_test_mean += list(idxs_test)
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mean]
 
-                inputs, labels = get_batch_example(test_data, idxs_test, batch_size_curr, T, n_classes, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(test_data, idxs_test, batch_size_curr, T, args.labels, input_size, dt, 26, False)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
                 predictions_batch = torch.zeros([batch_size_curr, 10, 2])
 
@@ -307,7 +306,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_train_mean += list(idxs)
                 idx_avail = [i for i in idx_avail if i not in idxs_used_train_mean]
 
-                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, n_classes, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, args.labels, input_size, dt, 26, False)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
                 predictions_batch = torch.zeros([batch_size_curr, 10, 2])
 

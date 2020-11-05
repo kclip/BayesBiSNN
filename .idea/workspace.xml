@@ -4,6 +4,8 @@
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BBSNN_notebook.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/BBSNN_notebook.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_preprocessing/load_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_preprocessing/load_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_preprocessing/misc.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_preprocessing/misc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py" afterDir="false" />
     </list>
@@ -18,23 +20,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../snn/snn/utils/misc.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="32" column="4" selection-start-line="32" selection-start-column="4" selection-end-line="32" selection-end-column="4" />
+            <state relative-caret-position="-497">
+              <caret line="73" column="21" selection-start-line="73" selection-start-column="21" selection-end-line="73" selection-end-column="21" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data_preprocessing/load_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="123" column="26" selection-start-line="123" selection-start-column="26" selection-end-line="123" selection-end-column="26" />
-              <folding>
-                <element signature="e#0#12#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="391">
+              <caret line="30" column="65" lean-forward="true" selection-start-line="30" selection-start-column="65" selection-end-line="30" selection-end-column="65" />
             </state>
           </provider>
         </entry>
@@ -54,8 +56,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="38" column="76" selection-start-line="38" selection-start-column="76" selection-end-line="38" selection-end-column="76" />
+            <state relative-caret-position="218">
+              <caret line="342" selection-start-line="342" selection-end-line="342" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -134,6 +136,8 @@
       <find>test</find>
       <find>smooth_step</find>
       <find>activation</find>
+      <find>train</find>
+      <find>n_classes</find>
     </findStrings>
     <replaceStrings>
       <replace>'params'</replace>
@@ -146,6 +150,7 @@
       <replace>tau_01</replace>
       <replace>tau_001</replace>
       <replace>train</replace>
+      <replace>test</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -176,8 +181,6 @@
         <option value="$PROJECT_DIR$/data_loaders/load_mnistdvs_2d.py" />
         <option value="$PROJECT_DIR$/data_loaders/load_mnistdvs_flat.py" />
         <option value="$PROJECT_DIR$/train_decolle_bbsnn.py" />
-        <option value="$PROJECT_DIR$/data_preprocessing/misc.py" />
-        <option value="$PROJECT_DIR$/data_preprocessing/load_data.py" />
         <option value="$PROJECT_DIR$/utils/loss.py" />
         <option value="$PROJECT_DIR$/train_decolle_vanilla.py" />
         <option value="$PROJECT_DIR$/utils/activations.py" />
@@ -201,6 +204,8 @@
         <option value="$PROJECT_DIR$/model/LIF_base.py" />
         <option value="$PROJECT_DIR$/model/LeNet.py" />
         <option value="$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py" />
+        <option value="$PROJECT_DIR$/data_preprocessing/load_data.py" />
+        <option value="$PROJECT_DIR$/data_preprocessing/misc.py" />
         <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py" />
       </list>
     </option>
@@ -371,12 +376,12 @@
       <workItem from="1604481727864" duration="8261000" />
       <workItem from="1604490909378" duration="431000" />
       <workItem from="1604491382010" duration="3796000" />
-      <workItem from="1604502095002" duration="585000" />
+      <workItem from="1604502095002" duration="6470000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="633595000" />
+    <option name="totallyTimeSpent" value="639480000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -389,9 +394,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23562753" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23562753" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -405,7 +409,7 @@
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.3285968" />
-      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.32149202" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.32149202" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.3268206" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -467,16 +471,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="398">
           <caret line="151" column="39" selection-start-line="151" selection-start-column="39" selection-end-line="151" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data_preprocessing/misc.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-238">
-          <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -608,13 +602,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data_preprocessing/load_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="51" column="30" selection-start-line="51" selection-start-column="30" selection-end-line="51" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/optimizer/BiSGD.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="147">
@@ -718,16 +705,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="38" column="76" selection-start-line="38" selection-start-column="76" selection-end-line="38" selection-end-column="76" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="476">
@@ -775,10 +752,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="342" selection-start-line="342" selection-end-line="342" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_preprocessing/misc.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="42" column="23" lean-forward="true" selection-start-line="42" selection-start-column="23" selection-end-line="42" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_preprocessing/load_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="30" column="65" lean-forward="true" selection-start-line="30" selection-start-column="65" selection-end-line="30" selection-end-column="65" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="123" column="26" selection-start-line="123" selection-start-column="26" selection-end-line="123" selection-end-column="26" />
+        <state relative-caret-position="-497">
+          <caret line="73" column="21" selection-start-line="73" selection-start-column="21" selection-end-line="73" selection-end-column="21" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
