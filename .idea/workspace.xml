@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BBSNN_notebook.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/BBSNN_notebook.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,11 +16,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="68" column="18" selection-start-line="68" selection-start-column="18" selection-end-line="68" selection-end-column="18" />
+            <state relative-caret-position="102">
+              <caret line="60" column="34" selection-start-line="60" selection-start-column="34" selection-end-line="60" selection-end-column="34" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -36,11 +37,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1887">
-              <caret line="127" column="17" selection-start-line="127" selection-start-column="17" selection-end-line="127" selection-end-column="17" />
+            <state relative-caret-position="209">
+              <caret line="311" column="100" selection-start-line="311" selection-start-column="100" selection-end-line="311" selection-end-column="100" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -195,7 +196,6 @@
         <option value="$PROJECT_DIR$/optimizer/BBSNN.py" />
         <option value="$PROJECT_DIR$/train_lenet_decolle_vanilla.py" />
         <option value="$PROJECT_DIR$/train_decolle_lenet_vanilla.py" />
-        <option value="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" />
         <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" />
         <option value="$PROJECT_DIR$/model/LIF_MLP.py" />
         <option value="$PROJECT_DIR$/model/LIF_base.py" />
@@ -204,6 +204,7 @@
         <option value="$PROJECT_DIR$/data_preprocessing/load_data.py" />
         <option value="$PROJECT_DIR$/data_preprocessing/misc.py" />
         <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py" />
+        <option value="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" />
       </list>
     </option>
   </component>
@@ -374,12 +375,12 @@
       <workItem from="1604490909378" duration="431000" />
       <workItem from="1604491382010" duration="3796000" />
       <workItem from="1604502095002" duration="7713000" />
-      <workItem from="1604583201761" duration="5692000" />
+      <workItem from="1604583201761" duration="7446000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="646415000" />
+    <option name="totallyTimeSpent" value="648169000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -723,8 +724,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="68" column="18" selection-start-line="68" selection-start-column="18" selection-end-line="68" selection-end-column="18" />
+        <state relative-caret-position="102">
+          <caret line="60" column="34" selection-start-line="60" selection-start-column="34" selection-end-line="60" selection-end-column="34" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
@@ -735,16 +736,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
           <caret line="30" column="65" selection-start-line="30" selection-start-column="65" selection-end-line="30" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1887">
-          <caret line="127" column="17" selection-start-line="127" selection-start-column="17" selection-end-line="127" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -784,6 +775,16 @@
           <caret line="40" selection-start-line="40" selection-end-line="40" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="311" column="100" selection-start-line="311" selection-start-column="100" selection-end-line="311" selection-end-column="100" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
           </folding>
         </state>
       </provider>
