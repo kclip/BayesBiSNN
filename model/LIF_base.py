@@ -37,7 +37,7 @@ class LIFLayer(nn.Module):
                 gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
                 std = gain / math.sqrt(fan)
                 # self.scale = (math.sqrt(3.0) * std)
-                self.scale = 1. / 1000
+                self.scale = 1. / 10
             elif hasattr(layer, 'in_features'):
                 self.scale = 1. / np.prod(self.base_layer.in_features)
         else:
