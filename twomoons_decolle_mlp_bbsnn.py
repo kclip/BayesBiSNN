@@ -36,7 +36,7 @@ if __name__ == "__main__":
     parser.add_argument('--n_epochs', type=int, default=3000)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=1e-8) #5e-3, 1e-5, 5e-7
+    parser.add_argument('--rho', type=float, default=5e-9) #5e-3, 1e-5, 5e-7
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
