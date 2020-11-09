@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BBSNN_notebook.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/BBSNN_notebook.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py" beforeDir="false" afterPath="$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,11 +16,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="174">
-              <caret line="135" column="29" selection-start-line="135" selection-start-column="29" selection-end-line="135" selection-end-column="29" />
+            <state relative-caret-position="-1224">
+              <caret line="54" column="16" lean-forward="true" selection-start-line="54" selection-start-column="16" selection-end-line="54" selection-end-column="16" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -27,11 +28,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
-              <caret line="157" selection-start-line="157" selection-end-line="157" />
+            <state relative-caret-position="221">
+              <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="208">
+              <caret line="163" lean-forward="true" selection-start-line="163" selection-end-line="163" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -42,8 +52,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="41" selection-start-line="41" selection-end-line="41" />
+            <state relative-caret-position="419">
+              <caret line="80" selection-start-line="77" selection-end-line="80" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -107,12 +117,12 @@
       <find>mean</find>
       <find>tau_1</find>
       <find>tau_01</find>
-      <find>test</find>
       <find>smooth_step</find>
       <find>activation</find>
       <find>train</find>
       <find>n_classes</find>
       <find>mode</find>
+      <find>test</find>
     </findStrings>
     <replaceStrings>
       <replace>'params'</replace>
@@ -124,9 +134,9 @@
       <replace>50000</replace>
       <replace>tau_01</replace>
       <replace>tau_001</replace>
-      <replace>train</replace>
       <replace>test</replace>
       <replace>mean</replace>
+      <replace>train</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -170,7 +180,6 @@
         <option value="$PROJECT_DIR$/train_decolle_lenet_bbsnnstgs.py" />
         <option value="$PROJECT_DIR$/twomoons_decolle_vanilla.py" />
         <option value="$PROJECT_DIR$/utils/misc.py" />
-        <option value="$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py" />
         <option value="$PROJECT_DIR$/optimizer/BBSNN.py" />
         <option value="$PROJECT_DIR$/train_lenet_decolle_vanilla.py" />
         <option value="$PROJECT_DIR$/train_decolle_lenet_vanilla.py" />
@@ -183,6 +192,8 @@
         <option value="$PROJECT_DIR$/model/LIF_base.py" />
         <option value="$PROJECT_DIR$/model/LeNet.py" />
         <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py" />
+        <option value="$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py" />
+        <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py" />
       </list>
     </option>
   </component>
@@ -354,12 +365,12 @@
       <workItem from="1604491382010" duration="3796000" />
       <workItem from="1604502095002" duration="7713000" />
       <workItem from="1604583201761" duration="13354000" />
-      <workItem from="1604608110070" duration="489000" />
+      <workItem from="1604608110070" duration="3549000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="654566000" />
+    <option name="totallyTimeSpent" value="657626000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -413,9 +424,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/optimizer/bop.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/data_loaders/load_mnist_pytorch.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/miniconda3/Lib/site-packages/torch/nn/utils/convert_parameters.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -528,16 +536,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
           <caret line="62" column="22" lean-forward="true" selection-start-line="62" selection-end-line="63" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="31" selection-start-line="13" selection-start-column="31" selection-end-line="13" selection-end-column="31" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
@@ -718,16 +716,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="41" selection-start-line="41" selection-end-line="41" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/LIF_base.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="527">
@@ -758,13 +746,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
+    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="174">
-          <caret line="135" column="29" selection-start-line="135" selection-start-column="29" selection-end-line="135" selection-end-column="29" />
+        <state relative-caret-position="419">
+          <caret line="80" selection-start-line="77" selection-end-line="80" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="163" lean-forward="true" selection-start-line="163" selection-end-line="163" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1224">
+          <caret line="54" column="16" lean-forward="true" selection-start-line="54" selection-start-column="16" selection-end-line="54" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
         </state>
       </provider>
     </entry>
