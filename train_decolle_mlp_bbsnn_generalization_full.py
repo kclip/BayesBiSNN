@@ -63,7 +63,7 @@ if not args.disable_cuda and torch.cuda.is_available():
 else:
     args.device = torch.device('cpu')
 
-test_period = 1
+test_period = 1000
 batch_size = 32
 sample_length = 2000  # length of samples during training in ms
 dt = 5000  # us
