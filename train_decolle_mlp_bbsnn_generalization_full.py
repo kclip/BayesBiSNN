@@ -75,6 +75,8 @@ dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hd
 train_data = dataset.root.test
 test_data = dataset.root.train
 
+args.labels_test = [i for i in range(10) if i not in args.labels_train]
+
 samples_train = find_indices_for_labels(train_data, args.labels_train)
 n_samples_train = len(samples_train)
 
@@ -84,7 +86,6 @@ n_samples_val = len(samples_val)
 samples_test = find_indices_for_labels(train_data, args.labels_test)
 n_samples_test = len(samples_test)
 
-args.labels_test = [i for i in range(10) if i not in args.labels_train]
 
 binary_model = LIFMLP(input_size,
                       len(args.labels),

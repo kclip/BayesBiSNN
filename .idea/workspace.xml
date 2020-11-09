@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/BBSNN_notebook.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/BBSNN_notebook.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py" beforeDir="false" afterPath="$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,8 +30,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
+            <state relative-caret-position="153">
+              <caret line="78" lean-forward="true" selection-start-line="78" selection-end-line="78" />
             </state>
           </provider>
         </entry>
@@ -365,12 +364,12 @@
       <workItem from="1604491382010" duration="3796000" />
       <workItem from="1604502095002" duration="7713000" />
       <workItem from="1604583201761" duration="13354000" />
-      <workItem from="1604608110070" duration="3549000" />
+      <workItem from="1604608110070" duration="3831000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="657626000" />
+    <option name="totallyTimeSpent" value="657908000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -778,8 +777,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
+        <state relative-caret-position="153">
+          <caret line="78" lean-forward="true" selection-start-line="78" selection-end-line="78" />
         </state>
       </provider>
     </entry>
