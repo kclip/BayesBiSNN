@@ -88,7 +88,7 @@ n_samples_test = len(samples_test)
 
 
 binary_model = LIFMLP(input_size,
-                      len(args.labels),
+                      len(args.labels_train),
                       n_neurons=[512, 256],
                       with_output_layer=False,
                       with_bias=False,
@@ -187,7 +187,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_test_mode += list(idxs_test)
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mode]
 
-                inputs, labels = get_batch_example(train_data, idxs_test, batch_size_curr, T, args.labels_test, input_size, dt, 26, True)
+                inputs, _ = get_batch_example(train_data, idxs_test, batch_size_curr, T, args.labels_test, input_size, dt, 26, True)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
@@ -276,7 +276,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_test_mean += list(idxs_test)
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mean]
 
-                inputs, labels = get_batch_example(train_data, idxs_test, batch_size_curr, T, args.labels_test, input_size, dt, 26, True)
+                inputs, _ = get_batch_example(train_data, idxs_test, batch_size_curr, T, args.labels_test, input_size, dt, 26, True)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
                 predictions_batch = torch.zeros([batch_size_curr, 10, len(args.labels)])
 
