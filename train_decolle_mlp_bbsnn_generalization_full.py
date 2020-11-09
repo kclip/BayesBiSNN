@@ -122,7 +122,7 @@ for epoch in range(args.n_epochs):
     inputs_train, labels_train = get_batch_example(train_data, idxs_train, batch_size_train, T, args.labels_train, input_size, dt, 26, True)
     inputs_val, labels_val = get_batch_example(test_data, idxs_val, batch_size_val, T, args.labels_train, input_size, dt, 26, True)
 
-    inputs = torch.cat((inputs_train.permute(1, 0, 2), inputs_val.permute(1, 0, 2)), dim=0).to(args.device)
+    inputs = torch.cat((inputs_train.permute(1, 0, 2), inputs_val.permute(1, 0, 2)), dim=1).to(args.device)
     labels = torch.cat((labels_train, labels_val), dim=0).to(args.device)
 
     optimizer.update_concrete_weights()
