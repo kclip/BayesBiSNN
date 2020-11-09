@@ -278,7 +278,7 @@ for epoch in range(args.n_epochs):
 
                 inputs, _ = get_batch_example(train_data, idxs_test, batch_size_curr, T, args.labels_test, input_size, dt, 26, True)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
-                predictions_batch = torch.zeros([batch_size_curr, 10, len(args.labels)])
+                predictions_batch = torch.zeros([batch_size_curr, 10, len(args.labels_train)])
 
                 for j in range(10):
                     optimizer.update_concrete_weights(test=True)
@@ -325,7 +325,7 @@ for epoch in range(args.n_epochs):
 
                 inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, args.labels_train, input_size, dt, 26, True)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
-                predictions_batch = torch.zeros([batch_size_curr, 10, len(args.labels)])
+                predictions_batch = torch.zeros([batch_size_curr, 10, len(args.labels_train)])
 
                 for j in range(10):
                     optimizer.update_concrete_weights(test=True)
