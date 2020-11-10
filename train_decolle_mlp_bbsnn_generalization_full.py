@@ -71,7 +71,11 @@ T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
 input_size = [676 * 2]
 burnin = 100
 
-dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
+try:
+    dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
+except:
+    dataset = tables.open_file(r'/scratch/users/k1804053/datasets/mnist-dvs/mnist_dvs_events.hdf5')
+
 train_data = dataset.root.test
 test_data = dataset.root.train
 
