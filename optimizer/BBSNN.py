@@ -26,8 +26,8 @@ class BayesBiSNNRP(BiOptimizer):
                 # print(w.grad.shape, torch.max(torch.abs(group['lr'] / group['rho'] * (d_w * scale - group['rho'] * group['prior_wr']))),
                 #       torch.max(torch.abs(self.param_groups[i]['params'][j])))
                 # print(group['prior_wr'])
-                self.param_groups[i]['params'][j].data = (1 - group['lr']) * self.param_groups[i]['params'][j].data \
-                                                         - group['lr'] / group['rho'] * (d_w * scale - group['rho'] * group['prior_wr'])
+                self.param_groups[i]['params'][j].data = (1 - group['lr'] * group['rho']) * self.param_groups[i]['params'][j].data \
+                                                         - group['lr'] * (d_w * scale - group['rho'] * group['prior_wr'])
 
 
     def update_concrete_weights(self, test=False):

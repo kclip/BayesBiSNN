@@ -34,9 +34,9 @@ if __name__ == "__main__":
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=3000)
-    parser.add_argument('--lr', type=float, default=0.001)
+    parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=1e-7) #5e-3, 1e-5, 5e-7
+    parser.add_argument('--rho', type=float, default=1e-4) #5e-3, 1e-5, 5e-7
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
@@ -68,7 +68,7 @@ n_samples_train = 200
 n_samples_per_dim_test = 50
 n_samples_test = n_samples_per_dim_test ** 2
 n_neurons_per_dim = 10
-test_period = 100
+test_period = 500
 
 x_bin_train, y_bin_train, x_train, y_train = make_moon_dataset_bin_pop_coding(n_samples_train, T, 0.1, n_neurons_per_dim)
 np.save(os.path.join(results_path, 'x_train'), x_train)
