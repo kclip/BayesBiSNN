@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/BBSNN_notebook.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/BBSNN_notebook.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/LIF_MLP.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/LIF_MLP.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py" beforeDir="false" afterPath="$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/misc.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/misc.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -23,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="332" lean-forward="true" selection-start-line="332" selection-end-line="332" />
+            <state relative-caret-position="155">
+              <caret line="60" column="47" selection-start-line="60" selection-start-column="47" selection-end-line="60" selection-end-column="47" />
             </state>
           </provider>
         </entry>
@@ -32,8 +27,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="155">
-              <caret line="343" column="62" lean-forward="true" selection-start-line="343" selection-start-column="62" selection-end-line="343" selection-end-column="79" />
+            <state relative-caret-position="237">
+              <caret line="56" column="22" lean-forward="true" selection-start-line="56" selection-end-line="57" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -411,12 +406,12 @@
       <workItem from="1604583201761" duration="13354000" />
       <workItem from="1604608110070" duration="11155000" />
       <workItem from="1604936528197" duration="8821000" />
-      <workItem from="1605083173881" duration="33560000" />
+      <workItem from="1605083173881" duration="33992000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="707613000" />
+    <option name="totallyTimeSpent" value="708045000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -823,8 +818,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="343" column="62" lean-forward="true" selection-start-line="343" selection-start-column="62" selection-end-line="343" selection-end-column="79" />
+        <state relative-caret-position="237">
+          <caret line="56" column="22" lean-forward="true" selection-start-line="56" selection-end-line="57" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
@@ -833,8 +828,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="332" lean-forward="true" selection-start-line="332" selection-end-line="332" />
+        <state relative-caret-position="155">
+          <caret line="60" column="47" selection-start-line="60" selection-start-column="47" selection-end-line="60" selection-end-column="47" />
         </state>
       </provider>
     </entry>

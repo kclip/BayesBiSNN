@@ -42,6 +42,7 @@ if __name__ == "__main__":
     parser.add_argument('--rho', type=float, default=1e-6)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
+    parser.add_argument('--with_softmax', type=str, default='true')
     parser.add_argument('--labels_train', nargs='+', default=None, type=int, help='Class labels to be used during training')
 
     args = parser.parse_args()
@@ -57,6 +58,7 @@ results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
                + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p + '_rho_%f' % args.rho + '_lr_%f' % args.lr
 os.makedirs(results_path)
 
+args.with_softmax = str2bool(args.with_softmax)
 args.disable_cuda = str2bool(args.disable_cuda)
 if not args.disable_cuda and torch.cuda.is_available():
     args.device = torch.device('cuda')
@@ -119,6 +121,8 @@ batch_size_val = batch_size // 10
 batch_size_train = batch_size - batch_size_val
 
 for epoch in range(args.n_epochs):
+    binary_model.softmax = args.with_softmax
+
     loss = 0
 
     idxs_train = np.random.choice(samples_train, [batch_size_train], replace=False)
@@ -167,6 +171,8 @@ for epoch in range(args.n_epochs):
 
 
     if (epoch + 1) % test_period == 0:
+        binary_model.softmax = False
+
         ### Mode testing
         with torch.no_grad():
             # # Compute weights
