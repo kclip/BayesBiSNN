@@ -15,12 +15,13 @@ class LIFMLP(LIFNetwork):
                  activation=smooth_step,
                  num_layers=1,
                  lif_layer_type=LIFLayer,
-                 lc_ampl=.5,
                  with_output_layer=True,
                  with_bias=True,
-                 scaling=True
+                 scaling=True,
+                 softmax=True
                  ):
 
+        self.softmax = softmax
         self.scales = []
         self.with_output_layer = with_output_layer
         if with_output_layer:
@@ -73,7 +74,7 @@ class LIFMLP(LIFNetwork):
 
             self.LIF_layers.append(layer)
             self.readout_layers.append(readout)
-            if scaling:
+            if scaling and hasattr(readout, 'weight'):
                 fan = _calculate_correct_fan(readout.weight, mode='fan_in')
                 gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
                 std = gain / math.sqrt(fan)
@@ -95,7 +96,10 @@ class LIFMLP(LIFNetwork):
             inputs = s.detach()
 
             s_out.append(s)
+            if self.softmax:
+                r_ = torch.softmax(r_, dim=-1)
             r_out.append(r_)
             u_out.append(u)
+
 
         return s_out, r_out, u_out

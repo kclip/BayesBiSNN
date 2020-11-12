@@ -12,7 +12,7 @@ from collections import Counter
 import pickle
 import fnmatch
 import time
-from utils.misc import make_moon_dataset_bin, make_moon_dataset_bin_pop_coding, make_moon_test_dataset_bin_pop_coding
+from utils.misc import gen_1d_signal
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -36,9 +36,8 @@ if __name__ == "__main__":
     parser.add_argument('--n_epochs', type=int, default=3000)
     parser.add_argument('--lr', type=float, default=1e-1)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=5e-3)
+    parser.add_argument('--rho', type=float, default=1e-5)
     parser.add_argument('--prior_p', type=float, default=0.5)
-    parser.add_argument('--with_softmax', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
     args = parser.parse_args()
@@ -50,11 +49,10 @@ else:
     expDirN = "%03d" % (int((prelist[len(prelist) - 1].split("__"))[0]) + 1)
 
 results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
-                             time.localtime()) + '_' + 'two_moons_mlp_bbsnnrp' + r'_%d_epochs' % args.n_epochs\
-               + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p + '_rho_%f' % args.rho + '_lr_%f' % args.lr + '_softmax_' + args.with_softmax
+                             time.localtime()) + '_' + '1d_mlp_bbsnnrp' + r'_%d_epochs' % args.n_epochs\
+               + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p + '_rho_%f' % args.rho + '_lr_%f' % args.lr
 os.makedirs(results_path)
 
-args.with_softmax = str2bool(args.with_softmax)
 args.disable_cuda = str2bool(args.disable_cuda)
 if not args.disable_cuda and torch.cuda.is_available():
     args.device = torch.device('cuda')
@@ -66,18 +64,15 @@ args.train_accs[args.n_epochs] = []
 
 
 T = 100
-n_samples_train = 200
-n_samples_per_dim_test = 50
-n_samples_test = n_samples_per_dim_test ** 2
 n_neurons_per_dim = 10
-test_period = 500
+test_period = 100
+step = 100
 
-x_bin_train, y_bin_train, x_train, y_train = make_moon_dataset_bin_pop_coding(n_samples_train, T, 0.1, n_neurons_per_dim)
+x_train, y_train, x_test, y_test, x_bin_train, y_bin_train, x_bin_test, y_bin_test = gen_1d_signal(T=T, step=step, n_neuron_per_dim=n_neurons_per_dim)
+n_samples_train = len(x_train)
+n_samples_test = len(x_test)
 np.save(os.path.join(results_path, 'x_train'), x_train)
 np.save(os.path.join(results_path, 'y_train'), y_train)
-
-# test_inputs, test_outputs = make_moon_dataset_bin_pop_coding(n_samples_test, T, 0.5, n_neurons_per_dim)
-x_bin_test, x_test, y_test = make_moon_test_dataset_bin_pop_coding(n_samples_per_dim_test, T, n_neurons_per_dim)
 np.save(os.path.join(results_path, 'x_test'), x_test)
 np.save(os.path.join(results_path, 'y_test'), y_test)
 
@@ -87,12 +82,12 @@ input_size = [x_bin_train.shape[-1]]
 burnin = 10
 
 binary_model = LIFMLP(input_size,
-                      2,
+                      n_neurons_per_dim,
                       n_neurons=[64, 64],
-                      with_output_layer=False,
+                      with_output_layer=True,
                       with_bias=False,
                       prior_p=args.prior_p,
-                      softmax=args.with_softmax
+                      softmax=False
                       ).to(args.device)
 
 latent_model = deepcopy(binary_model)
@@ -100,8 +95,7 @@ latent_model = deepcopy(binary_model)
 
 # specify loss function
 criterion = [torch.nn.SmoothL1Loss() for _ in range(binary_model.num_layers)]
-if binary_model.softmax:
-    criterion = [one_hot_crossentropy for _ in range(binary_model.num_layers)]
+# criterion = [one_hot_crossentropy for _ in range(binary_model.num_layers)]
 
 if binary_model.with_output_layer:
     criterion[-1] = one_hot_crossentropy
@@ -117,7 +111,6 @@ print(binary_model.scales)
 print([layer.scale for layer in binary_model.LIF_layers])
 
 for epoch in range(args.n_epochs):
-    binary_model.softmax = args.with_softmax
     loss = 0
 
     n_batchs = n_samples_train // batch_size + (1 - (n_samples_train % batch_size == 0))
@@ -167,29 +160,16 @@ for epoch in range(args.n_epochs):
             optimizer.step()
             optimizer.zero_grad()
 
-        with torch.no_grad():
-            preds = torch.cat((preds, torch.sum(readout_hist[-1].type_as(preds), dim=0)))
-            true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
-
-
-    acc = torch.sum(preds.argmax(dim=1).type_as(true_labels) == true_labels).float() / n_samples_train
-
     torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')
     torch.save(latent_model.state_dict(), results_path + '/latent_model_weights.pt')
-    print(acc)
-
-
 
     if (epoch + 1) % (args.n_epochs//5) == 0:
         torch.save(binary_model.state_dict(), results_path + '/binary_model_weights_%d.pt' % (1 + epoch))
         torch.save(latent_model.state_dict(), results_path + '/latent_model_weights_%d.pt' % (1 + epoch))
 
-
-
     if (epoch + 1) % test_period == 0:
         ### Mode testing
         with torch.no_grad():
-            binary_model.softmax = False
             # Compute weights
             optimizer.get_concrete_weights_mode()
 
@@ -223,7 +203,7 @@ for epoch in range(args.n_epochs):
                     for l, ro_h in enumerate(readout_hist):
                         readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
-                predictions_mode = torch.cat((predictions_mode, readout_hist[-1].permute(1, 0, 2)))
+                predictions_mode = torch.cat((predictions_mode, torch.sum(readout_hist[-1], dim=0)))
 
             np.save(os.path.join(results_path, 'test_predictions_latest_mode'), predictions_mode.numpy())
             np.save(os.path.join(results_path, 'idxs_test_mode'), np.array(idxs_used_test_mode))
@@ -234,39 +214,8 @@ for epoch in range(args.n_epochs):
             idxs_used_train_mode = []
             preds = torch.FloatTensor()
 
-            print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
-            for i in tqdm(range(n_batchs)):
-                if (i == (n_batchs - 1)) & (n_samples_train % batch_size != 0):
-                    batch_size_curr = n_samples_train % batch_size
-                else:
-                    batch_size_curr = batch_size
 
-                idxs = np.random.choice(idx_avail, [batch_size_curr], replace=False)
-                idxs_used_train_mode += list(idxs)
-                idx_avail = [i for i in idx_avail if i not in idxs_used_train_mode]
-
-                inputs = x_bin_train[idxs].permute(1, 0, 2).to(args.device)
-                labels = y_bin_train[idxs].permute(0, 2, 1).to(args.device)
-
-                binary_model.init(inputs, burnin=burnin)
-
-                readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
-
-                for t in range(burnin, T):
-                    s, r, u = binary_model(inputs[t])
-
-                    for l, ro_h in enumerate(readout_hist):
-                        readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
-
-                preds = torch.cat((preds, readout_hist[-1].type_as(preds).permute(1, 0, 2)))
-
-            np.save(os.path.join(results_path, 'train_predictions_latest_mode'), preds.numpy())
-            np.save(os.path.join(results_path, 'idxs_train_mode'), np.array(idxs_used_train_mode))
-
-
-
-        ### Mean testing
-        with torch.no_grad():
+            ### Mean testing
             n_batchs_test = n_samples_test // batch_size + (1 - (n_samples_test % batch_size == 0))
             idx_avail_test = np.arange(n_samples_test)
             idxs_used_test_mean = []
@@ -285,7 +234,7 @@ for epoch in range(args.n_epochs):
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mean]
 
                 inputs = x_bin_test[idxs_test].permute(1, 0, 2).to(args.device)
-                predictions_batch = torch.zeros([batch_size_curr, 10, T - burnin, 2])
+                predictions_batch = torch.zeros([batch_size_curr, 10, T - burnin, n_neurons_per_dim])
 
                 for j in range(10):
                     optimizer.update_concrete_weights(test=True)
@@ -302,48 +251,10 @@ for epoch in range(args.n_epochs):
                             readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
                     predictions_batch[:, j] = readout_hist[-1].permute(1, 0, 2)
-
                 predictions_mean = torch.cat((predictions_mean, predictions_batch))
 
             np.save(os.path.join(results_path, 'test_predictions_latest_mean'), predictions_mean.numpy())
             np.save(os.path.join(results_path, 'idxs_test_mean'), np.array(idxs_used_test_mean))
 
 
-            n_batchs = n_samples_train // batch_size + (1 - (n_samples_train % batch_size == 0))
-            idx_avail = np.arange(n_samples_train)
-            idxs_used_train_mean = []
-            predictions_mean = torch.FloatTensor()
-
-            print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
-
-            for i in tqdm(range(n_batchs)):
-                if (i == (n_batchs - 1)) & (n_samples_train % batch_size != 0):
-                    batch_size_curr = n_samples_train % batch_size
-                else:
-                    batch_size_curr = batch_size
-
-                idxs = np.random.choice(idx_avail, [batch_size_curr], replace=False)
-                idxs_used_train_mean += list(idxs)
-                idx_avail = [i for i in idx_avail if i not in idxs_used_train_mean]
-
-                inputs = x_bin_train[idxs].permute(1, 0, 2).to(args.device)
-                predictions_batch = torch.zeros([batch_size_curr, 10, T - burnin, 2])
-
-                for j in range(10):
-                    optimizer.update_concrete_weights(test=True)
-                    binary_model.init(inputs, burnin=burnin)
-
-                    readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
-
-                    for t in range(burnin, T):
-                        s, r, u = binary_model(inputs[t])
-
-                        for l, ro_h in enumerate(readout_hist):
-                            readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
-
-                    predictions_batch[:, j] = readout_hist[-1].permute(1, 0, 2)
-
-                predictions_mean = torch.cat((predictions_mean, predictions_batch))
-            np.save(os.path.join(results_path, 'train_predictions_latest_mean'), predictions_mean.numpy())
-            np.save(os.path.join(results_path, 'idxs_train_mean'), np.array(idxs_used_train_mean))
 

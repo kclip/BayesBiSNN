@@ -91,3 +91,52 @@ def make_moon_test_dataset_bin_pop_coding(n_samples_per_dim, T, n_neuron_per_dim
     return binary_inputs, x, y
 
 
+def gen_1d_signal(T=100, step=100, n_neuron_per_dim=10, res=100):
+    x0 = np.arange(-1, 0, 1 / step)
+    x1 = np.arange(1.5, 2.5, 1 / step)
+    x2 = np.arange(4, 5, 1 / step)
+    x_train = np.concatenate([x0, x1, x2])
+
+    x_test = np.arange(-1, 5, 1 / step)
+
+    def function(x):
+        return x - 0.1 * x ** 2 + np.cos(np.pi * x / 2)
+
+    y_train = function(x_train)
+    y_test = function(x_test)
+
+    noise_std = 0.25
+    noise_train = np.random.randn(*x_train.shape) * noise_std
+    y_train = y_train + noise_train
+    y_train = (y_train - np.min(y_train)) / (np.max(y_train) - np.min(y_train))
+    x_train = (x_train - np.min(x_train)) / (np.max(x_train) - np.min(x_train))
+
+    y_test = (y_test - np.min(y_test)) / (np.max(y_test) - np.min(y_test))
+    x_test = (x_test - np.min(x_test)) / (np.max(x_test) - np.min(x_test))
+
+    ### Population coding
+    # Centers of the cosine basis
+    c_intervals = 2 * (res / max(n_neuron_per_dim - 1, 1))
+    c = np.arange(0, res + c_intervals, c_intervals / 2)
+
+    x_train_bin = torch.zeros([len(x_train), T, n_neuron_per_dim])
+    y_train_bin = torch.zeros([len(y_train), T, n_neuron_per_dim])
+
+    for i, sample in enumerate(zip(x_train, y_train)):
+        rates_x = np.array([0.5 + np.cos(max(-np.pi, min(np.pi, np.pi * (sample[0] * res - c[k]) / c_intervals))) / 2 for k in range(n_neuron_per_dim)]).T
+        x_train_bin[i] = torch.bernoulli(torch.tensor(rates_x).unsqueeze(0).repeat(T, 1))
+
+        rates_y = np.array([0.5 + np.cos(max(-np.pi, min(np.pi, np.pi * (sample[1] * res - c[k]) / c_intervals))) / 2 for k in range(n_neuron_per_dim)]).T
+        y_train_bin[i] = torch.bernoulli(torch.tensor(rates_y).unsqueeze(0).repeat(T, 1))
+
+    x_test_bin = torch.zeros([len(x_test), T, n_neuron_per_dim])
+    y_test_bin = torch.zeros([len(y_test), T, n_neuron_per_dim])
+
+    for i, sample in enumerate(zip(x_test, y_test)):
+        rates_x = np.array([0.5 + np.cos(max(-np.pi, min(np.pi, np.pi * (sample[0] * res - c[k]) / c_intervals))) / 2 for k in range(n_neuron_per_dim)]).T
+        x_test_bin[i] = torch.bernoulli(torch.tensor(rates_x).unsqueeze(0).repeat(T, 1))
+
+        rates_y = np.array([0.5 + np.cos(max(-np.pi, min(np.pi, np.pi * (sample[1] * res - c[k]) / c_intervals))) / 2 for k in range(n_neuron_per_dim)]).T
+        y_test_bin[i] = torch.bernoulli(torch.tensor(rates_y).unsqueeze(0).repeat(T, 1))
+
+    return x_train, y_train, x_test, y_test, x_train_bin, y_train_bin, x_test_bin, y_test_bin
