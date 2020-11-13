@@ -24,8 +24,10 @@ class LenetLIF(LIFNetwork):
                  lif_layer_type=LIFLayer,
                  with_bias=True,
                  scaling=True,
-                 with_output_layer=True):
+                 with_output_layer=True,
+                 softmax=True):
 
+        self.softmax = softmax
         self.num_layers = num_conv_layers + num_mlp_layers
         self.activation = activation
         # If only one value provided, then it is duplicated for each layer
@@ -168,6 +170,9 @@ class LenetLIF(LIFNetwork):
             sd_ = do(s_)
             r_ = ro(sd_.reshape(sd_.size(0), -1)) * scale
             s_out.append(s_)
+            if self.softmax:
+                r_ = torch.softmax(r_, dim=-1)
+            # print(r_)
             r_out.append(r_)
             u_out.append(u_p)
             inputs = s_.detach()

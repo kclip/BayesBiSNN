@@ -37,6 +37,7 @@ if __name__ == "__main__":
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=1000)
     parser.add_argument('--lr', type=float, default=0.001)
+    parser.add_argument('--with_softmax', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
     args = parser.parse_args()
@@ -51,6 +52,7 @@ results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
                              time.localtime()) + '_' + 'mnist_dvs_decolle_lenet_' + r'_%d_epochs' % args.n_epochs + '_lr_%f' % args.lr
 os.makedirs(results_path)
 
+args.with_softmax = str2bool(args.with_softmax)
 args.disable_cuda = str2bool(args.disable_cuda)
 if not args.disable_cuda and torch.cuda.is_available():
     args.device = torch.device('cuda')
@@ -61,7 +63,7 @@ args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
 args.train_accs[args.n_epochs] = []
 
 test_period = 100
-batch_size = 16
+batch_size = 32
 sample_length = 2000  # length of samples during training in ms
 dt = 5000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample

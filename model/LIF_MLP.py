@@ -96,10 +96,12 @@ class LIFMLP(LIFNetwork):
             inputs = s.detach()
 
             s_out.append(s)
+            # print(r_)
             if self.softmax:
                 r_ = torch.softmax(r_, dim=-1)
             r_out.append(r_)
             u_out.append(u)
 
+        # print('/////////////')
 
         return s_out, r_out, u_out

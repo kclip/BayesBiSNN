@@ -36,9 +36,9 @@ if __name__ == "__main__":
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=1000)
-    parser.add_argument('--lr', type=float, default=0.001)
+    parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--temperature', type=float, default=0.1)
-    parser.add_argument('--rho', type=float, default=5e-8)
+    parser.add_argument('--rho', type=float, default=1e-4)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--with_softmax', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
@@ -67,13 +67,13 @@ args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
 args.train_accs[args.n_epochs] = []
 
 test_period = 100
-batch_size = 32
+batch_size = 16
 sample_length = 2000  # length of samples during training in ms
-dt = 5000  # us
+dt = 25000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
 input_size = [2, 26, 26]
 n_classes = 10
-burnin = 100
+burnin = 10
 n_samples_test = 1000
 n_samples_train = 9000
 
@@ -83,15 +83,15 @@ test_data = dataset.root.test
 
 
 binary_model = LenetLIF(input_size,
-                        Nhid_conv=[64, 128, 128],
-                        Nhid_mlp=[],
+                        Nhid_conv=[],
+                        Nhid_mlp=[64, 64],
                         out_channels=10,
                         kernel_size=[7],
                         stride=[1],
                         pool_size=[2, 1, 2],
                         dropout=[0.],
-                        num_conv_layers=3,
-                        num_mlp_layers=0,
+                        num_conv_layers=0,
+                        num_mlp_layers=2,
                         with_bias=True,
                         with_output_layer=False,
                         softmax=args.with_softmax).to(args.device)
@@ -160,6 +160,7 @@ for epoch in range(args.n_epochs):
         # print(u[-1])
         # print(torch. sum(labels.cpu(), dim=-1).argmax(dim=1))
 
+        # print(torch.sum(readout_hist[-2], dim=0))
         # print(torch.sum(readout_hist[-1], dim=0))
         # print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
         acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / batch_size

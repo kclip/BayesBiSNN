@@ -38,8 +38,9 @@ if __name__ == "__main__":
     parser.add_argument('--n_epochs', type=int, default=1000)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=1e-6)
+    parser.add_argument('--rho', type=float, default=1e-3)
     parser.add_argument('--prior_p', type=float, default=0.5)
+    parser.add_argument('--with_softmax', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
     args = parser.parse_args()
@@ -55,6 +56,7 @@ results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
                + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p + '_rho_%f' % args.rho + '_lr_%f' % args.lr
 os.makedirs(results_path)
 
+args.with_softmax = str2bool(args.with_softmax)
 args.disable_cuda = str2bool(args.disable_cuda)
 if not args.disable_cuda and torch.cuda.is_available():
     args.device = torch.device('cuda')
@@ -65,13 +67,14 @@ args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
 args.train_accs[args.n_epochs] = []
 
 test_period = 100
-batch_size = 32
+batch_size = 16
 sample_length = 2000  # length of samples during training in ms
 dt = 5000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
 input_size = [676]
 n_classes = 10
 burnin = 100
+args.labels = [i for i in range(10)]
 
 dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
 train_data = dataset.root.train
@@ -83,7 +86,9 @@ binary_model = LIFMLP(input_size,
                       n_neurons=[512, 256],
                       with_output_layer=False,
                       with_bias=False,
-                      prior_p=args.prior_p
+                      prior_p=args.prior_p,
+                      scaling=True,
+                      softmax=args.with_softmax
                       ).to(args.device)
 
 latent_model = deepcopy(binary_model)
@@ -91,6 +96,8 @@ latent_model = deepcopy(binary_model)
 
 # specify loss function
 criterion = [torch.nn.SmoothL1Loss() for _ in range(binary_model.num_layers)]
+# criterion = [one_hot_crossentropy for _ in range(binary_model.num_layers)]
+
 if binary_model.with_output_layer:
     criterion[-1] = one_hot_crossentropy
 
@@ -105,17 +112,12 @@ print(binary_model.scales)
 print([layer.scale for layer in binary_model.LIF_layers])
 
 for epoch in range(args.n_epochs):
+    binary_model.softmax = args.with_softmax
     loss = 0
-
-    if (epoch + 1) % 500 == 0:
-        args.lr = args.lr / 1.5
-        optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, rho=args.rho,
-                                 device=args.device)
-
 
     idxs = np.random.choice(np.arange(9000), [batch_size], replace=False)
 
-    inputs, labels = get_batch_example(train_data, idxs, batch_size, T, n_classes, input_size, dt, 26, False)
+    inputs, labels = get_batch_example(train_data, idxs, batch_size, T, args.labels, input_size, dt, 26, False)
 
     inputs = inputs.permute(1, 0, 2).to(args.device)
     labels = labels.to(args.device)
@@ -157,6 +159,7 @@ for epoch in range(args.n_epochs):
     if (epoch + 1) % test_period == 0:
         ### Mode testing
         with torch.no_grad():
+            binary_model.softmax = False
             n_batchs_test = 1000 // batch_size + (1 - (1000 % batch_size == 0))
             idx_avail_test = np.arange(1000)
             idxs_used_test_mode = []
@@ -177,7 +180,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_test_mode += list(idxs_test)
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mode]
 
-                inputs, labels = get_batch_example(test_data, idxs_test, batch_size, T, n_classes, input_size, dt, 26, False)
+                inputs, labels = get_batch_example(test_data, idxs_test, batch_size, T, args.labels, input_size, dt, 26, False)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
