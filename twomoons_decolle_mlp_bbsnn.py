@@ -36,7 +36,7 @@ if __name__ == "__main__":
     parser.add_argument('--n_epochs', type=int, default=3000)
     parser.add_argument('--lr', type=float, default=1e-1)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=5e-3)
+    parser.add_argument('--rho', type=float, default=5e-4)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--with_softmax', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
@@ -100,8 +100,8 @@ latent_model = deepcopy(binary_model)
 
 # specify loss function
 criterion = [torch.nn.SmoothL1Loss() for _ in range(binary_model.num_layers)]
-if binary_model.softmax:
-    criterion = [one_hot_crossentropy for _ in range(binary_model.num_layers)]
+# if binary_model.softmax:
+#     criterion = [one_hot_crossentropy for _ in range(binary_model.num_layers)]
 
 if binary_model.with_output_layer:
     criterion[-1] = one_hot_crossentropy

@@ -37,9 +37,9 @@ if __name__ == "__main__":
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=1000)
-    parser.add_argument('--lr', type=float, default=0.001)
+    parser.add_argument('--lr', type=float, default=0.1)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=1e-6)
+    parser.add_argument('--rho', type=float, default=1e-4)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
     parser.add_argument('--with_softmax', type=str, default='true')
@@ -157,13 +157,6 @@ for epoch in range(args.n_epochs):
         optimizer.step()
         optimizer.zero_grad()
 
-    with torch.no_grad():
-        # print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
-        # print(torch.sum(labels, dim=-1).argmax(dim=1))
-        acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / batch_size
-        # backward pass: compute gradient of the loss with respect to model parameters
-        print(acc)
-
 
     if (epoch + 1) % (args.n_epochs//5) == 0:
         torch.save(binary_model.state_dict(), results_path + '/binary_model_weights_%d.pt' % (1 + epoch))
@@ -196,7 +189,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_test_mode += list(idxs_test)
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mode]
 
-                inputs, _ = get_batch_example(train_data, idxs_test, batch_size_curr, T, args.labels_test, input_size, dt, 26, True)
+                inputs, _ = get_batch_example(test_data, idxs_test, batch_size_curr, T, args.labels_test, input_size, dt, 26, True)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
@@ -277,7 +270,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_test_mean += list(idxs_test)
                 idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mean]
 
-                inputs, _ = get_batch_example(train_data, idxs_test, batch_size_curr, T, args.labels_test, input_size, dt, 26, True)
+                inputs, _ = get_batch_example(test_data, idxs_test, batch_size_curr, T, args.labels_test, input_size, dt, 26, True)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
                 predictions_batch = torch.zeros([batch_size_curr, 10, T - burnin, len(args.labels_train)])
 
