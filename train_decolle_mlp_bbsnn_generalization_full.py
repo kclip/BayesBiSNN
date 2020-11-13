@@ -203,7 +203,7 @@ for epoch in range(args.n_epochs):
                     for l, ro_h in enumerate(readout_hist):
                         readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
-                predictions_mode = torch.cat((predictions_mode, readout_hist[-1]))
+                predictions_mode = torch.cat((predictions_mode, readout_hist[-1].permute(1, 0, 2)))
 
             np.save(os.path.join(results_path, 'test_predictions_latest_mode'), predictions_mode.numpy())
             np.save(os.path.join(results_path, 'idxs_test_mode'), np.array(idxs_used_test_mode))
@@ -242,7 +242,7 @@ for epoch in range(args.n_epochs):
                     for l, ro_h in enumerate(readout_hist):
                         readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
-                preds = torch.cat((preds, readout_hist[-1].type_as(preds)))
+                preds = torch.cat((preds, readout_hist[-1].type_as(preds).permute(1, 0, 2)))
 
             np.save(os.path.join(results_path, 'train_predictions_latest_mode'), preds.numpy())
             np.save(os.path.join(results_path, 'idxs_train_mode'), np.array(idxs_used_train_mode))

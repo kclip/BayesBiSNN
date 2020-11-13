@@ -34,26 +34,32 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train probabilistic multivalued SNNs using Pytorch')
 
     # Training arguments
-    parser.add_argument('--home', default='/home')
+    parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
+    parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=10000)
     parser.add_argument('--lr', type=float, default=1000)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
+    parser.add_argument('--with_softmax', type=str, default='true')
 
     args = parser.parse_args()
 
 
-pre = args.home + r'/results/'
-prelist = np.sort(fnmatch.filter(os.listdir(pre), '[0-9][0-9][0-9]__*'))
+prelist = np.sort(fnmatch.filter(os.listdir(args.results), '[0-9][0-9][0-9]__*'))
 if len(prelist) == 0:
     expDirN = "001"
 else:
     expDirN = "%03d" % (int((prelist[len(prelist) - 1].split("__"))[0]) + 1)
 
-results_path = time.strftime(pre + expDirN + "__" + "%d-%m-%Y", time.localtime()) + '_' + 'mnist_dvs_stlr' + r'_%d_epochs' % args.n_epochs
+results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
+                             time.localtime()) + '_' + 'two_moons_mlp_bbsnnrp' + r'_%d_epochs' % args.n_epochs\
+               + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p + '_rho_%f' % args.rho + '_lr_%f' % args.lr + '_softmax_' + args.with_softmax
 os.makedirs(results_path)
 
+results_path = time.strftime(pre + expDirN + "__" + "%d-%m-%Y", time.localtime()) + '_' + 'mnist_dvs_stlr' + r'_%d_epochs' % args.n_epochs + '_softmax_' + args.with_softmax
 
+
+args.with_softmax = str2bool(args.with_softmax)
 args.disable_cuda = str2bool(args.disable_cuda)
 if not args.disable_cuda and torch.cuda.is_available():
     args.device = torch.device('cuda')
@@ -80,6 +86,7 @@ binary_model = LIFMLP(input_size,
                       n_classes,
                       n_neurons=[512, 256],
                       with_output_layer=False,
+                      softmax=args.with_softmax
                       ).to(args.device)
 
 latent_model = deepcopy(binary_model).to(args.device)
@@ -99,6 +106,7 @@ optimizer.step()  # binarize weights
 
 
 for epoch in range(args.n_epochs):
+    binary_model.softmax = args.with_softmax
     torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
 
     loss = 0
@@ -140,6 +148,7 @@ for epoch in range(args.n_epochs):
     if (epoch + 1) % 100 == 0:
         torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')
         with torch.no_grad():
+            binary_model.softmax = False
             n_batchs_test = 1000 // batch_size
             idx_avail = [i for i in range(1000)]
             labels_test = torch.LongTensor()

@@ -35,6 +35,7 @@ if __name__ == "__main__":
     parser.add_argument('--n_epochs', type=int, default=3000)
     parser.add_argument('--lr', type=float, default=1e-1)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
+    parser.add_argument('--with_softmax', type=str, default='true')
 
     args = parser.parse_args()
 
@@ -48,6 +49,7 @@ results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
                              time.localtime()) + '_' + 'mnist_dvs_stlr' + r'_%d_epochs' % args.n_epochs + '_lr_%f' % args.lr
 os.makedirs(results_path)
 
+args.with_softmax = str2bool(args.with_softmax)
 args.disable_cuda = str2bool(args.disable_cuda)
 if not args.disable_cuda and torch.cuda.is_available():
     args.device = torch.device('cuda')
@@ -59,10 +61,10 @@ args.train_accs[args.n_epochs] = []
 
 T = 100
 n_samples_train = 200
-n_samples_per_dim_test = 50
+n_samples_per_dim_test = 80
 n_samples_test = n_samples_per_dim_test ** 2
 n_neurons_per_dim = 10
-test_period = 500
+test_period = 1500
 
 x_bin_train, y_bin_train, x_train, y_train = make_moon_dataset_bin_pop_coding(n_samples_train, T, 0.1, n_neurons_per_dim)
 np.save(os.path.join(results_path, 'x_train'), x_train)
@@ -84,7 +86,8 @@ binary_model = LIFMLP(input_size,
                       2,
                       n_neurons=[64, 64],
                       with_output_layer=False,
-                      with_bias=False
+                      with_bias=False,
+                      softmax=args.with_softmax
                       ).to(args.device)
 
 latent_model = deepcopy(binary_model)
@@ -105,6 +108,7 @@ optimizer = BiSGD(binary_model.parameters(), latent_model.parameters(), lr=args.
 binary_model.init_parameters()
 
 for epoch in range(args.n_epochs):
+    binary_model.softmax = args.with_softmax
     loss = 0
 
     n_batchs = n_samples_train // batch_size + (1 - (n_samples_train % batch_size == 0))
@@ -166,6 +170,7 @@ for epoch in range(args.n_epochs):
     print(acc)
 
     if (epoch + 1) % test_period == 0:
+        binary_model.softmax = False
         ### Mode testing
         with torch.no_grad():
             n_batchs_test = n_samples_test // batch_size + (1 - (n_samples_test % batch_size == 0))
