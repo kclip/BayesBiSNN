@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/utils/test_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn_generalization_full.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -45,8 +42,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="73" column="15" selection-start-line="73" selection-start-column="15" selection-end-line="73" selection-end-column="15" />
+            <state relative-caret-position="611">
+              <caret line="222" column="100" selection-start-line="222" selection-start-column="100" selection-end-line="222" selection-end-column="100" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -408,12 +405,12 @@
       <workItem from="1604608110070" duration="11155000" />
       <workItem from="1604936528197" duration="8821000" />
       <workItem from="1605083173881" duration="55743000" />
-      <workItem from="1605516936725" duration="3491000" />
+      <workItem from="1605516936725" duration="3740000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="733287000" />
+    <option name="totallyTimeSpent" value="733536000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -797,8 +794,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="73" column="15" selection-start-line="73" selection-start-column="15" selection-end-line="73" selection-end-column="15" />
+        <state relative-caret-position="611">
+          <caret line="222" column="100" selection-start-line="222" selection-start-column="100" selection-end-line="222" selection-end-column="100" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>

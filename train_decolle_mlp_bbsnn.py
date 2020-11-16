@@ -220,7 +220,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_train_mode += list(idxs)
                 idx_avail = [i for i in idx_avail if i not in idxs_used_train_mode]
 
-                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, n_classes, input_size, dt, 26, polarity)
+                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, args.labels, input_size, dt, 26, polarity)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
@@ -302,7 +302,7 @@ for epoch in range(args.n_epochs):
                 idxs_used_train_mean += list(idxs)
                 idx_avail = [i for i in idx_avail if i not in idxs_used_train_mean]
 
-                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, n_classes, input_size, dt, 26, polarity)
+                inputs, labels = get_batch_example(train_data, idxs, batch_size_curr, T, args.labels, input_size, dt, 26, polarity)
                 inputs = inputs.permute(1, 0, 2).to(args.device)
                 predictions_batch = torch.zeros([batch_size_curr, 10, T - burnin, 2])
 
