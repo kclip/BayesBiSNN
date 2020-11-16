@@ -36,7 +36,7 @@ if __name__ == "__main__":
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=1000)
-    parser.add_argument('--lr', type=float, default=1e4)
+    parser.add_argument('--lr', type=float, default=5e4)
     parser.add_argument('--temperature', type=float, default=0.1)
     parser.add_argument('--rho', type=float, default=1e-8)
     parser.add_argument('--prior_p', type=float, default=0.5)
@@ -139,7 +139,7 @@ for epoch in range(args.n_epochs):
 
 
     print('Epoch %d/%d' % (epoch, args.n_epochs))
-    for t in tqdm(range(burnin, T)):
+    for t in range(burnin, T):
         # forward pass: compute new pseudo-binary weights
         optimizer.update_concrete_weights()
         # print(list(binary_model.parameters()))
@@ -187,7 +187,7 @@ for epoch in range(args.n_epochs):
             print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
             predictions_mode = torch.FloatTensor()
 
-            for i in tqdm(range(n_batchs_test)):
+            for i in range(n_batchs_test):
                 if (i == (n_batchs_test - 1)) & (n_samples_test % batch_size != 0):
                     batch_size_curr = n_samples_test % batch_size
                 else:
@@ -223,7 +223,7 @@ for epoch in range(args.n_epochs):
             preds = torch.FloatTensor()
 
             print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
-            for i in tqdm(range(n_batchs)):
+            for i in range(n_batchs):
                 if (i == (n_batchs - 1)) & (n_samples_train % batch_size != 0):
                     batch_size_curr = n_samples_train % batch_size
                 else:
@@ -262,7 +262,7 @@ for epoch in range(args.n_epochs):
             print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
             predictions_mean = torch.FloatTensor()
 
-            for i in tqdm(range(n_batchs_test)):
+            for i in range(n_batchs_test):
                 if (i == (n_batchs_test - 1)) & (n_samples_test % batch_size != 0):
                     batch_size_curr = n_samples_test % batch_size
                 else:
@@ -304,7 +304,7 @@ for epoch in range(args.n_epochs):
 
             print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
 
-            for i in tqdm(range(n_batchs)):
+            for i in range(n_batchs):
                 if (i == (n_batchs - 1)) & (n_samples_train % batch_size != 0):
                     batch_size_curr = n_samples_train % batch_size
                 else:

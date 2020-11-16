@@ -135,7 +135,7 @@ for epoch in range(args.n_epochs):
 
 
     print('Epoch %d/%d' % (epoch, args.n_epochs))
-    for t in tqdm(range(burnin, T)):
+    for t in range(burnin, T):
         # forward pass: compute new pseudo-binary weights
         optimizer.update_concrete_weights()
         # print(list(binary_model.parameters()))
@@ -176,7 +176,7 @@ for epoch in range(args.n_epochs):
             print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
             predictions_mode = torch.FloatTensor()
 
-            for i in tqdm(range(n_batchs_test)):
+            for i in range(n_batchs_test):
                 if (i == (n_batchs_test - 1)) & (n_samples_test % batch_size != 0):
                     batch_size_curr = n_samples_test % batch_size
                 else:
@@ -212,7 +212,7 @@ for epoch in range(args.n_epochs):
             preds = torch.FloatTensor()
 
             print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
-            for i in tqdm(range(n_batchs)):
+            for i in range(n_batchs):
                 if (i == (n_batchs - 1)) & (n_samples_train % batch_size != 0):
                     batch_size_curr = n_samples_train % batch_size
                 else:
@@ -251,7 +251,7 @@ for epoch in range(args.n_epochs):
             print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
             predictions_mean = torch.FloatTensor()
 
-            for i in tqdm(range(n_batchs_test)):
+            for i in range(n_batchs_test):
                 if (i == (n_batchs_test - 1)) & (n_samples_test % batch_size != 0):
                     batch_size_curr = n_samples_test % batch_size
                 else:
@@ -294,7 +294,7 @@ for epoch in range(args.n_epochs):
 
             print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
 
-            for i in tqdm(range(n_batchs)):
+            for i in range(n_batchs):
                 if (i == (n_batchs - 1)) & (n_samples_train % batch_size != 0):
                     batch_size_curr = n_samples_train % batch_size
                 else:
