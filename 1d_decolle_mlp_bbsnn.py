@@ -64,7 +64,7 @@ args.train_accs[args.n_epochs] = []
 
 
 T = 100
-n_neurons_per_dim = 10
+n_neurons_per_dim = 20
 test_period = 100
 step = 100
 

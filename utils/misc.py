@@ -116,8 +116,8 @@ def gen_1d_signal(T=100, step=100, n_neuron_per_dim=10, res=100):
 
     ### Population coding
     # Centers of the cosine basis
-    c_intervals = 2 * (res / max(n_neuron_per_dim - 1, 1))
-    c = np.arange(0, res + c_intervals, c_intervals / 2)
+    c_intervals = 3 * (res / max(n_neuron_per_dim - 1, 1))
+    c = np.arange(0, res + c_intervals, c_intervals / 3)
 
     x_train_bin = torch.zeros([len(x_train), T, n_neuron_per_dim])
     y_train_bin = torch.zeros([len(y_train), T, n_neuron_per_dim])
