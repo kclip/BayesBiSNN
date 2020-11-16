@@ -35,7 +35,7 @@ if __name__ == "__main__":
     parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--n_epochs', type=int, default=1000)
+    parser.add_argument('--n_epochs', type=int, default=10000)
     parser.add_argument('--lr', type=float, default=1e4)
     parser.add_argument('--temperature', type=float, default=1)
     parser.add_argument('--rho', type=float, default=1e-7)
@@ -66,7 +66,7 @@ else:
 args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
 args.train_accs[args.n_epochs] = []
 
-test_period = 10
+test_period = 2000
 batch_size = 32
 sample_length = 2000  # length of samples during training in ms
 dt = 5000  # us
@@ -156,6 +156,8 @@ for epoch in range(args.n_epochs):
         # print(torch.sum(readout_hist[-1], dim=0).argmax(dim=1))
         # print(torch.sum(labels, dim=-1).argmax(dim=1))
         acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / batch_size
+        torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')
+        torch.save(latent_model.state_dict(), results_path + '/latent_model_weights.pt')
         # backward pass: compute gradient of the loss with respect to model parameters
         print(acc)
 
