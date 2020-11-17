@@ -201,5 +201,6 @@ def str2bool(v):
 def get_acc(preds, labels, batch_size):
     with torch.no_grad():
         acc = torch.sum(preds == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / batch_size
-        print(acc)
+
+        return acc
 

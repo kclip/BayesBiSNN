@@ -153,22 +153,8 @@ for epoch in range(args.n_epochs):
         np.save(os.path.join(results_path, 'test_predictions_latest_mode'), predictions_mode_test.numpy())
         np.save(os.path.join(results_path, 'idxs_test_mode'), np.array(idxs_test_mode))
 
-        print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
-        predictions_mode_train, idxs_train_mode = mode_testing(binary_model, optimizer, burnin, n_examples_train, args.batch_size, x_bin_train, T, args.device)
-        np.save(os.path.join(results_path, 'train_predictions_latest_mode'), predictions_mode_train.numpy())
-        np.save(os.path.join(results_path, 'idxs_train_mode'), np.array(idxs_train_mode))
-
-
         ### Mean testing
         print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
         predictions_mean_test, idxs_test_mean = mean_testing(binary_model, optimizer, burnin, n_samples, 2, n_examples_test, args.batch_size, x_bin_test, T, args.device)
         np.save(os.path.join(results_path, 'test_predictions_latest_mean'), predictions_mean_test.numpy())
         np.save(os.path.join(results_path, 'idxs_test_mean'), np.array(idxs_test_mean))
-
-        print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
-        predictions_mean_train, idxs_train_mean = mean_testing(binary_model, optimizer, burnin, n_samples, 2, n_examples_train, args.batch_size, x_bin_train, T, args.device)
-        np.save(os.path.join(results_path, 'train_predictions_latest_mean'), predictions_mean_train.numpy())
-        np.save(os.path.join(results_path, 'idxs_train_mean'), np.array(idxs_train_mean))
-
-
-

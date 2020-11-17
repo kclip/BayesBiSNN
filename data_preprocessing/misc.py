@@ -34,6 +34,7 @@ def expand_targets(targets, T=500, burnin=0):
 
 
 def make_output_from_labels(labels, T, classes):
+    print(labels, classes)
     out = torch.zeros([len(labels), len(classes), T])
     mapping = {classes[i]: i for i in range(len(classes))}
     out[[i for i in range(len(labels))], [mapping[lbl] for lbl in labels], :] = 1

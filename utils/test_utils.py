@@ -23,7 +23,7 @@ def mode_testing_dataset(binary_model, optimizer, burnin, n_examples, batch_size
             idxs_used += list(idxs)
             idx_avail = [i for i in idx_avail if i not in idxs_used]
 
-            inputs, labels = get_batch_example(datagroup, idxs, batch_size_curr, T, labels, input_size, dt, x_max, polarity)
+            inputs, _ = get_batch_example(datagroup, idxs, batch_size_curr, T, labels, input_size, dt, x_max, polarity)
             inputs = inputs.transpose(0, 1).to(device)
 
             binary_model.init(inputs, burnin=burnin)
@@ -59,7 +59,7 @@ def mean_testing_dataset(binary_model, optimizer, burnin, n_samples, n_outputs, 
             idxs_used += list(idxs)
             idx_avail = [i for i in idx_avail if i not in idxs_used]
 
-            inputs, labels = get_batch_example(datagroup, idxs, batch_size_curr, T, labels, input_size, dt, x_max, polarity)
+            inputs, _ = get_batch_example(datagroup, idxs, batch_size_curr, T, labels, input_size, dt, x_max, polarity)
             inputs = inputs.transpose(0, 1).to(device)
 
             binary_model.init(inputs, burnin=burnin)
