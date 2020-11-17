@@ -31,6 +31,7 @@ if __name__ == "__main__":
     parser.add_argument('--n_epochs', type=int, default=2000)
     parser.add_argument('--test_period', type=int, default=1000)
     parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--n_samples', type=int, default=10)
 
     parser.add_argument('--lr', type=float, default=5e4)
     parser.add_argument('--temperature', type=float, default=0.1)
