@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import argparse
 
 def get_output_shape(input_shape, kernel_size=[3,3], stride = [1,1], padding=[1,1], dilation=[0,0]):
     if not hasattr(kernel_size, '__len__'):
@@ -116,8 +117,8 @@ def gen_1d_signal(T=100, step=100, n_neuron_per_dim=10, res=100):
 
     ### Population coding
     # Centers of the cosine basis
-    c_intervals = 3 * (res / max(n_neuron_per_dim - 1, 1))
-    c = np.arange(0, res + c_intervals, c_intervals / 3)
+    c_intervals = 4 * (res / max(n_neuron_per_dim - 1, 1))
+    c = np.arange(0, res + c_intervals, c_intervals / 4)
 
     x_train_bin = torch.zeros([len(x_train), T, n_neuron_per_dim])
     y_train_bin = torch.zeros([len(y_train), T, n_neuron_per_dim])
@@ -140,3 +141,65 @@ def gen_1d_signal(T=100, step=100, n_neuron_per_dim=10, res=100):
         y_test_bin[i] = torch.bernoulli(torch.tensor(rates_y).unsqueeze(0).repeat(T, 1))
 
     return x_train, y_train, x_test, y_test, x_train_bin, y_train_bin, x_test_bin, y_test_bin
+
+
+def gen_1d_signal_realtarget(T=100, step=100, n_neuron_per_dim=10, res=100):
+    x0 = np.arange(-1, 0, 1 / step)
+    x1 = np.arange(1.5, 2.5, 1 / step)
+    x2 = np.arange(4, 5, 1 / step)
+    x_train = np.concatenate([x0, x1, x2])
+
+    x_test = np.arange(-1, 5, 1 / step)
+
+    def function(x):
+        return x - 0.1 * x ** 2 + np.cos(np.pi * x / 2)
+
+    y_train = function(x_train)
+    y_test = function(x_test)
+
+    noise_std = 0.25
+    noise_train = np.random.randn(*x_train.shape) * noise_std
+    y_train = y_train + noise_train
+    y_train = (y_train - np.min(y_train)) / (np.max(y_train) - np.min(y_train))
+    x_train = (x_train - np.min(x_train)) / (np.max(x_train) - np.min(x_train))
+
+    y_test = (y_test - np.min(y_test)) / (np.max(y_test) - np.min(y_test))
+    x_test = (x_test - np.min(x_test)) / (np.max(x_test) - np.min(x_test))
+
+    ### Population coding
+    # Centers of the cosine basis
+    c_intervals = 4 * (res / max(n_neuron_per_dim - 1, 1))
+    c = np.arange(0, res + c_intervals, c_intervals / 4)
+
+    x_train_bin = torch.zeros([len(x_train), T, n_neuron_per_dim])
+
+    for i, sample in enumerate(zip(x_train, y_train)):
+        rates_x = np.array([0.5 + np.cos(max(-np.pi, min(np.pi, np.pi * (sample[0] * res - c[k]) / c_intervals))) / 2 for k in range(n_neuron_per_dim)]).T
+        x_train_bin[i] = torch.bernoulli(torch.tensor(rates_x).unsqueeze(0).repeat(T, 1))
+
+    x_test_bin = torch.zeros([len(x_test), T, n_neuron_per_dim])
+
+    for i, sample in enumerate(zip(x_test, y_test)):
+        rates_x = np.array([0.5 + np.cos(max(-np.pi, min(np.pi, np.pi * (sample[0] * res - c[k]) / c_intervals))) / 2 for k in range(n_neuron_per_dim)]).T
+        x_test_bin[i] = torch.bernoulli(torch.tensor(rates_x).unsqueeze(0).repeat(T, 1))
+
+    return x_train, y_train, x_test, y_test, x_train_bin, x_test_bin
+
+
+
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
+def get_acc(preds, labels, batch_size):
+    with torch.no_grad():
+        acc = torch.sum(preds == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / batch_size
+        print(acc)
+

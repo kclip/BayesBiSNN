@@ -13,17 +13,9 @@ import pickle
 import fnmatch
 import time
 from utils.misc import gen_1d_signal
-
-def str2bool(v):
-    if isinstance(v, bool):
-        return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1'):
-        return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
-        return False
-    else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
-
+from utils.test_utils import mean_testing, mode_testing
+from utils.train_utils import train_on_example_bbsnn
+from utils.misc import str2bool, get_acc
 
 if __name__ == "__main__":
     # setting the hyper parameters
@@ -34,9 +26,12 @@ if __name__ == "__main__":
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=3000)
+    parser.add_argument('--test_period', type=int, default=1000)
+    parser.add_argument('--batch_size', type=int, default=32)
+
     parser.add_argument('--lr', type=float, default=1e-1)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=1e-5)
+    parser.add_argument('--rho', type=float, default=1e-4)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
@@ -63,21 +58,21 @@ args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
 args.train_accs[args.n_epochs] = []
 
 
-T = 100
+T = 400
 n_neurons_per_dim = 20
-test_period = 100
 step = 100
 
 x_train, y_train, x_test, y_test, x_bin_train, y_bin_train, x_bin_test, y_bin_test = gen_1d_signal(T=T, step=step, n_neuron_per_dim=n_neurons_per_dim)
-n_samples_train = len(x_train)
-n_samples_test = len(x_test)
+n_examples_train = len(x_train)
+n_examples_test = len(x_test)
+n_samples = 10
+
 np.save(os.path.join(results_path, 'x_train'), x_train)
 np.save(os.path.join(results_path, 'y_train'), y_train)
 np.save(os.path.join(results_path, 'x_test'), x_test)
 np.save(os.path.join(results_path, 'y_test'), y_test)
 
 
-batch_size = 32
 input_size = [x_bin_train.shape[-1]]
 burnin = 10
 
@@ -113,8 +108,8 @@ print([layer.scale for layer in binary_model.LIF_layers])
 for epoch in range(args.n_epochs):
     loss = 0
 
-    n_batchs = n_samples_train // batch_size + (1 - (n_samples_train % batch_size == 0))
-    idx_avail = np.arange(n_samples_train)
+    n_batchs = n_examples_train // args.batch_size + (1 - (n_examples_train % args.batch_size == 0))
+    idx_avail = np.arange(n_examples_train)
     idxs_used = []
 
     print('Epoch %d/%d' % (epoch + 1, args.n_epochs))
@@ -122,43 +117,26 @@ for epoch in range(args.n_epochs):
     true_labels = torch.FloatTensor()
 
     for i in tqdm(range(n_batchs)):
-        if (i == (n_batchs - 1)) & (n_samples_train % batch_size != 0):
-            batch_size_curr = n_samples_train % batch_size
+        if (i == (n_batchs - 1)) & (n_examples_train % args.batch_size != 0):
+            batch_size_curr = n_examples_train % args.batch_size
         else:
-            batch_size_curr = batch_size
+            batch_size_curr = args.batch_size
 
 
         idxs = np.random.choice(idx_avail, [batch_size_curr], replace=False)
         idxs_used += list(idxs)
         idx_avail = [i for i in idx_avail if i not in idxs_used]
 
-
         inputs = x_bin_train[idxs].permute(1, 0, 2).to(args.device)
         labels = y_bin_train[idxs].permute(0, 2, 1).to(args.device)
 
         optimizer.update_concrete_weights()
-
-        # print([Counter(w.detach().numpy().flatten()) for w in binary_model.parameters()])
         binary_model.init(inputs, burnin=burnin)
 
-        readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
+        binary_model.init(inputs, burnin=burnin)
 
-        for t in range(burnin, T):
-            # forward pass: compute new pseudo-binary weights
-            optimizer.update_concrete_weights()
-            # print(list(binary_model.parameters()))
+        readout_hist = train_on_example_bbsnn(binary_model, optimizer, decolle_loss, inputs, labels, burnin, T)
 
-            # forward pass: compute predicted outputs by passing inputs to the model
-            s, r, u = binary_model(inputs[t])
-
-            for l, ro_h in enumerate(readout_hist):
-                readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
-
-            # calculate the loss
-            loss = decolle_loss(s, r, u, target=labels[:, :, t])
-            loss.backward()
-            optimizer.step()
-            optimizer.zero_grad()
 
     torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')
     torch.save(latent_model.state_dict(), results_path + '/latent_model_weights.pt')
@@ -167,94 +145,30 @@ for epoch in range(args.n_epochs):
         torch.save(binary_model.state_dict(), results_path + '/binary_model_weights_%d.pt' % (1 + epoch))
         torch.save(latent_model.state_dict(), results_path + '/latent_model_weights_%d.pt' % (1 + epoch))
 
-    if (epoch + 1) % test_period == 0:
-        ### Mode testing
-        with torch.no_grad():
-            # Compute weights
-            optimizer.get_concrete_weights_mode()
+    if (epoch + 1) % args.test_period == 0:
+        binary_model.softmax = False
 
-            n_batchs_test = n_samples_test // batch_size + (1 - (n_samples_test % batch_size == 0))
-            idx_avail_test = np.arange(n_samples_test)
-            idxs_used_test_mode = []
+        print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
+        predictions_mode_test, idxs_test_mode = mode_testing(binary_model, optimizer, burnin, n_examples_test, args.batch_size, x_bin_test, T, args.device)
+        np.save(os.path.join(results_path, 'test_predictions_latest_mode'), predictions_mode_test.numpy())
+        np.save(os.path.join(results_path, 'idxs_test_mode'), np.array(idxs_test_mode))
 
-            print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
-            predictions_mode = torch.FloatTensor()
-
-            for i in tqdm(range(n_batchs_test)):
-                if (i == (n_batchs_test - 1)) & (n_samples_test % batch_size != 0):
-                    batch_size_curr = n_samples_test % batch_size
-                else:
-                    batch_size_curr = batch_size
-
-                idxs_test = np.random.choice(idx_avail_test, [batch_size_curr], replace=False)
-                idxs_used_test_mode += list(idxs_test)
-                idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mode]
-
-                inputs = x_bin_test[idxs_test].permute(1, 0, 2).to(args.device)
-
-                binary_model.init(inputs, burnin=burnin)
-
-                readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
-
-                for t in range(burnin, T):
-                    # forward pass: compute predicted outputs by passing inputs to the model
-                    s, r, u = binary_model(inputs[t])
-
-                    for l, ro_h in enumerate(readout_hist):
-                        readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
-
-                predictions_mode = torch.cat((predictions_mode, torch.sum(readout_hist[-1], dim=0)))
-
-            np.save(os.path.join(results_path, 'test_predictions_latest_mode'), predictions_mode.numpy())
-            np.save(os.path.join(results_path, 'idxs_test_mode'), np.array(idxs_used_test_mode))
+        print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
+        predictions_mode_train, idxs_train_mode = mode_testing(binary_model, optimizer, burnin, n_examples_train, args.batch_size, x_bin_train, T, args.device)
+        np.save(os.path.join(results_path, 'train_predictions_latest_mode'), predictions_mode_train.numpy())
+        np.save(os.path.join(results_path, 'idxs_train_mode'), np.array(idxs_train_mode))
 
 
-            n_batchs = n_samples_train // batch_size + (1 - (n_samples_train % batch_size == 0))
-            idx_avail = np.arange(n_samples_train)
-            idxs_used_train_mode = []
-            preds = torch.FloatTensor()
+        ### Mean testing
+        print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
+        predictions_mean_test, idxs_test_mean = mean_testing(binary_model, optimizer, burnin, n_samples, 2, n_examples_test, args.batch_size, x_bin_test, T, args.device)
+        np.save(os.path.join(results_path, 'test_predictions_latest_mean'), predictions_mean_test.numpy())
+        np.save(os.path.join(results_path, 'idxs_test_mean'), np.array(idxs_test_mean))
 
-
-            ### Mean testing
-            n_batchs_test = n_samples_test // batch_size + (1 - (n_samples_test % batch_size == 0))
-            idx_avail_test = np.arange(n_samples_test)
-            idxs_used_test_mean = []
-
-            print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
-            predictions_mean = torch.FloatTensor()
-
-            for i in tqdm(range(n_batchs_test)):
-                if (i == (n_batchs_test - 1)) & (n_samples_test % batch_size != 0):
-                    batch_size_curr = n_samples_test % batch_size
-                else:
-                    batch_size_curr = batch_size
-
-                idxs_test = np.random.choice(idx_avail_test, [batch_size_curr], replace=False)
-                idxs_used_test_mean += list(idxs_test)
-                idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test_mean]
-
-                inputs = x_bin_test[idxs_test].permute(1, 0, 2).to(args.device)
-                predictions_batch = torch.zeros([batch_size_curr, 10, T - burnin, n_neurons_per_dim])
-
-                for j in range(10):
-                    optimizer.update_concrete_weights(test=True)
-
-                    binary_model.init(inputs, burnin=burnin)
-
-                    readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
-
-                    for t in range(burnin, T):
-                        # forward pass: compute predicted outputs by passing inputs to the model
-                        s, r, u = binary_model(inputs[t])
-
-                        for l, ro_h in enumerate(readout_hist):
-                            readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
-
-                    predictions_batch[:, j] = readout_hist[-1].permute(1, 0, 2)
-                predictions_mean = torch.cat((predictions_mean, predictions_batch))
-
-            np.save(os.path.join(results_path, 'test_predictions_latest_mean'), predictions_mean.numpy())
-            np.save(os.path.join(results_path, 'idxs_test_mean'), np.array(idxs_used_test_mean))
+        print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
+        predictions_mean_train, idxs_train_mean = mean_testing(binary_model, optimizer, burnin, n_samples, 2, n_examples_train, args.batch_size, x_bin_train, T, args.device)
+        np.save(os.path.join(results_path, 'train_predictions_latest_mean'), predictions_mean_train.numpy())
+        np.save(os.path.join(results_path, 'idxs_train_mean'), np.array(idxs_train_mean))
 
 
 
