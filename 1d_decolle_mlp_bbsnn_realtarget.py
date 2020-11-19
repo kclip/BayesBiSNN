@@ -58,7 +58,7 @@ args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
 args.train_accs[args.n_epochs] = []
 
 
-T = 100
+T = 200
 n_neurons_per_dim = 20
 step = 100
 

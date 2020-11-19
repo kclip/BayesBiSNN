@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=3000)
-    parser.add_argument('--test_period', type=int, default=1000)
+    parser.add_argument('--test_period', type=int, default=3000)
     parser.add_argument('--batch_size', type=int, default=32)
 
     parser.add_argument('--lr', type=float, default=1e-1)
@@ -64,7 +64,7 @@ args.train_accs[args.n_epochs] = []
 
 T = 100
 n_examples_train = 200
-n_samples_per_dim_test = 50
+n_samples_per_dim_test = 200
 n_examples_test = n_samples_per_dim_test ** 2
 n_neurons_per_dim = 10
 n_samples = 10
@@ -137,9 +137,9 @@ for epoch in range(args.n_epochs):
 
         with torch.no_grad():
             preds = torch.cat((preds, torch.sum(readout_hist[-1].type_as(preds), dim=0)))
-            true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
+            true_labels = torch.cat((true_labels, labels.cpu().type_as(true_labels)))
 
-    acc = get_acc(preds, true_labels, args.batch_size)
+    acc = get_acc(preds.argmax(dim=-1), true_labels, len(preds))
     print(acc)
 
     torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')

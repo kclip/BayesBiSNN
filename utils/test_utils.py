@@ -164,6 +164,7 @@ def mean_testing(binary_model, optimizer, burnin, n_samples, n_outputs, n_exampl
                     for l, ro_h in enumerate(readout_hist):
                         readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
+                print(predictions_batch.shape, readout_hist[-1].transpose(0, 1).shape)
                 predictions_batch[:, j] = readout_hist[-1].transpose(0, 1)
 
             predictions = torch.cat((predictions, predictions_batch))

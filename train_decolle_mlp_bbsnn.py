@@ -105,6 +105,11 @@ optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), l
 binary_model.init_parameters()
 
 for epoch in range(args.n_epochs):
+    if epoch % (args.n_epochs // 2) == 0:
+        args.lr /= 2
+        optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, rho=args.rho,
+                                 device=args.device)
+
     binary_model.softmax = args.with_softmax
     loss = 0
 
