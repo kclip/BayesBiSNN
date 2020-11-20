@@ -78,7 +78,7 @@ burnin = 10
 
 binary_model = LIFMLP(input_size,
                       1,
-                      n_neurons=[64, 64],
+                      n_neurons=[128, 128],
                       with_output_layer=True,
                       with_bias=False,
                       prior_p=args.prior_p,
