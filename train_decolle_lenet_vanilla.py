@@ -88,15 +88,13 @@ model = LenetLIF(input_size,
                  dropout=[0.],
                  num_conv_layers=3,
                  num_mlp_layers=0,
-                 with_bias=True,
+                 with_bias=False,
                  with_output_layer=False,
                  scaling=True).to(args.device)
 
 
 # specify loss function
 criterion = [torch.nn.SmoothL1Loss() for _ in range(model.num_layers)]
-# criterion = [one_hot_crossentropy for _ in range(binary_model.num_layers)]
-
 if model.with_output_layer:
     criterion[-1] = one_hot_crossentropy
 
