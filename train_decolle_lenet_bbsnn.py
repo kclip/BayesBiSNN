@@ -109,6 +109,8 @@ optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), l
 
 binary_model.init_parameters()
 
+print([layer.scale for layer in binary_model.LIF_layers])
+
 for epoch in range(args.n_epochs):
     binary_model.softmax = args.with_softmax
     loss = 0

@@ -104,6 +104,7 @@ optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), l
 
 binary_model.init_parameters()
 
+
 for epoch in range(args.n_epochs):
     if epoch % (args.n_epochs // 4) == 0:
         args.lr /= 2
