@@ -90,7 +90,8 @@ model = LenetLIF(input_size,
                  num_mlp_layers=0,
                  with_bias=False,
                  with_output_layer=False,
-                 scaling=True).to(args.device)
+                 scaling=True,
+                 softmax=True).to(args.device)
 
 
 # specify loss function
