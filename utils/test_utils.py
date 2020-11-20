@@ -41,7 +41,7 @@ def mode_testing_dataset(binary_model, optimizer, burnin, n_examples, batch_size
 
         return predictions, idxs_used
 
-def mean_testing_dataset(binary_model, optimizer, burnin, n_samples, n_outputs, n_examples, batch_size, datagroup, T, labels, input_size, dt, x_max, polarity, device):
+def mean_testing_dataset(binary_model, optimizer, burnin, n_samples, n_outputs, n_examples, batch_size, datagroup, T, labels, input_size, dt, x_max, polarity, device, output=-1):
     with torch.no_grad():
         n_batchs = n_examples // batch_size + (1 - (n_examples % batch_size == 0))
         idx_avail = np.arange(n_examples)
@@ -81,7 +81,7 @@ def mean_testing_dataset(binary_model, optimizer, burnin, n_samples, n_outputs, 
                     for l, ro_h in enumerate(readout_hist):
                         readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
-                predictions_batch[:, j] = readout_hist[-1].transpose(0, 1)
+                predictions_batch[:, j] = readout_hist[output].transpose(0, 1)
 
             predictions = torch.cat((predictions, predictions_batch))
 
