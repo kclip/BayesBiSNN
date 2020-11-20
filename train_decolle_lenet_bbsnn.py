@@ -82,7 +82,7 @@ test_data = dataset.root.test
 
 
 binary_model = LenetLIF(input_size,
-                        Nhid_conv=[64, 128, 128],
+                        Nhid_conv=[64, 128, 64],
                         Nhid_mlp=[],
                         out_channels=10,
                         kernel_size=[7],
