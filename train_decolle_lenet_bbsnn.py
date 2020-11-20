@@ -88,7 +88,7 @@ binary_model = LenetLIF(input_size,
                         kernel_size=[7],
                         stride=[1],
                         pool_size=[2, 1, 2],
-                        dropout=[0.5],
+                        dropout=[0.],
                         num_conv_layers=3,
                         num_mlp_layers=0,
                         with_bias=True,
@@ -130,8 +130,6 @@ for epoch in range(args.n_epochs):
     acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
     print(acc)
     acc = get_acc(torch.sum(readout_hist[-2], dim=0).argmax(dim=1), labels, args.batch_size)
-    print(acc)
-    acc = get_acc(torch.sum(readout_hist[-3], dim=0).argmax(dim=1), labels, args.batch_size)
     print(acc)
 
 

@@ -172,10 +172,10 @@ class LenetLIF(LIFNetwork):
             s_out.append(s_)
             if self.softmax:
                 r_ = torch.softmax(r_, dim=-1)
-            # print(r_)
+            print(r_)
             r_out.append(r_)
             u_out.append(u_p)
             inputs = s_.detach()
             i += 1
-
+        print('////////////////////////////////')
         return s_out, r_out, u_out

@@ -23,10 +23,9 @@ class BayesBiSNNRP(BiOptimizer):
                 scale = (1 - w * w + 1e-10) / group['temperature'] / (1 - mu * mu + 1e-10)
 
                 d_w = w.grad
-                print(w.grad.shape, torch.max(torch.abs(group['lr'] * (d_w * scale - group['rho'] * group['prior_wr']))),
-                      torch.max(torch.abs(self.param_groups[i]['params'][j])))
-                print(w.grad.shape, torch.max(d_w), torch.max(torch.abs(self.param_groups[i]['params'][j])))
-
+                # print(w.grad.shape, torch.max(torch.abs(group['lr'] * (d_w * scale - group['rho'] * group['prior_wr']))),
+                #       torch.max(torch.abs(self.param_groups[i]['params'][j])))
+                # print(w.grad.shape, torch.max(d_w), torch.max(torch.abs(self.param_groups[i]['params'][j])))
                 # print(group['prior_wr'])
                 self.param_groups[i]['params'][j].data = (1 - group['lr'] * group['rho']) * self.param_groups[i]['params'][j].data \
                                                          - group['lr'] * (d_w * scale - group['rho'] * group['prior_wr'])
