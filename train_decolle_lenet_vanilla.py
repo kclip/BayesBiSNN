@@ -138,7 +138,7 @@ for epoch in range(args.n_epochs):
         # calculate the loss
         loss = decolle_loss(s, r, u, target=labels[:, :, t])
 
-        print([torch.max(w.grad) for w in model.get_trainable_parameters() if w is not None])
+        print([torch.max(w.grad) for w in model.get_trainable_parameters() if w.grad is not None])
         print([torch.max(w) for w in model.get_trainable_parameters() if w is not None])
         loss.backward()
         optimizer.step()
