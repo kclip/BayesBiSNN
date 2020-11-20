@@ -3,7 +3,7 @@ import torch
 from data_preprocessing.load_data import get_batch_example
 from collections import Counter
 
-def mode_testing_dataset(binary_model, optimizer, burnin, n_examples, batch_size, datagroup, T, labels, input_size, dt, x_max, polarity, device):
+def mode_testing_dataset(binary_model, optimizer, burnin, n_examples, batch_size, datagroup, T, labels, input_size, dt, x_max, polarity, device, output=-1):
     with torch.no_grad():
         optimizer.get_concrete_weights_mode()
         # print([Counter(w.detach().numpy().flatten()) for w in binary_model.parameters()])
@@ -37,7 +37,7 @@ def mode_testing_dataset(binary_model, optimizer, burnin, n_examples, batch_size
                 for l, ro_h in enumerate(readout_hist):
                     readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
-            predictions = torch.cat((predictions, readout_hist[-1].transpose(0, 1)))
+            predictions = torch.cat((predictions, readout_hist[output].transpose(0, 1)))
 
         return predictions, idxs_used
 
