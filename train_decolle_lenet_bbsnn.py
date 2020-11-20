@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--n_samples', type=int, default=10)
 
-    parser.add_argument('--lr', type=float, default=5e4)
+    parser.add_argument('--lr', type=float, default=1000)
     parser.add_argument('--temperature', type=float, default=1)
     parser.add_argument('--rho', type=float, default=1e-7)
     parser.add_argument('--prior_p', type=float, default=0.5)
@@ -82,7 +82,7 @@ test_data = dataset.root.test
 
 
 binary_model = LenetLIF(input_size,
-                        Nhid_conv=[64, 128, 64],
+                        Nhid_conv=[64, 128, 128],
                         Nhid_mlp=[],
                         out_channels=10,
                         kernel_size=[7],
