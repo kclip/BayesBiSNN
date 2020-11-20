@@ -83,14 +83,14 @@ test_data = dataset.root.test
 
 binary_model = LenetLIF(input_size,
                         Nhid_conv=[64, 128, 128],
-                        Nhid_mlp=[],
+                        Nhid_mlp=[64],
                         out_channels=10,
                         kernel_size=[7],
                         stride=[1],
                         pool_size=[2, 1, 2],
                         dropout=[0.],
                         num_conv_layers=3,
-                        num_mlp_layers=0,
+                        num_mlp_layers=1,
                         with_bias=True,
                         with_output_layer=False,
                         softmax=args.with_softmax).to(args.device)
@@ -127,11 +127,7 @@ for epoch in range(args.n_epochs):
     binary_model.init(inputs, burnin=burnin)
 
     readout_hist = train_on_example_bbsnn(binary_model, optimizer, decolle_loss, inputs, labels, burnin, T)
-    acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
-    print(acc)
     acc = get_acc(torch.sum(readout_hist[-2], dim=0).argmax(dim=1), labels, args.batch_size)
-    print(acc)
-    acc = get_acc(torch.sum(readout_hist[-3], dim=0).argmax(dim=1), labels, args.batch_size)
     print(acc)
 
 
