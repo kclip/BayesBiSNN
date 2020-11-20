@@ -110,13 +110,14 @@ model.init_parameters()
 
 print(model.scales)
 print([layer.scale for layer in model.LIF_layers])
+args.labels = [i for i in range(10)]
 
 for epoch in range(args.n_epochs):
     loss = 0
 
     idxs = np.random.choice(np.arange(9000), [batch_size], replace=False)
 
-    inputs, labels = get_batch_example(train_data, idxs, batch_size, T, n_classes, input_size, dt, 26, True)
+    inputs, labels = get_batch_example(train_data, idxs, batch_size, T, args.labels, input_size, dt, 26, True)
 
     inputs = inputs.permute(1, 0, 2, 3, 4).to(args.device)
     labels = labels.to(args.device)
