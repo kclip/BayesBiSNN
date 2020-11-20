@@ -140,6 +140,7 @@ for epoch in range(args.n_epochs):
 
         print([torch.max(w.grad) for w in model.get_trainable_parameters() if w.grad is not None])
         print([torch.max(w) for w in model.get_trainable_parameters() if w is not None])
+        print('/////')
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
