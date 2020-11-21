@@ -33,9 +33,9 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--n_samples', type=int, default=10)
 
-    parser.add_argument('--lr', type=float, default=10000)
+    parser.add_argument('--lr', type=float, default=1000)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=1e-7)
+    parser.add_argument('--rho', type=float, default=1e-8)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--with_softmax', type=str, default='true')
     parser.add_argument('--polarity', type=str, default='true')
