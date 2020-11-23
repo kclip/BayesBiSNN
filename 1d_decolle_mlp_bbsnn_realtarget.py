@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=3000)
-    parser.add_argument('--test_period', type=int, default=1000)
+    parser.add_argument('--test_period', type=int, default=500)
     parser.add_argument('--batch_size', type=int, default=32)
 
     parser.add_argument('--lr', type=float, default=1e-1)
@@ -58,7 +58,7 @@ args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
 args.train_accs[args.n_epochs] = []
 
 
-T = 200
+T = 100
 n_neurons_per_dim = 20
 step = 100
 
@@ -78,8 +78,8 @@ burnin = 10
 
 binary_model = LIFMLP(input_size,
                       1,
-                      n_neurons=[128, 128],
-                      with_output_layer=True,
+                      n_neurons=[64, 64],
+                      with_output_layer=False,
                       with_bias=False,
                       prior_p=args.prior_p,
                       softmax=False

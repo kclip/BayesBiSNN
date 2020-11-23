@@ -160,8 +160,8 @@ def gen_1d_signal_realtarget(T=100, step=100, n_neuron_per_dim=10, res=100):
     noise_std = 0.25
     noise_train = np.random.randn(*x_train.shape) * noise_std
     y_train = y_train + noise_train
-    y_train = (y_train - np.min(y_train)) / (np.max(y_train) - np.min(y_train))
-    x_train = (x_train - np.min(x_train)) / (np.max(x_train) - np.min(x_train))
+    y_train = (y_train - np.min(y_test)) / (np.max(y_test) - np.min(y_test))
+    x_train = (x_train - np.min(x_test)) / (np.max(x_test) - np.min(x_test))
 
     y_test = (y_test - np.min(y_test)) / (np.max(y_test) - np.min(y_test))
     x_test = (x_test - np.min(x_test)) / (np.max(x_test) - np.min(x_test))

@@ -16,16 +16,8 @@ import pickle
 import fnmatch
 import time
 from snn.utils.misc import find_indices_for_labels
-
-def str2bool(v):
-    if isinstance(v, bool):
-        return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1'):
-        return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
-        return False
-    else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
+from utils.train_utils import train_on_example_bbsnn
+from utils.misc import str2bool, get_acc
 
 
 if __name__ == "__main__":
@@ -135,27 +127,11 @@ for epoch in range(args.n_epochs):
     labels = torch.cat((labels_train, labels_val), dim=0).to(args.device)
 
     optimizer.update_concrete_weights()
-
     binary_model.init(inputs, burnin=burnin)
 
-    readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
-
-    for t in range(burnin, T):
-        # forward pass: compute new pseudo-binary weights
-        optimizer.update_concrete_weights()
-        # print(list(binary_model.parameters()))
-
-        # forward pass: compute predicted outputs by passing inputs to the model
-        s, r, u = binary_model(inputs[t])
-
-        for l, ro_h in enumerate(readout_hist):
-            readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
-
-        # calculate the loss
-        loss = decolle_loss(s, r, u, target=labels[:, :, t])
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
+    readout_hist = train_on_example_bbsnn(binary_model, optimizer, decolle_loss, inputs, labels, burnin, T)
+    acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
+    print(acc)
 
 
     if (epoch + 1) % (args.n_epochs//5) == 0:

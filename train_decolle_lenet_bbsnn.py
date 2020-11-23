@@ -147,4 +147,4 @@ for epoch in range(args.n_epochs):
         binary_model.softmax = False
 
         launch_tests(binary_model, optimizer, burnin, n_examples_test, n_examples_train,
-                     test_data, train_data, T, input_size, dt, epoch, args, results_path, output=-2)
+                     test_data, train_data, T, input_size, dt, epoch, args, results_path, output=-1)

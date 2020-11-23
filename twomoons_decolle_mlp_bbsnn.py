@@ -64,7 +64,7 @@ args.train_accs[args.n_epochs] = []
 
 T = 100
 n_examples_train = 200
-n_samples_per_dim_test = 200
+n_samples_per_dim_test = 100
 n_examples_test = n_samples_per_dim_test ** 2
 n_neurons_per_dim = 10
 n_samples = 10
