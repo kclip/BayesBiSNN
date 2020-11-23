@@ -1,9 +1,29 @@
 import numpy as np
 import torch
 from data_preprocessing.load_data import get_batch_example
+import os
 from collections import Counter
 
-def mode_testing_dataset(binary_model, optimizer, burnin, n_examples, batch_size, datagroup, T, labels, input_size, dt, x_max, polarity, device, output=-1):
+def launch_tests(binary_model, optimizer, burnin, n_examples_test, n_examples_train, test_data, train_data, T, input_size, dt, epoch, args, results_path, output=-1):
+    ### Mode testing
+    print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
+    mode_testing_dataset(binary_model, optimizer, burnin, n_examples_test, args.batch_size, test_data, T, args.labels, input_size, dt, 26, args.polarity, args.device, 'test', output)
+
+    print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
+    mode_testing_dataset(binary_model, optimizer, burnin, n_examples_train, args.batch_size, train_data, T, args.labels, input_size, dt, 26, args.polarity, args.device, 'train', output)
+
+    ### Mean testing
+    print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
+    mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.labels), n_examples_test,
+                         args.batch_size, test_data, T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'test', output)
+
+    print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
+    mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.labels), n_examples_train,
+                         args.batch_size, train_data, T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'train', output)
+
+
+def mode_testing_dataset(binary_model, optimizer, burnin, n_examples, batch_size, datagroup, T,
+                         labels, input_size, dt, x_max, polarity, device, results_path, data_name, output=-1):
     with torch.no_grad():
         optimizer.get_concrete_weights_mode()
         # print([Counter(w.detach().numpy().flatten()) for w in binary_model.parameters()])
@@ -39,9 +59,12 @@ def mode_testing_dataset(binary_model, optimizer, burnin, n_examples, batch_size
 
             predictions = torch.cat((predictions, readout_hist[output].transpose(0, 1)))
 
-        return predictions, idxs_used
+    np.save(os.path.join(results_path, data_name + '_predictions_latest_mode'), predictions.numpy())
+    np.save(os.path.join(results_path, data_name + '_idxs_mode'), np.array(idxs_used))
 
-def mean_testing_dataset(binary_model, optimizer, burnin, n_samples, n_outputs, n_examples, batch_size, datagroup, T, labels, input_size, dt, x_max, polarity, device, output=-1):
+
+def mean_testing_dataset(binary_model, optimizer, burnin, n_samples, n_outputs, n_examples, batch_size,
+                         datagroup, T, labels, input_size, dt, x_max, polarity, device, results_path, data_name,  output=-1):
     with torch.no_grad():
         n_batchs = n_examples // batch_size + (1 - (n_examples % batch_size == 0))
         idx_avail = np.arange(n_examples)
@@ -85,7 +108,8 @@ def mean_testing_dataset(binary_model, optimizer, burnin, n_samples, n_outputs, 
 
             predictions = torch.cat((predictions, predictions_batch))
 
-        return predictions, idxs_used
+    np.save(os.path.join(results_path, data_name + '_predictions_latest_mean'), predictions.numpy())
+    np.save(os.path.join(results_path, data_name + '_idxs_mean'), np.array(idxs_used))
 
 def mode_testing(binary_model, optimizer, burnin, n_examples, batch_size, data, T, device):
     with torch.no_grad():
