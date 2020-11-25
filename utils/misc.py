@@ -45,6 +45,30 @@ def make_moon_dataset_bin(n_samples, T, noise):
     return binary_inputs, binary_outputs
 
 
+def make_moon_dataset_bin_pop_coding_bce(n_samples, T, noise, n_neuron_per_dim, res=100):
+    from sklearn import datasets
+    data = datasets.make_moons(n_samples=n_samples, noise=noise)
+
+    c_intervals = res / max(n_neuron_per_dim - 1, 1)
+    c = np.arange(0, res + c_intervals, c_intervals)
+
+    data[0][:, 0] = (data[0][:, 0] - np.min(data[0][:, 0])) / (np.max(data[0][:, 0]) - np.min(data[0][:, 0]))
+    data[0][:, 1] = (data[0][:, 1] - np.min(data[0][:, 1])) / (np.max(data[0][:, 1]) - np.min(data[0][:, 1]))
+
+    binary_inputs = torch.zeros([len(data[0]), T, 2 * n_neuron_per_dim])
+    binary_outputs = torch.zeros([len(data[0]), T, 1])
+
+    for i, sample in enumerate(data[0]):
+        rates_0 = np.array([0.5 + np.cos(max(-np.pi, min(np.pi, np.pi * (sample[0] * res - c[k]) / c_intervals))) / 2 for k in range(n_neuron_per_dim)]).T
+        binary_inputs[i, :, :n_neuron_per_dim] = torch.bernoulli(torch.tensor(rates_0).unsqueeze(0).repeat(T, 1))
+
+        rates_1 = np.array([0.5 + np.cos(max(-np.pi, min(np.pi, np.pi * (sample[1] * res - c[k]) / c_intervals))) / 2 for k in range(n_neuron_per_dim)]).T
+        binary_inputs[i, :, n_neuron_per_dim:] = torch.bernoulli(torch.tensor(rates_1).unsqueeze(0).repeat(T, 1))
+
+        binary_outputs[i, :] = data[1][i]
+
+    return binary_inputs, binary_outputs, data[0], data[1]
+
 def make_moon_dataset_bin_pop_coding(n_samples, T, noise, n_neuron_per_dim, res=100):
     from sklearn import datasets
     data = datasets.make_moons(n_samples=n_samples, noise=noise)
@@ -143,13 +167,13 @@ def gen_1d_signal(T=100, step=100, n_neuron_per_dim=10, res=100):
     return x_train, y_train, x_test, y_test, x_train_bin, y_train_bin, x_test_bin, y_test_bin
 
 
-def gen_1d_signal_realtarget(T=100, step=100, n_neuron_per_dim=10, res=100):
-    x0 = np.arange(-1, 0, 1 / step)
-    x1 = np.arange(1.5, 2.5, 1 / step)
-    x2 = np.arange(4, 5, 1 / step)
+def gen_1d_signal_realtarget(T=100, step_train=100, step_test=100, n_neuron_per_dim=10, res=100):
+    x0 = np.arange(-1, 0, 1 / step_train)
+    x1 = np.arange(1.5, 2.5, 1 / step_train)
+    x2 = np.arange(4, 5, 1 / step_train)
     x_train = np.concatenate([x0, x1, x2])
 
-    x_test = np.arange(-1, 5, 1 / step)
+    x_test = np.arange(-1, 5, 1 / step_test)
 
     def function(x):
         return x - 0.1 * x ** 2 + np.cos(np.pi * x / 2)
@@ -157,7 +181,7 @@ def gen_1d_signal_realtarget(T=100, step=100, n_neuron_per_dim=10, res=100):
     y_train = function(x_train)
     y_test = function(x_test)
 
-    noise_std = 0.25
+    noise_std = 0.1
     noise_train = np.random.randn(*x_train.shape) * noise_std
     y_train = y_train + noise_train
     y_train = (y_train - np.min(y_test)) / (np.max(y_test) - np.min(y_test))

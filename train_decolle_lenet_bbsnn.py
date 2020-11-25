@@ -97,8 +97,8 @@ binary_model = LenetLIF(input_size,
 latent_model = deepcopy(binary_model)
 
 # specify loss function
-criterion = [torch.nn.SmoothL1Loss() for _ in range(binary_model.num_layers)]
-# criterion = [one_hot_crossentropy for _ in range(binary_model.num_layers)]
+# criterion = [torch.nn.SmoothL1Loss() for _ in range(binary_model.num_layers)]
+criterion = [one_hot_crossentropy for _ in range(binary_model.num_layers)]
 if binary_model.with_output_layer:
     criterion[-1] = one_hot_crossentropy
 

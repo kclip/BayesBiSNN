@@ -51,7 +51,10 @@ class BayesBiSNNRP(BiOptimizer):
         for i, group in enumerate(self.binary_param_groups):
             for j, w in enumerate(group['params']):
                 if w.requires_grad:
-                    w.data = torch.tanh(self.param_groups[i]['params'][j])
+                    epsilon = torch.rand(w.data.shape).to(self.device)
+                    delta = torch.log(epsilon / (1 - epsilon)) / 2
+
+                    w.data = torch.tanh((delta + self.param_groups[i]['params'][j]) / group['temperature'])
                     binarize(w)
                 else:
                     binarize(w)

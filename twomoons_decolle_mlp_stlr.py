@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=3000)
-    parser.add_argument('--lr', type=float, default=1e-1)
+    parser.add_argument('--lr', type=float, default=5e-2)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
     parser.add_argument('--with_softmax', type=str, default='true')
 
@@ -61,10 +61,10 @@ args.train_accs[args.n_epochs] = []
 
 T = 100
 n_samples_train = 200
-n_samples_per_dim_test = 80
+n_samples_per_dim_test = 100
 n_samples_test = n_samples_per_dim_test ** 2
 n_neurons_per_dim = 10
-test_period = 1500
+test_period = 3000
 
 x_bin_train, y_bin_train, x_train, y_train = make_moon_dataset_bin_pop_coding(n_samples_train, T, 0.1, n_neurons_per_dim)
 np.save(os.path.join(results_path, 'x_train'), x_train)
