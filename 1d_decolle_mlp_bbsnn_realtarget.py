@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--lr', type=float, default=1e-2)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=1e-4)
+    parser.add_argument('--rho', type=float, default=1e-3)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 
@@ -89,8 +89,6 @@ latent_model = deepcopy(binary_model)
 
 # specify loss function
 criterion = [torch.nn.SmoothL1Loss() for _ in range(binary_model.num_layers)]
-if binary_model.with_output_layer:
-    criterion[-1] = one_hot_crossentropy
 
 decolle_loss = DECOLLELoss(criterion, latent_model)
 
