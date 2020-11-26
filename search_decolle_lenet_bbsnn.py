@@ -85,7 +85,7 @@ results_l2 = {i: {j: [] for j in rho_list} for i in lr_list}
 
 for lr in lr_list:
     for rho in rho_list:
-        print('LR: ' + lr + ', rho: ' + rho)
+        print('LR: ' + str(lr) + ', rho: ' + str(rho))
         binary_model = LenetLIF(input_size,
                                 Nhid_conv=[64, 128, 128],
                                 Nhid_mlp=[],
