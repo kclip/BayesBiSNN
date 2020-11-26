@@ -78,8 +78,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/search_decolle_lenet_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="393">
-              <caret line="79" column="31" selection-start-line="79" selection-start-column="31" selection-end-line="79" selection-end-column="31" />
+            <state relative-caret-position="510">
+              <caret line="49" column="77" selection-start-line="49" selection-start-column="77" selection-end-line="49" selection-end-column="77" />
             </state>
           </provider>
         </entry>
@@ -426,12 +426,12 @@
       <workItem from="1605707451335" duration="619000" />
       <workItem from="1605774713106" duration="30883000" />
       <workItem from="1606050970441" duration="618000" />
-      <workItem from="1606119590501" duration="53385000" />
+      <workItem from="1606119590501" duration="53554000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="848190000" />
+    <option name="totallyTimeSpent" value="848359000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -863,8 +863,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/search_decolle_lenet_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="393">
-          <caret line="79" column="31" selection-start-line="79" selection-start-column="31" selection-end-line="79" selection-end-column="31" />
+        <state relative-caret-position="510">
+          <caret line="49" column="77" selection-start-line="49" selection-start-column="77" selection-end-line="49" selection-end-column="77" />
         </state>
       </provider>
     </entry>

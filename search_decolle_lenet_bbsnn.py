@@ -47,7 +47,7 @@ else:
 
 results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
                              time.localtime()) + '_' + 'search_mnist_dvs_bbsnnrp_lenet_' + r'_%d_epochs' % args.n_epochs \
-               + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p + '_rho_%f' % args.rho + '_lr_%f' % args.lr
+               + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p
 os.makedirs(results_path)
 
 args.polarity = str2bool(args.polarity)
