@@ -77,7 +77,7 @@ train_data = dataset.root.train
 test_data = dataset.root.test
 
 
-lr_list = np.logspace(-5, 5, 11, endpoint=True)
+lr_list = np.logspace(-5, 6, 12, endpoint=True)
 rho_list = np.logspace(-10, 1, 12, endpoint=True)
 
 results_l1 = {i: {j: [] for j in rho_list} for i in lr_list}
