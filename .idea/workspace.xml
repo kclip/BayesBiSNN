@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/search_decolle_lenet_bbsnn.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/twomoons_decolle_mlp_stlr_bceloss.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn_bceloss.py" beforeDir="false" afterPath="$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn_bceloss.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,8 +21,32 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn_bceloss.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-289">
-              <caret line="34" column="58" selection-start-line="34" selection-start-column="58" selection-end-line="34" selection-end-column="58" />
+            <state relative-caret-position="255">
+              <caret line="33" column="41" selection-start-line="33" selection-start-column="41" selection-end-line="33" selection-end-column="41" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-15">
+              <caret line="213" lean-forward="true" selection-start-line="213" selection-end-line="213" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_stlr_bceloss.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="544">
+              <caret line="32" column="54" selection-start-line="32" selection-start-column="54" selection-end-line="32" selection-end-column="54" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -31,8 +57,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="101" selection-start-line="99" selection-end-line="101" />
+            <state relative-caret-position="-644">
+              <caret line="35" column="25" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1461">
+              <caret line="97" lean-forward="true" selection-start-line="97" selection-end-line="97" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -41,12 +79,21 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
+        <entry file="file://$PROJECT_DIR$/search_decolle_lenet_bbsnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="186">
-              <caret line="97" lean-forward="true" selection-start-line="97" selection-end-line="97" />
+            <state relative-caret-position="614">
+              <caret line="134" lean-forward="true" selection-start-line="134" selection-end-line="134" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/LIF_base.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="65" column="8" selection-start-line="65" selection-start-column="8" selection-end-line="65" selection-end-column="8" />
               <folding>
-                <element signature="e#0#12#0" expanded="true" />
+                <element signature="e#0#21#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -57,18 +104,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="34">
               <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/optimizer/BBSNN.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="969">
-              <caret line="57" selection-start-line="57" selection-end-line="57" />
-              <folding>
-                <element signature="e#0#45#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -136,8 +171,8 @@
       <find>train</find>
       <find>torch.sum(readout_hist[-1], dim=0)</find>
       <find>test</find>
-      <find>n_samples_test</find>
       <find>n_samples_train</find>
+      <find>n_samples_test</find>
     </findStrings>
     <replaceStrings>
       <replace>'params'</replace>
@@ -154,8 +189,8 @@
       <replace>mean</replace>
       <replace>readout_hist[-1]</replace>
       <replace>train</replace>
-      <replace>n_examples_test</replace>
       <replace>n_examples_train</replace>
+      <replace>n_examples_test</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -164,8 +199,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/model/LIF.py" />
-        <option value="$PROJECT_DIR$/train_stlr.py" />
         <option value="$PROJECT_DIR$/utils/decolle_utils.py" />
         <option value="$PROJECT_DIR$/data_loaders/load_dvsgestures_sparse.py" />
         <option value="$PROJECT_DIR$/data_loaders/events_timeslices.py" />
@@ -211,18 +244,20 @@
         <option value="$PROJECT_DIR$/1d_decolle_mlp_bbsnn_realtarget.py" />
         <option value="$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn.py" />
         <option value="$PROJECT_DIR$/utils/misc.py" />
-        <option value="$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn_bceloss.py" />
         <option value="$PROJECT_DIR$/train_lenet_decolle_stlr.py" />
         <option value="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" />
         <option value="$PROJECT_DIR$/train_decolle_mlp_bbsnn.py" />
+        <option value="$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn_bceloss.py" />
+        <option value="$PROJECT_DIR$/twomoons_decolle_mlp_stlr_bceloss.py" />
+        <option value="$PROJECT_DIR$/search_decolle_lenet_bbsnn.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-11" />
-    <option name="y" value="-11" />
-    <option name="width" value="1943" />
-    <option name="height" value="1043" />
+    <option name="x" value="1912" />
+    <option name="y" value="-8" />
+    <option name="width" value="575" />
+    <option name="height" value="315" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -394,12 +429,12 @@
       <workItem from="1605707451335" duration="619000" />
       <workItem from="1605774713106" duration="30883000" />
       <workItem from="1606050970441" duration="618000" />
-      <workItem from="1606119590501" duration="44893000" />
+      <workItem from="1606119590501" duration="53203000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="839698000" />
+    <option name="totallyTimeSpent" value="848008000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -411,10 +446,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
+    <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2680162" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17643923" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -428,7 +463,7 @@
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.3285968" />
-      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.28241563" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.17226435" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.3268206" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -453,24 +488,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/miniconda3/Lib/site-packages/torch/optim/lr_scheduler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="398">
-          <caret line="151" column="39" selection-start-line="151" selection-start-column="39" selection-end-line="151" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/optimizer/BiOptimizer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1343">
-          <caret line="79" column="13" selection-start-line="79" selection-start-column="13" selection-end-line="79" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/train_decolle_notebook.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/miniconda3/Lib/site-packages/torch/__init__.pyi" />
     <entry file="file://$PROJECT_DIR$/utils/activations.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -676,16 +693,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/LIF_base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="392">
-          <caret line="140" column="30" selection-start-line="140" selection-start-column="12" selection-end-line="140" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/optimizer/BBSNN.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="969">
@@ -753,16 +760,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="35" column="56" selection-start-line="35" selection-start-column="56" selection-end-line="35" selection-end-column="56" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utils/misc.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="186">
@@ -804,33 +801,73 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn_bceloss.py">
+    <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-289">
-          <caret line="34" column="58" selection-start-line="34" selection-start-column="58" selection-end-line="34" selection-end-column="58" />
+        <state relative-caret-position="-644">
+          <caret line="35" column="25" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
+    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_bbsnn_bceloss.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="101" selection-start-line="99" selection-end-line="101" />
+        <state relative-caret-position="255">
+          <caret line="33" column="41" selection-start-line="33" selection-start-column="41" selection-end-line="33" selection-end-column="41" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_stlr.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-15">
+          <caret line="213" lean-forward="true" selection-start-line="213" selection-end-line="213" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/twomoons_decolle_mlp_stlr_bceloss.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="544">
+          <caret line="32" column="54" selection-start-line="32" selection-start-column="54" selection-end-line="32" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/search_lenet_decolle_stlr.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_mlp_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="186">
+        <state relative-caret-position="1461">
           <caret line="97" lean-forward="true" selection-start-line="97" selection-end-line="97" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/LIF_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="65" column="8" selection-start-line="65" selection-start-column="8" selection-end-line="65" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/search_decolle_lenet_bbsnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="614">
+          <caret line="134" lean-forward="true" selection-start-line="134" selection-end-line="134" />
         </state>
       </provider>
     </entry>
