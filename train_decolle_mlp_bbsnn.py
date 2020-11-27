@@ -133,6 +133,10 @@ for epoch in range(args.n_epochs):
     torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')
     torch.save(latent_model.state_dict(), results_path + '/latent_model_weights.pt')
 
+    if (epoch + 1) % (args.n_epochs//5) == 0:
+        torch.save(binary_model.state_dict(), results_path + '/binary_model_weights_%d.pt' % (1 + epoch))
+        torch.save(latent_model.state_dict(), results_path + '/latent_model_weights_%d.pt' % (1 + epoch))
+
     if (epoch + 1) % args.test_period == 0:
         binary_model.softmax = False
 
