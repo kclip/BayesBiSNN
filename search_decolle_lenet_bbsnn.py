@@ -28,7 +28,7 @@ if __name__ == "__main__":
     parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--n_epochs', type=int, default=10)
+    parser.add_argument('--n_epochs', type=int, default=30)
     parser.add_argument('--batch_size', type=int, default=32)
 
     parser.add_argument('--temperature', type=float, default=1)
@@ -77,8 +77,8 @@ train_data = dataset.root.train
 test_data = dataset.root.test
 
 
-lr_list = np.logspace(-5, 6, 12, endpoint=True)
-rho_list = np.logspace(-10, 1, 12, endpoint=True)
+lr_list = np.logspace(1, 6, 6, endpoint=True)
+rho_list = np.logspace(-14, -3, 12, endpoint=True)
 
 results_l1 = {i: {j: [] for j in rho_list} for i in lr_list}
 results_l2 = {i: {j: [] for j in rho_list} for i in lr_list}

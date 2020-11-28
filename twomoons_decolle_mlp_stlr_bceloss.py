@@ -26,11 +26,11 @@ if __name__ == "__main__":
     parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--n_epochs', type=int, default=3000)
-    parser.add_argument('--test_period', type=int, default=3000)
+    parser.add_argument('--n_epochs', type=int, default=5000)
+    parser.add_argument('--test_period', type=int, default=5000)
     parser.add_argument('--batch_size', type=int, default=32)
 
-    parser.add_argument('--lr', type=float, default=500)
+    parser.add_argument('--lr', type=float, default=750)
     parser.add_argument('--with_softmax', type=str, default='false')
     parser.add_argument('--polarity', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
@@ -61,7 +61,7 @@ args.train_accs[args.n_epochs] = []
 
 T = 100
 n_examples_train = 200
-n_samples_per_dim_test = 200
+n_samples_per_dim_test = 100
 n_examples_test = n_samples_per_dim_test ** 2
 n_neurons_per_dim = 10
 n_samples = 10
