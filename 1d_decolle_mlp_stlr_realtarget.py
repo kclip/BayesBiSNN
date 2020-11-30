@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--n_epochs', type=int, default=3000)
+    parser.add_argument('--n_epochs', type=int, default=5000)
     parser.add_argument('--test_period', type=int, default=500)
     parser.add_argument('--batch_size', type=int, default=32)
 
@@ -59,7 +59,7 @@ T = 100
 n_neurons_per_dim = 20
 step = 100
 
-x_train, y_train, x_test, y_test, x_train_bin, x_test_bin = gen_1d_signal_realtarget(T=T, step=step, n_neuron_per_dim=n_neurons_per_dim)
+x_train, y_train, x_test, y_test, x_train_bin, x_test_bin = gen_1d_signal_realtarget(T=T, step_train=20, step_test=step, n_neuron_per_dim=n_neurons_per_dim)
 n_examples_train = len(x_train)
 n_examples_test = len(x_test)
 n_samples = 10

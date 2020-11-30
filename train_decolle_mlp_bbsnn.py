@@ -81,7 +81,7 @@ n_examples_train = 9000
 
 binary_model = LIFMLP(input_size,
                       len(args.labels),
-                      n_neurons=[1024, 512],
+                      n_neurons=[512, 256],
                       with_output_layer=False,
                       with_bias=False,
                       prior_p=args.prior_p,
