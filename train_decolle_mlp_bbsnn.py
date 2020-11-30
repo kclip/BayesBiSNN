@@ -29,7 +29,7 @@ if __name__ == "__main__":
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=10000)
     parser.add_argument('--test_period', type=int, default=2000)
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--n_samples', type=int, default=10)
 
     parser.add_argument('--lr', type=float, default=5e5)
@@ -81,7 +81,7 @@ n_examples_train = 9000
 
 binary_model = LIFMLP(input_size,
                       len(args.labels),
-                      n_neurons=[512, 256],
+                      n_neurons=[1024, 512],
                       with_output_layer=False,
                       with_bias=False,
                       prior_p=args.prior_p,
@@ -141,7 +141,7 @@ for epoch in range(args.n_epochs):
         binary_model.softmax = False
 
         launch_tests(binary_model, optimizer, burnin, n_examples_test, n_examples_train,
-                     test_data, train_data, T, input_size, dt, epoch, args, results_path, output=-1)
+                     test_data, None, T, input_size, dt, epoch, args, results_path, output=-1)
 
 
 

@@ -5,23 +5,24 @@ import os
 from collections import Counter
 
 def launch_tests(binary_model, optimizer, burnin, n_examples_test, n_examples_train, test_data, train_data, T, input_size, dt, epoch, args, results_path, output=-1):
-    ### Mode testing
-    print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
-    mode_testing_dataset(binary_model, optimizer, burnin, n_examples_test, args.batch_size, test_data,
-                         T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'test', output)
+    if train_data is not None:
+        print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
+        mode_testing_dataset(binary_model, optimizer, burnin, n_examples_train, args.batch_size, train_data,
+                             T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'train', output)
 
-    print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
-    mode_testing_dataset(binary_model, optimizer, burnin, n_examples_train, args.batch_size, train_data,
-                         T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'train', output)
+        print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
+        mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.labels), n_examples_train,
+                             args.batch_size, train_data, T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'train', output)
 
-    ### Mean testing
-    print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
-    mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.labels), n_examples_test,
-                         args.batch_size, test_data, T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'test', output)
+    if test_data is not None:
+        print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
+        mode_testing_dataset(binary_model, optimizer, burnin, n_examples_test, args.batch_size, test_data,
+                             T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'test', output)
 
-    print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
-    mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.labels), n_examples_train,
-                         args.batch_size, train_data, T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'train', output)
+        print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
+        mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.labels), n_examples_test,
+                             args.batch_size, test_data, T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'test', output)
+
 
 
 def mode_testing_dataset(binary_model, optimizer, burnin, n_examples, batch_size, datagroup, T,
