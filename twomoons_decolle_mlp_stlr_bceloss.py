@@ -30,7 +30,7 @@ if __name__ == "__main__":
     parser.add_argument('--test_period', type=int, default=10000)
     parser.add_argument('--batch_size', type=int, default=32)
 
-    parser.add_argument('--lr', type=float, default=1000)
+    parser.add_argument('--lr', type=float, default=5000)
     parser.add_argument('--with_softmax', type=str, default='false')
     parser.add_argument('--polarity', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
