@@ -108,7 +108,6 @@ optimizer.step()  # binarize weights
 
 for epoch in range(args.n_epochs):
     binary_model.softmax = args.with_softmax
-    torch.save(binary_model.state_dict(), os.getcwd() + '/results/binary_model_weights.pt')
 
     loss = 0
 
