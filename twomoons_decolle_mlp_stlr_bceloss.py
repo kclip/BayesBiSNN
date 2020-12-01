@@ -26,11 +26,11 @@ if __name__ == "__main__":
     parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--n_epochs', type=int, default=10000)
-    parser.add_argument('--test_period', type=int, default=10000)
+    parser.add_argument('--n_epochs', type=int, default=3000)
+    parser.add_argument('--test_period', type=int, default=3000)
     parser.add_argument('--batch_size', type=int, default=32)
 
-    parser.add_argument('--lr', type=float, default=5000)
+    parser.add_argument('--lr', type=float, default=1000)
     parser.add_argument('--with_softmax', type=str, default='false')
     parser.add_argument('--polarity', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
@@ -106,9 +106,9 @@ binary_model.init_parameters()
 for epoch in range(args.n_epochs):
     loss = 0
 
-    if epoch % (args.n_epochs // 4) == 0:
-        args.lr = args.lr / 2
-        optimizer = BiSGD(binary_model.parameters(), latent_model.parameters(), lr=args.lr, binarizer=binarize)
+    # if epoch % (args.n_epochs // 3) == 0:
+    #     args.lr = args.lr / 2
+    #     optimizer = BiSGD(binary_model.parameters(), latent_model.parameters(), lr=args.lr, binarizer=binarize)
 
     n_batchs = n_examples_train // args.batch_size + (1 - (n_examples_train % args.batch_size == 0))
     idx_avail = np.arange(n_examples_train)
