@@ -34,7 +34,7 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--n_samples', type=int, default=10)
 
-    parser.add_argument('--lr', type=float, default=100)
+    parser.add_argument('--lr', type=float, default=500)
     parser.add_argument('--with_softmax', type=str, default='true')
     parser.add_argument('--polarity', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
@@ -124,7 +124,7 @@ for epoch in range(args.n_epochs):
 
 
     print('Epoch %d/%d' % (epoch, args.n_epochs))
-    for t in tqdm(range(burnin, T)):
+    for t in range(burnin, T):
         # forward pass: compute predicted outputs by passing inputs to the model
         s, r, u = binary_model(inputs[t])
 
@@ -158,7 +158,7 @@ for epoch in range(args.n_epochs):
             print('Testing epoch %d/%d' % (epoch + 1, args.n_epochs))
             predictions = torch.FloatTensor()
 
-            for i in tqdm(range(n_batchs_test)):
+            for i in range(n_batchs_test):
                 if (i == (n_batchs_test - 1)) & (n_examples_test % args.batch_size != 0):
                     batch_size_curr = n_examples_test % args.batch_size
                 else:
@@ -182,11 +182,7 @@ for epoch in range(args.n_epochs):
                     for l, ro_h in enumerate(readout_hist):
                         readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
-                predictions = torch.cat((predictions, readout_hist[output].transpose(0, 1)))
+                predictions = torch.cat((predictions, readout_hist[-1].transpose(0, 1)))
 
             np.save(os.path.join(results_path, 'test_predictions_latest'), predictions.numpy())
             np.save(os.path.join(results_path, 'idxs_test'), np.array(idxs_used_test))
-
-            n_batchs_train = n_examples_train // args.batch_size + (1 - (n_examples_train % args.batch_size == 0))
-            idx_avail_train = np.arange(n_examples_train)
-            idxs_used_train = []
