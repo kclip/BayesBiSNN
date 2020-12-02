@@ -75,7 +75,7 @@ args.labels = [i for i in range(10)]
 if args.dataset == 'mnist_dvs':
     dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
 elif args.dataset == 'dvs_gestures':
-    dataset = tables.open_file(args.home + r'/datasets/DvsGesture/mnist_dvs_events.hdf5')
+    dataset = tables.open_file(args.home + r'/datasets/DvsGesture/dvs_gestures_events.hdf5')
 train_data = dataset.root.train
 test_data = dataset.root.test
 
