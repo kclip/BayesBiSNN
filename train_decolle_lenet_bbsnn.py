@@ -77,10 +77,11 @@ elif args.dataset == 'dvs_gestures':
 train_data = dataset.root.train
 test_data = dataset.root.test
 
+args.labels = [i for i in range(10)]
+
 n_examples_test = len(find_indices_for_labels(test_data, args.labels))
 n_examples_train = len(find_indices_for_labels(train_data, args.labels))
 x_max = dataset.root.stats.train_data[1]
-args.labels = [i for i in range(10)]
 print(dataset.root.stats.test_data)
 input_size = [2, x_max, x_max]
 
