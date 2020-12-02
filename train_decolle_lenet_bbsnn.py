@@ -72,12 +72,12 @@ burnin = 100
 
 if args.dataset == 'mnist_dvs':
     dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
+    args.labels = [i for i in range(10)]
 elif args.dataset == 'dvs_gestures':
     dataset = tables.open_file(args.home + r'/datasets/DvsGesture/dvs_gestures_events.hdf5')
+    args.labels = [i for i in range(11)]
 train_data = dataset.root.train
 test_data = dataset.root.test
-
-args.labels = [i for i in range(10)]
 
 n_examples_test = len(find_indices_for_labels(test_data, args.labels))
 n_examples_train = len(find_indices_for_labels(train_data, args.labels))
