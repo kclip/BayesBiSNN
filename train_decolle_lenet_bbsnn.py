@@ -82,7 +82,6 @@ test_data = dataset.root.test
 n_examples_test = len(find_indices_for_labels(test_data, args.labels))
 n_examples_train = len(find_indices_for_labels(train_data, args.labels))
 x_max = dataset.root.stats.train_data[1]
-print(dataset.root.stats.test_data[:])
 input_size = [2, x_max, x_max]
 
 binary_model = LenetLIF(input_size,
