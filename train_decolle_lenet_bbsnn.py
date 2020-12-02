@@ -67,7 +67,6 @@ else:
 sample_length = 2000  # length of samples during training in ms
 dt = 1000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
-input_size = [2, 26, 26]
 burnin = 100
 
 args.labels = [i for i in range(10)]
@@ -82,6 +81,7 @@ test_data = dataset.root.test
 n_examples_test = len(find_indices_for_labels(test_data, args.labels))
 n_examples_train = len(find_indices_for_labels(train_data, args.labels))
 x_max = dataset.root.stats.train_data[1]
+input_size = [2, x_max, x_max]
 
 binary_model = LenetLIF(input_size,
                         Nhid_conv=[64, 128, 128],
