@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--lr', type=float, default=1e-1)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=1e-2)
+    parser.add_argument('--rho', type=float, default=1e-3)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--with_softmax', type=str, default='false')
     parser.add_argument('--polarity', type=str, default='true')
@@ -65,7 +65,7 @@ args.train_accs[args.n_epochs] = []
 
 T = 100
 n_examples_train = 200
-n_samples_per_dim_test = 200
+n_samples_per_dim_test = 100
 n_examples_test = n_samples_per_dim_test ** 2
 n_neurons_per_dim = 10
 n_samples = 10

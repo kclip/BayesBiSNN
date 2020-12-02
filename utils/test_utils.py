@@ -4,24 +4,24 @@ from data_preprocessing.load_data import get_batch_example
 import os
 from collections import Counter
 
-def launch_tests(binary_model, optimizer, burnin, n_examples_test, n_examples_train, test_data, train_data, T, input_size, dt, epoch, args, results_path, output=-1):
+def launch_tests(binary_model, optimizer, burnin, n_examples_test, n_examples_train, test_data, train_data, T, input_size, dt, epoch, args, results_path, x_max, output=-1):
     if train_data is not None:
         print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
         mode_testing_dataset(binary_model, optimizer, burnin, n_examples_train, args.batch_size, train_data,
-                             T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'train', output)
+                             T, args.labels, input_size, dt, x_max, args.polarity, args.device, results_path, 'train', output)
 
         print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
         mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.labels), n_examples_train,
-                             args.batch_size, train_data, T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'train', output)
+                             args.batch_size, train_data, T, args.labels, input_size, dt, x_max, args.polarity, args.device, results_path, 'train', output)
 
     if test_data is not None:
         print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
         mode_testing_dataset(binary_model, optimizer, burnin, n_examples_test, args.batch_size, test_data,
-                             T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'test', output)
+                             T, args.labels, input_size, dt, x_max, args.polarity, args.device, results_path, 'test', output)
 
         print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
         mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.labels), n_examples_test,
-                             args.batch_size, test_data, T, args.labels, input_size, dt, 26, args.polarity, args.device, results_path, 'test', output)
+                             args.batch_size, test_data, T, args.labels, input_size, dt, x_max, args.polarity, args.device, results_path, 'test', output)
 
 
 

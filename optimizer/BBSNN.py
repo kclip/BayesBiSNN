@@ -54,7 +54,8 @@ class BayesBiSNNRP(BiOptimizer):
                     epsilon = torch.rand(w.data.shape).to(self.device)
                     delta = torch.log(epsilon / (1 - epsilon)) / 2
 
-                    w.data = torch.tanh((delta + self.param_groups[i]['params'][j]) / group['temperature'])
+                    # w.data = torch.tanh((delta + self.param_groups[i]['params'][j]) / group['temperature'])
+                    w.data = torch.sigmoid(2 * self.param_groups[i]['params'][j])
                     binarize(w)
                 else:
                     binarize(w)

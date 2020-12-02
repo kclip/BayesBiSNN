@@ -18,7 +18,7 @@ import time
 from utils.train_utils import train_on_example_bbsnn
 from utils.test_utils import launch_tests
 from utils.misc import str2bool, get_acc
-
+from snn.utils.misc import find_indices_for_labels
 
 if __name__ == "__main__":
     # setting the hyper parameters
@@ -27,6 +27,7 @@ if __name__ == "__main__":
     # Training arguments
     parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
+    parser.add_argument('--dataset', default=r"mnist_dvs")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=20000)
     parser.add_argument('--test_period', type=int, default=5000)
@@ -50,7 +51,7 @@ else:
     expDirN = "%03d" % (int((prelist[len(prelist) - 1].split("__"))[0]) + 1)
 
 results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
-                             time.localtime()) + '_' + 'mnist_dvs_bbsnnrp_lenet_' + r'_%d_epochs' % args.n_epochs \
+                             time.localtime()) + '_' + args.dataset + '_bbsnnrp_lenet_' + r'_%d_epochs' % args.n_epochs \
                + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p + '_rho_%f' % args.rho + '_lr_%f' % args.lr
 os.makedirs(results_path)
 
@@ -68,15 +69,19 @@ dt = 1000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
 input_size = [2, 26, 26]
 burnin = 100
-n_examples_test = 1000
-n_examples_train = 9000
 
 args.labels = [i for i in range(10)]
 
-dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
+if args.dataset == 'mnist_dvs':
+    dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
+elif args.dataset == 'dvs_gestures':
+    dataset = tables.open_file(args.home + r'/datasets/DvsGesture/mnist_dvs_events.hdf5')
 train_data = dataset.root.train
 test_data = dataset.root.test
 
+n_examples_test = len(find_indices_for_labels(test_data, args.labels))
+n_examples_train = len(find_indices_for_labels(train_data, args.labels))
+x_max = dataset.root.stats.train_data[1]
 
 binary_model = LenetLIF(input_size,
                         Nhid_conv=[64, 128, 128],
@@ -115,7 +120,7 @@ for epoch in range(args.n_epochs):
 
     idxs = np.random.choice(np.arange(n_examples_train), [args.batch_size], replace=False)
 
-    inputs, labels = get_batch_example(train_data, idxs, args.batch_size, T, args.labels, input_size, dt, 26, args.polarity)
+    inputs, labels = get_batch_example(train_data, idxs, args.batch_size, T, args.labels, input_size, dt, x_max, args.polarity)
 
     inputs = inputs.transpose(0, 1).to(args.device)
     labels = labels.to(args.device)
@@ -144,4 +149,4 @@ for epoch in range(args.n_epochs):
         binary_model.softmax = False
 
         launch_tests(binary_model, optimizer, burnin, n_examples_test, n_examples_train,
-                     test_data, None, T, input_size, dt, epoch, args, results_path, output=-1)
+                     test_data, None, T, input_size, dt, epoch, args, results_path, x_max, output=-1)
