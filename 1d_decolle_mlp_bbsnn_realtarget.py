@@ -25,7 +25,7 @@ if __name__ == "__main__":
     parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--n_epochs', type=int, default=10000)
+    parser.add_argument('--n_epochs', type=int, default=5000)
     parser.add_argument('--test_period', type=int, default=500)
     parser.add_argument('--batch_size', type=int, default=32)
 
@@ -78,7 +78,7 @@ burnin = 10
 
 binary_model = LIFMLP(input_size,
                       1,
-                      n_neurons=[64, 64],
+                      n_neurons=[256, 256],
                       with_output_layer=False,
                       with_bias=False,
                       prior_p=args.prior_p,

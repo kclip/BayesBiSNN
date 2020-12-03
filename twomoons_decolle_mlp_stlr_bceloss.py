@@ -77,6 +77,7 @@ np.save(os.path.join(results_path, 'y_test'), y_test)
 
 input_size = [x_bin_train.shape[-1]]
 
+### Increase capacity
 binary_model = LIFMLP(input_size,
                       1,
                       n_neurons=[64, 64],

@@ -178,7 +178,6 @@ def mean_testing(binary_model, optimizer, burnin, n_samples, n_outputs, n_exampl
 
             for j in range(n_samples):
                 optimizer.update_concrete_weights(test=True)
-                # print([Counter(w.detach().numpy().flatten()) for w in binary_model.parameters()])
 
                 binary_model.init(inputs, burnin=burnin)
 

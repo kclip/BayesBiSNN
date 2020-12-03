@@ -19,6 +19,7 @@ from utils.train_utils import train_on_example_bbsnn
 from utils.test_utils import launch_tests
 from utils.misc import str2bool, get_acc
 from snn.utils.misc import find_indices_for_labels
+from pytorch_memlab import MemReporter
 
 if __name__ == "__main__":
     # setting the hyper parameters
@@ -65,7 +66,7 @@ else:
     args.device = torch.device('cpu')
 
 sample_length = 2000  # length of samples during training in ms
-dt = 1000  # us
+dt = 5000  # us
 T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
 burnin = 100
 
@@ -115,6 +116,8 @@ binary_model.init_parameters()
 print([layer.scale for layer in binary_model.LIF_layers])
 print(binary_model.scales)
 
+reporter = MemReporter()
+
 for epoch in range(args.n_epochs):
     binary_model.softmax = args.with_softmax
     loss = 0
@@ -126,28 +129,30 @@ for epoch in range(args.n_epochs):
     inputs = inputs.transpose(0, 1).to(args.device)
     labels = labels.to(args.device)
 
-    optimizer.update_concrete_weights()
-    binary_model.init(inputs, burnin=burnin)
-
-    readout_hist = train_on_example_bbsnn(binary_model, optimizer, decolle_loss, inputs, labels, burnin, T)
-    acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
-    print(acc)
-    acc = get_acc(torch.sum(readout_hist[-2], dim=0).argmax(dim=1), labels, args.batch_size)
-    print(acc)
-
-
-    torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')
-    torch.save(latent_model.state_dict(), results_path + '/latent_model_weights.pt')
-
-
-    if (epoch + 1) % (args.n_epochs//5) == 0:
-        torch.save(binary_model.state_dict(), results_path + '/binary_model_weights_%d.pt' % (1 + epoch))
-        torch.save(latent_model.state_dict(), results_path + '/latent_model_weights_%d.pt' % (1 + epoch))
-
-
-
-    if (epoch + 1) % args.test_period == 0:
-        binary_model.softmax = False
-
-        launch_tests(binary_model, optimizer, burnin, n_examples_test, n_examples_train,
-                     test_data, None, T, input_size, dt, epoch, args, results_path, x_max, output=-1)
+    reporter.report()
+    # del inputs, labels
+    # optimizer.update_concrete_weights()
+    # binary_model.init(inputs, burnin=burnin)
+    #
+    # readout_hist = train_on_example_bbsnn(binary_model, optimizer, decolle_loss, inputs, labels, burnin, T)
+    # acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
+    # print(acc)
+    # acc = get_acc(torch.sum(readout_hist[-2], dim=0).argmax(dim=1), labels, args.batch_size)
+    # print(acc)
+    #
+    #
+    # torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')
+    # torch.save(latent_model.state_dict(), results_path + '/latent_model_weights.pt')
+    #
+    #
+    # if (epoch + 1) % (args.n_epochs//5) == 0:
+    #     torch.save(binary_model.state_dict(), results_path + '/binary_model_weights_%d.pt' % (1 + epoch))
+    #     torch.save(latent_model.state_dict(), results_path + '/latent_model_weights_%d.pt' % (1 + epoch))
+    #
+    #
+    #
+    # if (epoch + 1) % args.test_period == 0:
+    #     binary_model.softmax = False
+    #
+    #     launch_tests(binary_model, optimizer, burnin, n_examples_test, n_examples_train,
+    #                  test_data, None, T, input_size, dt, epoch, args, results_path, x_max, output=-1)
