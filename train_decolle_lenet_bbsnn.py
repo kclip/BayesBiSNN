@@ -19,7 +19,6 @@ from utils.train_utils import train_on_example_bbsnn
 from utils.test_utils import launch_tests
 from utils.misc import str2bool, get_acc
 from snn.utils.misc import find_indices_for_labels
-from pytorch_memlab import MemReporter
 from data_preprocessing.load_data import create_dataloader
 
 if __name__ == "__main__":
@@ -88,7 +87,7 @@ input_size = [2, x_max, x_max]
 dataset.close()
 
 train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, size=input_size, classes=args.classes, sample_length_train=sample_length,
-                                      sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=0)
+                                      sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
 train_iterator = iter(train_dl)
 test_iterator = iter(test_dl)
 
@@ -130,7 +129,6 @@ for epoch in range(args.n_epochs):
     loss = 0
 
     inputs, labels = next(train_iterator)
-
     inputs = inputs.transpose(0, 1).to(args.device)
     labels = labels.to(args.device)
 

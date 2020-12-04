@@ -10,7 +10,7 @@ from torch.optim.lr_scheduler import StepLR
 import argparse
 import tables
 import numpy as np
-from data_preprocessing.load_data_old import get_batch_example
+from data_preprocessing.load_data import create_dataloader
 from utils.activations import smooth_sigmoid, smooth_step
 from collections import Counter
 import pickle
@@ -61,19 +61,32 @@ if not args.disable_cuda and torch.cuda.is_available():
 else:
     args.device = torch.device('cpu')
 
-sample_length = 2000  # length of samples during training in ms
+
+sample_length = 2e6  # length of samples during training in mus
 dt = 1000  # us
-T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
-input_size = [2, 26, 26]
+T = int(sample_length / dt)
 burnin = 100
-n_examples_test = 1000
-n_examples_train = 9000
 
-args.labels = [i for i in range(10)]
 
-dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
+if args.dataset == 'mnist_dvs':
+    dataset_path = args.home + r'/datasets/mnist-dvs/mnist_dvs_events_new.hdf5'
+elif args.dataset == 'dvs_gestures':
+    dataset_path = args.home + r'/datasets/DvsGesture/dvs_gestures_events_new.hdf5'
+
+dataset = tables.open_file(dataset_path)
 train_data = dataset.root.train
 test_data = dataset.root.test
+
+args.classes = [i for i in range(dataset.root.stats.train_label[1])]
+
+x_max = dataset.root.stats.train_data[1]
+input_size = [2, x_max, x_max]
+dataset.close()
+
+train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, size=input_size, classes=args.classes, sample_length_train=sample_length,
+                                      sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
+train_iterator = iter(train_dl)
+test_iterator = iter(test_dl)
 
 binary_model = LenetLIF(input_size,
                         Nhid_conv=[64, 128, 128],
@@ -111,10 +124,7 @@ for epoch in range(args.n_epochs):
 
     loss = 0
 
-    idxs = np.random.choice(np.arange(n_examples_train), [args.batch_size], replace=False)
-
-    inputs, labels = get_batch_example(train_data, idxs, args.batch_size, T, args.labels, input_size, dt, 26, args.polarity)
-
+    inputs, labels = next(train_iterator)
     inputs = inputs.transpose(0, 1).to(args.device)
     labels = labels.to(args.device)
 
@@ -151,24 +161,11 @@ for epoch in range(args.n_epochs):
         binary_model.softmax = False
 
         with torch.no_grad():
-            n_batchs_test = n_examples_test // args.batch_size + (1 - (n_examples_test % args.batch_size == 0))
-            idx_avail_test = np.arange(n_examples_test)
-            idxs_used_test = []
-
             print('Testing epoch %d/%d' % (epoch + 1, args.n_epochs))
             predictions = torch.FloatTensor()
+            true_labels = torch.FloatTensor()
 
-            for i in range(n_batchs_test):
-                if (i == (n_batchs_test - 1)) & (n_examples_test % args.batch_size != 0):
-                    batch_size_curr = n_examples_test % args.batch_size
-                else:
-                    batch_size_curr = args.batch_size
-
-                idxs_test = np.random.choice(idx_avail_test, [batch_size_curr], replace=False)
-                idxs_used_test += list(idxs_test)
-                idx_avail_test = [i for i in idx_avail_test if i not in idxs_used_test]
-
-                inputs, _ = get_batch_example(test_data, idxs, batch_size_curr, T, labels, input_size, dt, 26, args.polarity)
+            for inputs, labels in test_iterator:
                 inputs = inputs.transpose(0, 1).to(args.device)
 
                 binary_model.init(inputs, burnin=burnin)
@@ -183,6 +180,7 @@ for epoch in range(args.n_epochs):
                         readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
                 predictions = torch.cat((predictions, readout_hist[-1].transpose(0, 1)))
+                true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
 
             np.save(os.path.join(results_path, 'test_predictions_latest'), predictions.numpy())
-            np.save(os.path.join(results_path, 'idxs_test'), np.array(idxs_used_test))
+            np.save(os.path.join(results_path, 'true_labels_test'), true_labels.numpy())

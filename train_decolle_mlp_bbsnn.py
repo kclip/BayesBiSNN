@@ -10,7 +10,7 @@ from torch.optim.lr_scheduler import StepLR
 import argparse
 import tables
 import numpy as np
-from data_preprocessing.load_data_old import get_batch_example
+from data_preprocessing.load_data import create_dataloader
 from collections import Counter
 import pickle
 import fnmatch
@@ -61,23 +61,32 @@ if not args.disable_cuda and torch.cuda.is_available():
 else:
     args.device = torch.device('cpu')
 
-args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
-args.train_accs[args.n_epochs] = []
-
-sample_length = 2000  # length of samples during training in ms
+sample_length = 2e6  # length of samples during training in mus
 dt = 1000  # us
-T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
-input_size = [676 * (1 + args.polarity)]
+T = int(sample_length / dt)
 burnin = 100
-args.labels = [i for i in range(10)]
 
-dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
+
+if args.dataset == 'mnist_dvs':
+    dataset_path = args.home + r'/datasets/mnist-dvs/mnist_dvs_events_new.hdf5'
+elif args.dataset == 'dvs_gestures':
+    dataset_path = args.home + r'/datasets/DvsGesture/dvs_gestures_events_new.hdf5'
+
+dataset = tables.open_file(dataset_path)
 train_data = dataset.root.train
 test_data = dataset.root.test
 
+args.classes = [i for i in range(dataset.root.stats.train_label[1])]
 
-n_examples_test = 1000
-n_examples_train = 9000
+x_max = dataset.root.stats.train_data[1]
+input_size = [2, x_max, x_max]
+dataset.close()
+
+train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, size=input_size, classes=args.classes, sample_length_train=sample_length,
+                                      sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
+train_iterator = iter(train_dl)
+test_iterator = iter(test_dl)
+
 
 binary_model = LIFMLP(input_size,
                       len(args.labels),
@@ -116,10 +125,7 @@ for epoch in range(args.n_epochs):
     binary_model.softmax = args.with_softmax
     loss = 0
 
-    idxs = np.random.choice(np.arange(n_examples_train), [args.batch_size], replace=False)
-
-    inputs, labels = get_batch_example(train_data, idxs, args.batch_size, T, args.labels, input_size, dt, 26, args.polarity)
-
+    inputs, labels = next(train_iterator)
     inputs = inputs.transpose(0, 1).to(args.device)
     labels = labels.to(args.device)
 
@@ -139,9 +145,7 @@ for epoch in range(args.n_epochs):
 
     if (epoch + 1) % args.test_period == 0:
         binary_model.softmax = False
-
-        launch_tests(binary_model, optimizer, burnin, n_examples_test, n_examples_train,
-                     test_data, None, T, input_size, dt, epoch, args, results_path, output=-1)
+        launch_tests(binary_model, optimizer, burnin, None, test_iterator, T, epoch, args, results_path, output=-1)
 
 
 
