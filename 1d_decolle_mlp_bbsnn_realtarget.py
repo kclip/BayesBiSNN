@@ -29,9 +29,9 @@ if __name__ == "__main__":
     parser.add_argument('--test_period', type=int, default=500)
     parser.add_argument('--batch_size', type=int, default=32)
 
-    parser.add_argument('--lr', type=float, default=10)
+    parser.add_argument('--lr', type=float, default=0.1)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=5e-6)
+    parser.add_argument('--rho', type=float, default=5e-4)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
 

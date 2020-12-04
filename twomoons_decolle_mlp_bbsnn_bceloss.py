@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--lr', type=float, default=1e-1)
     parser.add_argument('--temperature', type=float, default=1)
-    parser.add_argument('--rho', type=float, default=5e-4)
+    parser.add_argument('--rho', type=float, default=1e-12)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--with_softmax', type=str, default='false')
     parser.add_argument('--polarity', type=str, default='true')
@@ -83,7 +83,7 @@ input_size = [x_bin_train.shape[-1]]
 
 binary_model = LIFMLP(input_size,
                       1,
-                      n_neurons=[128, 128],
+                      n_neurons=[256, 256],
                       with_output_layer=False,
                       with_bias=False,
                       prior_p=args.prior_p,
