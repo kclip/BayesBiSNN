@@ -7,7 +7,7 @@ from copy import deepcopy
 import os
 import argparse
 import numpy as np
-from data_preprocessing.load_data import get_batch_example
+from data_preprocessing.load_data_old import get_batch_example
 from collections import Counter
 import pickle
 import fnmatch

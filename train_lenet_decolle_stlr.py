@@ -10,7 +10,7 @@ from torch.optim.lr_scheduler import StepLR
 import argparse
 import tables
 import numpy as np
-from data_preprocessing.load_data import get_batch_example
+from data_preprocessing.load_data_old import get_batch_example
 from utils.activations import smooth_sigmoid, smooth_step
 from collections import Counter
 import pickle

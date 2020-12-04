@@ -1,7 +1,7 @@
 import argparse
 import tables
 import numpy as np
-from data_preprocessing.load_better import create_dataloader
+from data_preprocessing.load_data import create_dataloader
 
 from snn.utils.misc import find_indices_for_labels, str2bool
 from pytorch_memlab import MemReporter
@@ -25,7 +25,7 @@ args.polarity = str2bool(args.polarity)
 
 sample_length = 2e6  # length of samples during training in ms
 dt = 1000  # us
-T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
+T = int(sample_length / dt)  # number of timesteps in a sample
 burnin = 100
 
 

@@ -10,7 +10,7 @@ from torch.optim.lr_scheduler import StepLR
 import argparse
 import tables
 import numpy as np
-from data_preprocessing.load_data import get_batch_example
+from data_preprocessing.load_data_old import get_batch_example
 from collections import Counter
 
 def str2bool(v):
