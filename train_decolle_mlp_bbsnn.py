@@ -90,7 +90,7 @@ test_iterator = iter(test_dl)
 
 
 binary_model = LIFMLP(input_size,
-                      len(args.labels),
+                      len(args.classes),
                       n_neurons=[512, 256],
                       with_output_layer=False,
                       with_bias=False,
