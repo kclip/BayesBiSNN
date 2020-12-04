@@ -56,7 +56,7 @@ for epoch in range(args.n_epochs):
     inputs = inputs.transpose(0, 1)
     labels = labels
 
-    print(inputs.shape, labels.shape)
+    print(inputs.dtype, labels.shape)
 
     if (epoch + 1) % args.test_period == 0:
         for inputs, labels in test_iterator:

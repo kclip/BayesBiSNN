@@ -96,7 +96,7 @@ def get_batch_example(hdf5_group, idx, T=80, sample_length=2e6, dt=1000, ds=1, c
 
         bucket_start = bucket_end
 
-    return data, make_outputs_binary(label, T, classes)
+    return torch.FloatTensor(data), torch.FloatTensor(make_outputs_binary(label, T, classes))
 
 
 def create_dataloader(path, batch_size=32, size=[1], classes=[0], sample_length_train=2e6, sample_length_test=2e6, dt=1000, polarity=True, ds=1, **dl_kwargs):
