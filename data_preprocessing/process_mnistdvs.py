@@ -146,5 +146,5 @@ def create_data(path_to_hdf5='../data/mnist_dvs_events.hdf5', path_to_data=None)
 #             )
 
 create_data(path_to_hdf5=r'/scratch/users/k1804053/datasets/mnist-dvs/mnist_dvs_events_new.hdf5',
-            path_to_data=r'\users\k1804053\processed_polarity')
+            path_to_data=r'/users/k1804053/processed_polarity')
 

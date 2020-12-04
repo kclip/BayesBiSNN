@@ -51,8 +51,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data_preprocessing/process_mnistdvs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
-              <caret line="147" column="90" selection-start-line="147" selection-start-column="90" selection-end-line="147" selection-end-column="90" />
+            <state relative-caret-position="231">
+              <caret line="148" column="43" selection-start-line="148" selection-start-column="43" selection-end-line="148" selection-end-column="43" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -354,12 +354,12 @@
       <workItem from="1606119590501" duration="73640000" />
       <workItem from="1606465624420" duration="86611000" />
       <workItem from="1607017895333" duration="33516000" />
-      <workItem from="1607108070483" duration="2830000" />
+      <workItem from="1607108070483" duration="3438000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="991402000" />
+    <option name="totallyTimeSpent" value="992010000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -783,8 +783,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/data_preprocessing/process_mnistdvs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="147" column="90" selection-start-line="147" selection-start-column="90" selection-end-line="147" selection-end-column="90" />
+        <state relative-caret-position="231">
+          <caret line="148" column="43" selection-start-line="148" selection-start-column="43" selection-end-line="148" selection-end-column="43" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
