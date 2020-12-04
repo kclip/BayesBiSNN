@@ -181,7 +181,7 @@ for epoch in range(args.n_epochs):
                         readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
                 predictions = torch.cat((predictions, readout_hist[-1].transpose(0, 1)))
-                true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
+                true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
 
             np.save(os.path.join(results_path, 'test_predictions_latest'), predictions.numpy())
             np.save(os.path.join(results_path, 'true_labels_test'), true_labels.numpy())
