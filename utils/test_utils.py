@@ -43,7 +43,7 @@ def mode_testing_dataset(binary_model, optimizer, burnin, iterator, T, device, r
                     readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
             predictions = torch.cat((predictions, readout_hist[output].transpose(0, 1)))
-            true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
+            true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
 
     np.save(os.path.join(results_path, data_name + '_predictions_latest_mode'), predictions.numpy())
     np.save(os.path.join(results_path, data_name + '_true_labels_mode'), true_labels.numpy())
@@ -80,7 +80,7 @@ def mean_testing_dataset(binary_model, optimizer, burnin, n_samples, n_outputs, 
                 predictions_batch[:, j] = readout_hist[output].transpose(0, 1)
 
             predictions = torch.cat((predictions, predictions_batch))
-            true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1)))
+            true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
 
     np.save(os.path.join(results_path, data_name + '_predictions_latest_mean'), predictions.numpy())
     np.save(os.path.join(results_path, data_name + '_true_labels_mean'), true_labels.numpy())
