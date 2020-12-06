@@ -30,8 +30,8 @@ if __name__ == "__main__":
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--dataset', default=r"mnist_dvs")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--n_epochs', type=int, default=20000)
-    parser.add_argument('--test_period', type=int, default=5000)
+    parser.add_argument('--n_epochs', type=int, default=500)
+    parser.add_argument('--test_period', type=int, default=50)
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--n_samples', type=int, default=10)
 
@@ -86,9 +86,6 @@ dataset.close()
 
 train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, size=input_size, classes=args.classes, sample_length_train=sample_length,
                                       sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
-train_iterator = iter(train_dl)
-test_iterator = iter(test_dl)
-
 binary_model = LenetLIF(input_size,
                         Nhid_conv=[64, 128, 128],
                         Nhid_mlp=[],
@@ -121,37 +118,39 @@ optimizer.step()  # binarize weights
 
 
 for epoch in range(args.n_epochs):
-    binary_model.softmax = args.with_softmax
-
-    loss = 0
-
-    inputs, labels = next(train_iterator)
-    inputs = inputs.transpose(0, 1).to(args.device)
-    labels = labels.to(args.device)
-
-    binary_model.init(inputs, burnin=burnin)
-
-    readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
-
+    train_iterator = iter(train_dl)
+    test_iterator = iter(test_dl)
 
     print('Epoch %d/%d' % (epoch, args.n_epochs))
-    for t in range(burnin, T):
-        # forward pass: compute predicted outputs by passing inputs to the model
-        s, r, u = binary_model(inputs[t])
+    for inputs, labels in train_iterator:
+        binary_model.softmax = args.with_softmax
+        loss = 0
 
-        for l, ro_h in enumerate(readout_hist):
-            readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
+        inputs = inputs.transpose(0, 1).to(args.device)
+        labels = labels.to(args.device)
 
-        # calculate the loss
-        loss = decolle_loss(s, r, u, target=labels[:, :, t])
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
+        binary_model.init(inputs, burnin=burnin)
 
-    with torch.no_grad():
-        acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / args.batch_size
-        # backward pass: compute gradient of the loss with respect to model parameters
-        print(acc)
+        readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
+
+
+        for t in range(burnin, T):
+            # forward pass: compute predicted outputs by passing inputs to the model
+            s, r, u = binary_model(inputs[t])
+
+            for l, ro_h in enumerate(readout_hist):
+                readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
+
+            # calculate the loss
+            loss = decolle_loss(s, r, u, target=labels[:, :, t])
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
+
+        with torch.no_grad():
+            acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / args.batch_size
+            # backward pass: compute gradient of the loss with respect to model parameters
+            print(acc)
 
 
     if (epoch + 1) % (args.n_epochs//5) == 0:

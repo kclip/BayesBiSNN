@@ -28,8 +28,8 @@ if __name__ == "__main__":
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--dataset', default=r"mnist_dvs")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--n_epochs', type=int, default=20000)
-    parser.add_argument('--test_period', type=int, default=5000)
+    parser.add_argument('--n_epochs', type=int, default=500)
+    parser.add_argument('--test_period', type=int, default=50)
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--n_samples', type=int, default=10)
 
@@ -85,9 +85,6 @@ dataset.close()
 
 train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, size=input_size, classes=args.classes, sample_length_train=sample_length,
                                       sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
-train_iterator = iter(train_dl)
-test_iterator = iter(test_dl)
-
 
 binary_model = LIFMLP(input_size,
                       len(args.classes),
@@ -118,24 +115,27 @@ binary_model.init_parameters()
 
 
 for epoch in range(args.n_epochs):
-    if epoch % (args.n_epochs // 4) == 0:
-        args.lr /= 2
-        optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, rho=args.rho,
-                                 device=args.device)
+    train_iterator = iter(train_dl)
+    test_iterator = iter(test_dl)
 
-    binary_model.softmax = args.with_softmax
-    loss = 0
+    # if epoch % (args.n_epochs // 4) == 0:
+    #     args.lr /= 2
+    #     optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, rho=args.rho,
+    #                              device=args.device)
 
-    inputs, labels = next(train_iterator)
-    inputs = inputs.transpose(0, 1).to(args.device)
-    labels = labels.to(args.device)
+    for inputs, labels in train_iterator:
+        binary_model.softmax = args.with_softmax
+        loss = 0
 
-    optimizer.update_concrete_weights()
-    binary_model.init(inputs, burnin=burnin)
+        inputs = inputs.transpose(0, 1).to(args.device)
+        labels = labels.to(args.device)
 
-    readout_hist = train_on_example_bbsnn(binary_model, optimizer, decolle_loss, inputs, labels, burnin, T)
-    acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
-    print(acc)
+        optimizer.update_concrete_weights()
+        binary_model.init(inputs, burnin=burnin)
+
+        readout_hist = train_on_example_bbsnn(binary_model, optimizer, decolle_loss, inputs, labels, burnin, T)
+        acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
+        print(acc)
 
     torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')
     torch.save(latent_model.state_dict(), results_path + '/latent_model_weights.pt')
