@@ -94,7 +94,6 @@ model = LenetLIF(input_size,
                  num_mlp_layers=0,
                  with_bias=True,
                  with_output_layer=False,
-                 scaling=False,
                  softmax=args.with_softmax).to(args.device)
 
 
@@ -107,7 +106,7 @@ decolle_loss = DECOLLELoss(criterion, model)
 
 
 # specify optimizer
-optimizer = torch.optim.Adamax(model.get_trainable_parameters(), lr=args.lr, betas=[0., .95])
+optimizer = torch.optim.SGD(model.get_trainable_parameters(), lr=args.lr)
 
 model.init_parameters()
 
