@@ -58,7 +58,7 @@ else:
     args.device = torch.device('cpu')
 
 sample_length = 2e6  # length of samples during training in mus
-dt = 1000  # us
+dt = 5000  # us
 T = int(sample_length / dt)
 burnin = 50
 
