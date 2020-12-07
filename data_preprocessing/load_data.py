@@ -70,10 +70,9 @@ def get_batch_example(hdf5_group, idx, T=80, sample_length=2e6, dt=1000, ds=1, c
 
     ts = np.arange(dt, addrs[-1, 0] + dt, dt)
     bucket_start = 0
-    bucket_end = 0
 
     for i, t in enumerate(ts):
-        bucket_end = bucket_end + np.searchsorted(addrs[:, 0], t)
+        bucket_end = np.searchsorted(addrs[:, 0], t)
 
         ee = addrs[bucket_start:bucket_end]
 
