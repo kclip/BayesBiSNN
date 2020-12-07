@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/search_decolle_lenet_stlr.py" beforeDir="false" afterPath="$PROJECT_DIR$/search_decolle_lenet_stlr.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_lenet_bbsnn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_decolle_lenet_vanilla.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_decolle_lenet_vanilla.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_lenet_decolle_stlr.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_lenet_decolle_stlr.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train_lenet_decolle_stlr.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="89" column="109" selection-start-line="89" selection-start-column="109" selection-end-line="89" selection-end-column="109" />
+            <state relative-caret-position="221">
+              <caret line="87" column="16" selection-start-line="87" selection-start-column="16" selection-end-line="87" selection-end-column="16" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -33,7 +30,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_decolle_lenet_vanilla.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="535">
+            <state relative-caret-position="382">
               <caret line="84" lean-forward="true" selection-start-line="84" selection-end-line="84" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
@@ -406,12 +403,12 @@
       <workItem from="1606465624420" duration="86611000" />
       <workItem from="1607017895333" duration="33516000" />
       <workItem from="1607108070483" duration="9085000" />
-      <workItem from="1607329512177" duration="25734000" />
+      <workItem from="1607329512177" duration="26120000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1023391000" />
+    <option name="totallyTimeSpent" value="1023777000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -831,16 +828,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/train_decolle_lenet_vanilla.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="535">
-          <caret line="84" lean-forward="true" selection-start-line="84" selection-end-line="84" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_lenet_bbsnn.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -851,10 +838,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/train_decolle_lenet_vanilla.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="382">
+          <caret line="84" lean-forward="true" selection-start-line="84" selection-end-line="84" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/train_lenet_decolle_stlr.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="89" column="109" selection-start-line="89" selection-start-column="109" selection-end-line="89" selection-end-column="109" />
+        <state relative-caret-position="221">
+          <caret line="87" column="16" selection-start-line="87" selection-start-column="16" selection-end-line="87" selection-end-column="16" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
