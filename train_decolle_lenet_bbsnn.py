@@ -83,7 +83,7 @@ test_data = dataset.root.test
 
 args.classes = [i for i in range(dataset.root.stats.train_label[1])]
 
-x_max = dataset.root.stats.train_data[1]
+x_max = dataset.root.stats.train_data[1] // ds
 input_size = [2, x_max, x_max]
 dataset.close()
 

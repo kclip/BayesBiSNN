@@ -37,10 +37,10 @@ class NeuromorphicDataset(data.Dataset):
 
         if train:
             self.group = 'train'
-            self.x_max = dataset.root.stats.train_data[1]
+            self.x_max = dataset.root.stats.train_data[1] // ds
         else:
             self.group = 'test'
-            self.x_max = dataset.root.stats.test_data[1]
+            self.x_max = dataset.root.stats.test_data[1] // ds
 
         self.valid_idx = find_indices_for_labels(dataset.root[self.group], self.classes)
         self.n_examples = len(self.valid_idx)
