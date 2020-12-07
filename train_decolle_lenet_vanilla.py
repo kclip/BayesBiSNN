@@ -31,7 +31,7 @@ if __name__ == "__main__":
     parser.add_argument('--n_epochs', type=int, default=1000)
     parser.add_argument('--batch_size', type=int, default=64)
 
-    parser.add_argument('--lr', type=float, default=0.001)
+    parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--with_softmax', type=str, default='true')
     parser.add_argument('--polarity', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
@@ -159,30 +159,30 @@ for epoch in range(args.n_epochs):
         torch.save(model.state_dict(), results_path + '/latent_model_weights_%d.pt' % (1 + epoch))
 
 
-    # if (epoch + 1) % args.test_period == 0:
-    #     model.softmax = False
-    #
-    #     with torch.no_grad():
-    #         print('Testing epoch %d/%d' % (epoch + 1, args.n_epochs))
-    #         predictions = torch.FloatTensor()
-    #         true_labels = torch.FloatTensor()
-    #
-    #         for inputs, labels in test_iterator:
-    #             inputs = inputs.transpose(0, 1).to(args.device)
-    #
-    #             model.init(inputs, burnin=burnin)
-    #
-    #             readout_hist = [torch.Tensor() for _ in range(len(model.readout_layers))]
-    #
-    #             for t in range(burnin, T):
-    #                 # forward pass: compute predicted outputs by passing inputs to the model
-    #                 s, r, u = model(inputs[t])
-    #
-    #                 for l, ro_h in enumerate(readout_hist):
-    #                     readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
-    #
-    #             predictions = torch.cat((predictions, readout_hist[-1].transpose(0, 1)))
-    #             true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
-    #
-    #         np.save(os.path.join(results_path, 'test_predictions_latest'), predictions.numpy())
-    #         np.save(os.path.join(results_path, 'true_labels_test'), true_labels.numpy())
+    if (epoch + 1) % args.test_period == 0:
+        model.softmax = False
+
+        with torch.no_grad():
+            print('Testing epoch %d/%d' % (epoch + 1, args.n_epochs))
+            predictions = torch.FloatTensor()
+            true_labels = torch.FloatTensor()
+
+            for inputs, labels in test_iterator:
+                inputs = inputs.transpose(0, 1).to(args.device)
+
+                model.init(inputs, burnin=burnin)
+
+                readout_hist = [torch.Tensor() for _ in range(len(model.readout_layers))]
+
+                for t in range(burnin, T):
+                    # forward pass: compute predicted outputs by passing inputs to the model
+                    s, r, u = model(inputs[t])
+
+                    for l, ro_h in enumerate(readout_hist):
+                        readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
+
+                predictions = torch.cat((predictions, readout_hist[-1].transpose(0, 1)))
+                true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
+
+            np.save(os.path.join(results_path, 'test_predictions_latest'), predictions.numpy())
+            np.save(os.path.join(results_path, 'true_labels_test'), true_labels.numpy())
