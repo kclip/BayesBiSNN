@@ -31,7 +31,7 @@ if __name__ == "__main__":
     parser.add_argument('--n_epochs', type=int, default=1000)
     parser.add_argument('--batch_size', type=int, default=64)
 
-    parser.add_argument('--lr', type=float, default=0.0001)
+    parser.add_argument('--lr', type=float, default=0.1)
     parser.add_argument('--with_softmax', type=str, default='true')
     parser.add_argument('--polarity', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
@@ -121,10 +121,7 @@ for epoch in range(args.n_epochs):
 
     for inputs, labels in train_iterator:
         model.softmax = args.with_softmax
-    #
 
-        # idxs = np.random.choice(np.arange(9000), [args.batch_size], replace=False)
-        # inputs, labels = get_batch_example(train_data, idxs, args.batch_size, T, args.classes, input_size, dt, x_max, args.polarity)
         inputs = inputs.transpose(0, 1).to(args.device)
         labels = labels.to(args.device)
 
