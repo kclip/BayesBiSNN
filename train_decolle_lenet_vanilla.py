@@ -146,7 +146,7 @@ for epoch in range(args.n_epochs):
 
             loss.backward()
             optimizer.step()
-        optimizer.zero_grad()
+            optimizer.zero_grad()
 
         with torch.no_grad():
             acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / args.batch_size
