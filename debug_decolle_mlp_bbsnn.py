@@ -53,7 +53,7 @@ else:
 
 
 sample_length = 2e6  # length of samples during training in mus
-dt = 25000  # us
+dt = 5000  # us
 T = int(sample_length / dt)
 burnin = 10
 

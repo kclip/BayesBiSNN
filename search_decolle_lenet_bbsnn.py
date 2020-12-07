@@ -29,7 +29,9 @@ if __name__ == "__main__":
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=30)
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--batch_size', type=int, default=64)
+    parser.add_argument('--dataset', default=r"mnist_dvs")
+
 
     parser.add_argument('--temperature', type=float, default=1)
     parser.add_argument('--prior_p', type=float, default=0.5)
