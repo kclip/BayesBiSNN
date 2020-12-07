@@ -86,7 +86,7 @@ train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, 
 
 
 lr_list = np.logspace(1, 3, 15, endpoint=True)
-rho_list = np.logspace(-14, -3, 12, endpoint=True)
+rho_list = np.logspace(-10, -5, 6, endpoint=True)
 
 results_l1 = {i: {j: [] for j in rho_list} for i in lr_list}
 results_l2 = {i: {j: [] for j in rho_list} for i in lr_list}
