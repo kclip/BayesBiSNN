@@ -126,7 +126,24 @@ for lr in lr_list:
             optimizer.update_concrete_weights()
             binary_model.init(inputs, burnin=burnin)
 
-            readout_hist = train_on_example_bbsnn(binary_model, optimizer, decolle_loss, inputs, labels, burnin, T)
+            readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
+
+            for t in tqdm(range(burnin, T)):
+                # forward pass: compute new pseudo-binary weights
+                optimizer.update_concrete_weights()
+
+                # forward pass: compute predicted outputs by passing inputs to the model
+                s, r, u = binary_model(inputs[t])
+
+                for l, ro_h in enumerate(readout_hist):
+                    readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
+
+                # calculate the loss
+                loss = decolle_loss(s, r, u, target=labels[:, :, t])
+                loss.backward()
+                optimizer.step()
+                optimizer.zero_grad()
+
             acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
             results_l1[lr][rho].append(acc)
             print(acc)
