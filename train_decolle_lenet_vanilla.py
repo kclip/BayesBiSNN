@@ -58,7 +58,7 @@ else:
     args.device = torch.device('cpu')
 
 sample_length = 2e6  # length of samples during training in mus
-dt = 5000  # us
+dt = 1000  # us
 T = int(sample_length / dt)
 burnin = 50
 
@@ -76,10 +76,10 @@ args.classes = [i for i in range(dataset.root.stats.train_label[1])]
 
 x_max = dataset.root.stats.train_data[1]
 input_size = [2, x_max, x_max]
-# dataset.close() #todo
+dataset.close()
 
-# train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, size=input_size, classes=args.classes, sample_length_train=sample_length,
-#                                       sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
+train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, size=input_size, classes=args.classes, sample_length_train=sample_length,
+                                      sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
 
 
 model = LenetLIF(input_size,
@@ -114,44 +114,44 @@ print(model.scales)
 print([layer.scale for layer in model.LIF_layers])
 
 for epoch in range(args.n_epochs):
-    # train_iterator = iter(train_dl)
-    # test_iterator = iter(test_dl)
+    train_iterator = iter(train_dl)
+    test_iterator = iter(test_dl)
 
     loss = 0
 
-    # for inputs, labels in train_iterator:
-    #     model.softmax = args.with_softmax
+    for inputs, labels in train_iterator:
+        model.softmax = args.with_softmax
     #
 
-    idxs = np.random.choice(np.arange(9000), [args.batch_size], replace=False)
-    inputs, labels = get_batch_example(train_data, idxs, args.batch_size, T, args.classes, input_size, dt, x_max, args.polarity)
-    inputs = inputs.transpose(0, 1).to(args.device)
-    labels = labels.to(args.device)
+        # idxs = np.random.choice(np.arange(9000), [args.batch_size], replace=False)
+        # inputs, labels = get_batch_example(train_data, idxs, args.batch_size, T, args.classes, input_size, dt, x_max, args.polarity)
+        inputs = inputs.transpose(0, 1).to(args.device)
+        labels = labels.to(args.device)
 
-    model.init(inputs, burnin=burnin)
+        model.init(inputs, burnin=burnin)
 
-    readout_hist = [torch.Tensor() for _ in range(len(model.readout_layers))]
+        readout_hist = [torch.Tensor() for _ in range(len(model.readout_layers))]
 
 
-    print('Epoch %d/%d' % (epoch, args.n_epochs))
-    for t in tqdm(range(burnin, T)):
-        # forward pass: compute predicted outputs by passing inputs to the model
-        s, r, u = model(inputs[t])
+        print('Epoch %d/%d' % (epoch, args.n_epochs))
+        for t in tqdm(range(burnin, T)):
+            # forward pass: compute predicted outputs by passing inputs to the model
+            s, r, u = model(inputs[t])
 
-        for l, ro_h in enumerate(readout_hist):
-            readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
+            for l, ro_h in enumerate(readout_hist):
+                readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
-        # calculate the loss
-        loss = decolle_loss(s, r, u, target=labels[:, :, t])
+            # calculate the loss
+            loss = decolle_loss(s, r, u, target=labels[:, :, t])
 
-        loss.backward()
-        optimizer.step()
-    optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+        optimizer.zero_grad()
 
-    with torch.no_grad():
-        acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / args.batch_size
-        # backward pass: compute gradient of the loss with respect to model parameters
-        print(acc)
+        with torch.no_grad():
+            acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / args.batch_size
+            # backward pass: compute gradient of the loss with respect to model parameters
+            print(acc)
 
 
     if (epoch + 1) % (args.n_epochs//5) == 0:
