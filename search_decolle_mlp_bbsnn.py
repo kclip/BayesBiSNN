@@ -57,7 +57,7 @@ if not args.disable_cuda and torch.cuda.is_available():
     args.device = torch.device('cuda')
 else:
     args.device = torch.device('cpu')
-
+print(args.device)
 
 sample_length = 2e6  # length of samples during training in mus
 dt = 1000  # us
