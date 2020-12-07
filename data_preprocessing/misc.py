@@ -19,6 +19,18 @@ def expand_targets(targets, T=500, burnin=0):
     return y
 
 
+def make_outputs_batch(labels, T, classes):
+    mapping = {classes[i]: i for i in range(len(classes))}
+    print(labels)
+    if hasattr(labels, 'len'):
+        out = torch.zeros([len(labels), len(classes), T])
+        out[[i for i in range(len(labels))], [mapping[lbl] for lbl in labels], :] = 1
+    else:
+        out = torch.zeros([len(classes), T])
+        mapping = {classes[i]: i for i in range(len(classes))}
+        out[mapping[labels], :] = 1
+    return out
+
 def make_outputs_binary(labels, T, classes):
     mapping = {classes[i]: i for i in range(len(classes))}
 
