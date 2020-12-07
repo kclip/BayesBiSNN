@@ -91,70 +91,69 @@ results_l1 = {i: [] for i in lr_list}
 results_l2 = {i: [] for i in lr_list}
 
 for lr in lr_list:
-        print('LR: ' + str(lr))
-        binary_model = LenetLIF(input_size,
-                                Nhid_conv=[64, 128, 128],
-                                Nhid_mlp=[],
-                                out_channels=len(args.classes),
-                                kernel_size=[7],
-                                stride=[1],
-                                pool_size=[2, 1, 2],
-                                dropout=[0.],
-                                num_conv_layers=3,
-                                num_mlp_layers=0,
-                                with_bias=True,
-                                with_output_layer=False,
-                                softmax=args.with_softmax).to(args.device)
-        latent_model = deepcopy(binary_model)
+    print('LR: ' + str(lr))
+    model = LenetLIF(input_size,
+                     Nhid_conv=[64, 128, 128],
+                     Nhid_mlp=[],
+                     out_channels=len(args.classes),
+                     kernel_size=[7],
+                     stride=[1],
+                     pool_size=[2, 1, 2],
+                     dropout=[0.],
+                     num_conv_layers=3,
+                     num_mlp_layers=0,
+                     with_bias=True,
+                     with_output_layer=False,
+                     softmax=args.with_softmax).to(args.device)
 
-        # specify loss function
-        criterion = [one_hot_crossentropy for _ in range(binary_model.num_layers)]
+    # specify loss function
+    criterion = [one_hot_crossentropy for _ in range(model.num_layers)]
 
-        decolle_loss = DECOLLELoss(criterion, latent_model)
+    decolle_loss = DECOLLELoss(criterion, model)
 
-        # specify optimizer
-        optimizer = BiSGD(binary_model.parameters(), latent_model.parameters(), lr=lr, binarizer=binarize)
+    # specify optimizer
+    optimizer = torch.optim.Adamax(model.get_trainable_parameters(), lr=args.lr, betas=[0., .95])
 
-        binary_model.init_parameters()
+    model.init_parameters()
 
-        train_iterator = iter(train_dl)
+    train_iterator = iter(train_dl)
 
-        for i in range(30):
-            binary_model.softmax = args.with_softmax
-            loss = 0
+    for i in range(30):
+        model.softmax = args.with_softmax
+        loss = 0
 
-            inputs, labels = next(train_iterator)
-            inputs = inputs.transpose(0, 1).to(args.device)
-            labels = labels.to(args.device)
+        inputs, labels = next(train_iterator)
+        inputs = inputs.transpose(0, 1).to(args.device)
+        labels = labels.to(args.device)
 
-            binary_model.init(inputs, burnin=burnin)
+        model.init(inputs, burnin=burnin)
 
-            readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
+        readout_hist = [torch.Tensor() for _ in range(len(model.readout_layers))]
 
-            for t in range(burnin, T):
-                # forward pass: compute predicted outputs by passing inputs to the model
-                s, r, u = binary_model(inputs[t])
+        for t in range(burnin, T):
+            # forward pass: compute predicted outputs by passing inputs to the model
+            s, r, u = model(inputs[t])
 
-                for l, ro_h in enumerate(readout_hist):
-                    readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
+            for l, ro_h in enumerate(readout_hist):
+                readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
-                # calculate the loss
-                loss = decolle_loss(s, r, u, target=labels[:, :, t])
-                loss.backward()
-                optimizer.step()
-                optimizer.zero_grad()
+            # calculate the loss
+            loss = decolle_loss(s, r, u, target=labels[:, :, t])
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
 
-            acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
-            results_l1[lr].append(acc)
-            print(acc)
-            # acc = get_acc(torch.sum(readout_hist[-2], dim=0).argmax(dim=1), labels, args.batch_size)
-            # results_l2[lr].append(acc)
-            # print(acc)
+        acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
+        results_l1[lr].append(acc)
+        print(acc)
+        # acc = get_acc(torch.sum(readout_hist[-2], dim=0).argmax(dim=1), labels, args.batch_size)
+        # results_l2[lr].append(acc)
+        # print(acc)
 
 
-        with open(results_path + '/res_l1.pkl', 'wb') as f:
-            pickle.dump(results_l1, f, pickle.HIGHEST_PROTOCOL)
+    with open(results_path + '/res_l1.pkl', 'wb') as f:
+        pickle.dump(results_l1, f, pickle.HIGHEST_PROTOCOL)
 
-        # with open(results_path + '/res_l2.pkl', 'wb') as f:
-        #     pickle.dump(results_l2, f, pickle.HIGHEST_PROTOCOL)
+    # with open(results_path + '/res_l2.pkl', 'wb') as f:
+    #     pickle.dump(results_l2, f, pickle.HIGHEST_PROTOCOL)
 
