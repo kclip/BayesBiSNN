@@ -65,8 +65,10 @@ burnin = 50
 
 if args.dataset == 'mnist_dvs':
     dataset_path = args.home + r'/datasets/mnist-dvs/mnist_dvs_events_new.hdf5'
+    ds = 1
 elif args.dataset == 'dvs_gestures':
     dataset_path = args.home + r'/datasets/DvsGesture/dvs_gestures_events_new.hdf5'
+    ds = 4
 
 dataset = tables.open_file(dataset_path)
 train_data = dataset.root.train
@@ -79,7 +81,7 @@ input_size = [2, x_max, x_max]
 dataset.close()
 
 train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, size=input_size, classes=args.classes, sample_length_train=sample_length,
-                                      sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
+                                      sample_length_test=sample_length, dt=dt, polarity=args.polarity, ds=ds, num_workers=2)
 
 
 model = LenetLIF(input_size,
@@ -118,6 +120,7 @@ for epoch in range(args.n_epochs):
     test_iterator = iter(test_dl)
 
     loss = 0
+    print('Epoch %d/%d' % (epoch, args.n_epochs))
 
     for inputs, labels in train_iterator:
         model.softmax = args.with_softmax
@@ -130,7 +133,6 @@ for epoch in range(args.n_epochs):
         readout_hist = [torch.Tensor() for _ in range(len(model.readout_layers))]
 
 
-        print('Epoch %d/%d' % (epoch, args.n_epochs))
         for t in range(burnin, T):
             # forward pass: compute predicted outputs by passing inputs to the model
             s, r, u = model(inputs[t])

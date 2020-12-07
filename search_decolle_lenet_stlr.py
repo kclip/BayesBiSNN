@@ -68,8 +68,10 @@ burnin = 50
 
 if args.dataset == 'mnist_dvs':
     dataset_path = args.home + r'/datasets/mnist-dvs/mnist_dvs_events_new.hdf5'
+    ds = 1
 elif args.dataset == 'dvs_gestures':
     dataset_path = args.home + r'/datasets/DvsGesture/dvs_gestures_events_new.hdf5'
+    ds = 4
 
 dataset = tables.open_file(dataset_path)
 train_data = dataset.root.train
@@ -82,7 +84,7 @@ input_size = [2, x_max, x_max]
 dataset.close()
 
 train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, size=input_size, classes=args.classes, sample_length_train=sample_length,
-                                      sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
+                                      sample_length_test=sample_length, dt=dt, polarity=args.polarity, ds=ds, num_workers=2)
 
 
 lr_list = np.linspace(100, 1000, 10)
