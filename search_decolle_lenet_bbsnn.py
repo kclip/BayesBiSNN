@@ -120,7 +120,7 @@ for lr in lr_list:
 
         train_iterator = iter(train_dl)
 
-        for i in range(10):
+        for i in range(30):
             binary_model.softmax = args.with_softmax
             loss = 0
 

@@ -46,7 +46,7 @@ else:
     expDirN = "%03d" % (int((prelist[len(prelist) - 1].split("__"))[0]) + 1)
 
 results_path = time.strftime(args.results + r'/' + expDirN + "__" + "%d-%m-%Y",
-                             time.localtime()) + '_' + 'search_mnist_dvs_bbsnnrp_mlp_' + r'_%d_epochs' % args.n_epochs \
+                             time.localtime()) + '_' + 'search_mnist_dvs_bbsnnrp_mlp_' + \
                + '_temp_%3f' % args.temperature + '_prior_%3f' % args.prior_p
 os.makedirs(results_path)
 
