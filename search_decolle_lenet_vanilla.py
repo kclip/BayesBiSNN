@@ -112,7 +112,7 @@ for lr in lr_list:
     decolle_loss = DECOLLELoss(criterion, model)
 
     # specify optimizer
-    optimizer = torch.optim.Adamax(model.get_trainable_parameters(), lr=args.lr, betas=[0., .95])
+    optimizer = torch.optim.Adamax(model.get_trainable_parameters(), lr=lr, betas=[0., .95])
 
     model.init_parameters()
 
