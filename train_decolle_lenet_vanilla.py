@@ -131,7 +131,7 @@ for epoch in range(args.n_epochs):
 
 
         print('Epoch %d/%d' % (epoch, args.n_epochs))
-        for t in tqdm(range(burnin, T)):
+        for t in range(burnin, T):
             # forward pass: compute predicted outputs by passing inputs to the model
             s, r, u = model(inputs[t])
 
