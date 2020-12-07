@@ -122,11 +122,12 @@ for epoch in range(args.n_epochs):
     # for inputs, labels in train_iterator:
     #     model.softmax = args.with_softmax
     #
-    #     inputs = inputs.transpose(0, 1).to(args.device)
-    #     labels = labels.to(args.device)
 
     idxs = np.random.choice(np.arange(9000), [args.batch_size], replace=False)
     inputs, labels = get_batch_example(train_data, idxs, args.batch_size, T, args.classes, input_size, dt, x_max, args.polarity)
+    inputs = inputs.transpose(0, 1).to(args.device)
+    labels = labels.to(args.device)
+
     model.init(inputs, burnin=burnin)
 
     readout_hist = [torch.Tensor() for _ in range(len(model.readout_layers))]
