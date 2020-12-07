@@ -85,7 +85,7 @@ train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, 
                                       sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
 
 
-lr_list = np.logspace(0, 12, 13, endpoint=True)
+lr_list = np.linspace(500, 5000, 10)
 
 results_l1 = {i: [] for i in lr_list}
 results_l2 = {i: [] for i in lr_list}
@@ -119,7 +119,7 @@ for lr in lr_list:
 
         train_iterator = iter(train_dl)
 
-        for i in range(15):
+        for i in range(30):
             binary_model.softmax = args.with_softmax
             loss = 0
 
