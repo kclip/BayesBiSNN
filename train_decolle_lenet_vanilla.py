@@ -94,6 +94,7 @@ model = LenetLIF(input_size,
                  num_mlp_layers=0,
                  with_bias=True,
                  with_output_layer=False,
+                 scaling=False,
                  softmax=args.with_softmax).to(args.device)
 
 
