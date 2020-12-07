@@ -64,9 +64,9 @@ burnin = 50
 
 
 if args.dataset == 'mnist_dvs':
-    dataset_path = args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5'
+    dataset_path = args.home + r'/datasets/mnist-dvs/mnist_dvs_events_new.hdf5'
 elif args.dataset == 'dvs_gestures':
-    dataset_path = args.home + r'/datasets/DvsGesture/dvs_gestures_events.hdf5'
+    dataset_path = args.home + r'/datasets/DvsGesture/dvs_gestures_events_new.hdf5'
 
 dataset = tables.open_file(dataset_path)
 train_data = dataset.root.train
