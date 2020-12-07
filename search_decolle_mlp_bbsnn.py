@@ -60,9 +60,9 @@ else:
 print(args.device)
 
 sample_length = 2e6  # length of samples during training in mus
-dt = 1000  # us
+dt = 5000  # us
 T = int(sample_length / dt)
-burnin = 100
+burnin = 50
 
 
 if args.dataset == 'mnist_dvs':
@@ -128,7 +128,7 @@ for lr in lr_list:
 
             readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
 
-            for t in tqdm(range(burnin, T)):
+            for t in range(burnin, T):
                 # forward pass: compute new pseudo-binary weights
                 optimizer.update_concrete_weights()
 
