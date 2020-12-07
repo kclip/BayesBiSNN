@@ -85,7 +85,7 @@ train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, 
                                       sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
 
 
-lr_list = np.logspace(-10, 1, 12)
+lr_list = np.logspace(-5, 1, 6, endpoint=True)
 
 results_l1 = {i: [] for i in lr_list}
 results_l2 = {i: [] for i in lr_list}
@@ -112,7 +112,7 @@ for lr in lr_list:
     decolle_loss = DECOLLELoss(criterion, model)
 
     # specify optimizer
-    optimizer = torch.optim.Adamax(model.get_trainable_parameters(), lr=lr, betas=[0., .95])
+    optimizer = torch.optim.SGD(model.get_trainable_parameters(), lr=lr)
 
     model.init_parameters()
 
