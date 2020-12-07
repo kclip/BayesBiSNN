@@ -30,7 +30,7 @@ if __name__ == "__main__":
     parser.add_argument('--test_period', type=int, default=10000)
     parser.add_argument('--batch_size', type=int, default=32)
 
-    parser.add_argument('--lr', type=float, default=1000)
+    parser.add_argument('--lr', type=float, default=750)
     parser.add_argument('--with_softmax', type=str, default='false')
     parser.add_argument('--polarity', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
@@ -80,7 +80,7 @@ input_size = [x_bin_train.shape[-1]]
 ### Increase capacity
 binary_model = LIFMLP(input_size,
                       1,
-                      n_neurons=[64, 64],
+                      n_neurons=[256, 256],
                       with_output_layer=False,
                       with_bias=False,
                       prior_p=0.5,
