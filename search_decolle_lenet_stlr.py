@@ -86,13 +86,11 @@ train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, 
 
 
 lr_list = np.logspace(-5, 8, 14, endpoint=True)
-rho_list = np.logspace(-14, -3, 12, endpoint=True)
 
-results_l1 = {i: {j: [] for j in rho_list} for i in lr_list}
+results_l1 = {i: [] for i in lr_list}
 
 for lr in lr_list:
-    for rho in rho_list:
-        print('LR: ' + str(lr) + ', rho: ' + str(rho))
+        print('LR: ' + str(lr))
         binary_model = LenetLIF(input_size,
                                 Nhid_conv=[64, 128, 128],
                                 Nhid_mlp=[],
@@ -114,7 +112,7 @@ for lr in lr_list:
         decolle_loss = DECOLLELoss(criterion, latent_model)
 
         # specify optimizer
-        optimizer = BiSGD(binary_model.parameters(), latent_model.parameters(), lr=args.lr, binarizer=binarize)
+        optimizer = BiSGD(binary_model.parameters(), latent_model.parameters(), lr=lr, binarizer=binarize)
 
         binary_model.init_parameters()
 
@@ -146,7 +144,7 @@ for lr in lr_list:
                 optimizer.zero_grad()
 
             acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
-            results_l1[lr][rho].append(acc)
+            results_l1[lr].append(acc)
             print(acc)
 
         with open(results_path + '/res_l1.pkl', 'wb') as f:

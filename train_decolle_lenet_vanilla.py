@@ -34,8 +34,11 @@ if __name__ == "__main__":
     # Training arguments
     parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
     parser.add_argument('--results', default=r"C:\Users\K1804053\results")
+    parser.add_argument('--dataset', default=r"mnist_dvs")
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=1000)
+    parser.add_argument('--batch_size', type=int, default=64)
+
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--with_softmax', type=str, default='true')
     parser.add_argument('--disable-cuda', type=str, default='false', help='Disable CUDA')
