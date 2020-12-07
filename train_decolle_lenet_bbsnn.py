@@ -18,7 +18,6 @@ import time
 from utils.train_utils import train_on_example_bbsnn
 from utils.test_utils import launch_tests
 from utils.misc import str2bool, get_acc
-from snn.utils.misc import find_indices_for_labels
 from data_preprocessing.load_data import create_dataloader
 
 if __name__ == "__main__":
