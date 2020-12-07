@@ -170,8 +170,8 @@
       <find>test</find>
       <find>n_samples_train</find>
       <find>n_samples_test</find>
-      <find>args.la</find>
       <find>args.labels</find>
+      <find>args.la</find>
     </findStrings>
     <replaceStrings>
       <replace>'params'</replace>
