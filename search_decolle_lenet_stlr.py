@@ -85,7 +85,7 @@ train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, 
                                       sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
 
 
-lr_list = np.linspace(500, 5000, 10)
+lr_list = np.linspace(100, 1000, 10)
 
 results_l1 = {i: [] for i in lr_list}
 results_l2 = {i: [] for i in lr_list}
@@ -147,14 +147,14 @@ for lr in lr_list:
             acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
             results_l1[lr].append(acc)
             print(acc)
-            acc = get_acc(torch.sum(readout_hist[-2], dim=0).argmax(dim=1), labels, args.batch_size)
-            results_l2[lr].append(acc)
-            print(acc)
+            # acc = get_acc(torch.sum(readout_hist[-2], dim=0).argmax(dim=1), labels, args.batch_size)
+            # results_l2[lr].append(acc)
+            # print(acc)
 
 
         with open(results_path + '/res_l1.pkl', 'wb') as f:
             pickle.dump(results_l1, f, pickle.HIGHEST_PROTOCOL)
 
-        with open(results_path + '/res_l2.pkl', 'wb') as f:
-            pickle.dump(results_l2, f, pickle.HIGHEST_PROTOCOL)
+        # with open(results_path + '/res_l2.pkl', 'wb') as f:
+        #     pickle.dump(results_l2, f, pickle.HIGHEST_PROTOCOL)
 
