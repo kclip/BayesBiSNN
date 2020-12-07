@@ -78,6 +78,7 @@ args.classes = [i for i in range(dataset.root.stats.train_label[1])]
 
 x_max = dataset.root.stats.train_data[1]
 input_size = [2, x_max, x_max]
+print(input_size)
 dataset.close()
 
 train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, size=input_size, classes=args.classes, sample_length_train=sample_length,
