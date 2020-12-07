@@ -85,7 +85,7 @@ train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, 
                                       sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
 
 
-lr_list = np.logspace(0, 8, 9, endpoint=True)
+lr_list = np.logspace(1, 3, 15, endpoint=True)
 rho_list = np.logspace(-14, -3, 12, endpoint=True)
 
 results_l1 = {i: {j: [] for j in rho_list} for i in lr_list}
@@ -136,13 +136,13 @@ for lr in lr_list:
             acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
             results_l1[lr][rho].append(acc)
             print(acc)
-            acc = get_acc(torch.sum(readout_hist[-2], dim=0).argmax(dim=1), labels, args.batch_size)
-            print(acc)
-            results_l2[lr][rho].append(acc)
+            # acc = get_acc(torch.sum(readout_hist[-2], dim=0).argmax(dim=1), labels, args.batch_size)
+            # print(acc)
+            # results_l2[lr][rho].append(acc)
 
         with open(results_path + '/res_l1.pkl', 'wb') as f:
             pickle.dump(results_l1, f, pickle.HIGHEST_PROTOCOL)
 
-        with open(results_path + '/res_l2.pkl', 'wb') as f:
-            pickle.dump(results_l2, f, pickle.HIGHEST_PROTOCOL)
+        # with open(results_path + '/res_l2.pkl', 'wb') as f:
+        #     pickle.dump(results_l2, f, pickle.HIGHEST_PROTOCOL)
 
