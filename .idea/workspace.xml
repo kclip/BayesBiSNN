@@ -90,8 +90,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train_decolle_lenet_vanilla.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="335">
-              <caret line="127" column="121" selection-start-line="127" selection-start-column="121" selection-end-line="127" selection-end-column="121" />
+            <state relative-caret-position="451">
+              <caret line="186" lean-forward="true" selection-start-line="159" selection-end-line="186" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -397,12 +397,12 @@
       <workItem from="1606465624420" duration="86611000" />
       <workItem from="1607017895333" duration="33516000" />
       <workItem from="1607108070483" duration="9085000" />
-      <workItem from="1607329512177" duration="11578000" />
+      <workItem from="1607329512177" duration="11620000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1009235000" />
+    <option name="totallyTimeSpent" value="1009277000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -844,8 +844,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train_decolle_lenet_vanilla.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="335">
-          <caret line="127" column="121" selection-start-line="127" selection-start-column="121" selection-end-line="127" selection-end-column="121" />
+        <state relative-caret-position="451">
+          <caret line="186" lean-forward="true" selection-start-line="159" selection-end-line="186" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
