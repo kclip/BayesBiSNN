@@ -125,7 +125,8 @@ for epoch in range(args.n_epochs):
     #     inputs = inputs.transpose(0, 1).to(args.device)
     #     labels = labels.to(args.device)
 
-    inputs, labels = get_batch_example(train_data, args.batch_size, T, args.classes, input_size, dt, x_max, args.polarity)
+    idxs = np.random.choice(np.arange(900), [args.batch_size], replace=False)
+    inputs, labels = get_batch_example(train_data, idxs, args.batch_size, T, args.classes, input_size, dt, x_max, args.polarity)
     model.init(inputs, burnin=burnin)
 
     readout_hist = [torch.Tensor() for _ in range(len(model.readout_layers))]
