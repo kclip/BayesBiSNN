@@ -28,7 +28,7 @@ def get_batch_example(hdf5_group, idxs, batch_size, T=80, classes=[0], size=[1, 
     else:
         data = curr[:, :T]
 
-    return torch.FloatTensor(data), torch.FloatTensor(make_output_from_labels(labels, T, classes))
+    return torch.FloatTensor(data), torch.FloatTensor(make_outputs_binary(labels, T, classes))
 
 
 def chunk_evs_pol(times, addrs, batch_size, idx_beg, idx_end, T, dt=1000, size=[2, 304, 240], x_max=1, polarity=True):
