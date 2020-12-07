@@ -10,7 +10,7 @@ from torch.optim.lr_scheduler import StepLR
 import argparse
 import tables
 import numpy as np
-from data_preprocessing.load_data_old import get_batch_example
+from data_preprocessing.load_data import create_dataloader
 from collections import Counter
 import pickle
 import fnmatch
@@ -18,7 +18,7 @@ import time
 from utils.train_utils import train_on_example_bbsnn
 from utils.test_utils import launch_tests
 from utils.misc import str2bool, get_acc
-
+import pickle
 
 if __name__ == "__main__":
     # setting the hyper parameters
@@ -59,22 +59,29 @@ if not args.disable_cuda and torch.cuda.is_available():
 else:
     args.device = torch.device('cpu')
 
-args.train_accs = {i: [] for i in range(0, args.n_epochs, 100)}
-args.train_accs[args.n_epochs] = []
-
-sample_length = 2000  # length of samples during training in ms
+sample_length = 2e6  # length of samples during training in mus
 dt = 1000  # us
-T = int(sample_length * 1000 / dt)  # number of timesteps in a sample
-input_size = [2, 26, 26]
+T = int(sample_length / dt)
 burnin = 100
-n_examples_test = 1000
-n_examples_train = 9000
 
-args.labels = [i for i in range(10)]
 
-dataset = tables.open_file(args.home + r'/datasets/mnist-dvs/mnist_dvs_events.hdf5')
+if args.dataset == 'mnist_dvs':
+    dataset_path = args.home + r'/datasets/mnist-dvs/mnist_dvs_events_new.hdf5'
+elif args.dataset == 'dvs_gestures':
+    dataset_path = args.home + r'/datasets/DvsGesture/dvs_gestures_events_new.hdf5'
+
+dataset = tables.open_file(dataset_path)
 train_data = dataset.root.train
 test_data = dataset.root.test
+
+args.classes = [i for i in range(dataset.root.stats.train_label[1])]
+
+x_max = dataset.root.stats.train_data[1]
+input_size = [(1 + args.polarity) * x_max * x_max]
+dataset.close()
+
+train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, size=input_size, classes=args.classes, sample_length_train=sample_length,
+                                      sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
 
 
 lr_list = np.logspace(1, 6, 6, endpoint=True)
@@ -89,7 +96,7 @@ for lr in lr_list:
         binary_model = LenetLIF(input_size,
                                 Nhid_conv=[64, 128, 128],
                                 Nhid_mlp=[],
-                                out_channels=10,
+                                out_channels=len(args.classes),
                                 kernel_size=[7],
                                 stride=[1],
                                 pool_size=[2, 1, 2],
@@ -111,14 +118,13 @@ for lr in lr_list:
 
         binary_model.init_parameters()
 
-        for epoch in range(args.n_epochs):
+        train_iterator = iter(train_dl)
+
+        for i in range(10):
             binary_model.softmax = args.with_softmax
             loss = 0
 
-            idxs = np.random.choice(np.arange(n_examples_train), [args.batch_size], replace=False)
-
-            inputs, labels = get_batch_example(train_data, idxs, args.batch_size, T, args.labels, input_size, dt, 26, args.polarity)
-
+            inputs, labels = next(train_iterator)
             inputs = inputs.transpose(0, 1).to(args.device)
             labels = labels.to(args.device)
 
@@ -132,3 +138,10 @@ for lr in lr_list:
             acc = get_acc(torch.sum(readout_hist[-2], dim=0).argmax(dim=1), labels, args.batch_size)
             print(acc)
             results_l2[lr][rho].append(acc)
+
+        with open(results_path + '/res_l1.pkl', 'wb') as f:
+            pickle.dump(results_l1, f, pickle.HIGHEST_PROTOCOL)
+
+        with open(results_path + '/res_l2.pkl', 'wb') as f:
+            pickle.dump(results_l2, f, pickle.HIGHEST_PROTOCOL)
+
