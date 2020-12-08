@@ -124,7 +124,7 @@ loss = 0
 
 gradients_means = []
 gradients_stds = []
-true_labels = []
+true_labels = torch.FloatTensor()
 
 i = 0
 for inputs, labels in train_iterator:
