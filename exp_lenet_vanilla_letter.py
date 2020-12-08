@@ -126,7 +126,9 @@ gradients_means = []
 gradients_stds = []
 true_labels = []
 
-for i, inputs, labels in enumerate(train_iterator):
+i = 0
+for inputs, labels in train_iterator:
+    i += 1
     model.softmax = args.with_softmax
 
     inputs = inputs.transpose(0, 1).to(args.device)
