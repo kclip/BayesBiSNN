@@ -126,6 +126,8 @@ for epoch in range(args.n_epochs):
     train_iterator = iter(train_dl)
     test_iterator = iter(test_dl)
 
+    print('Epoch %d/%d' % (epoch, args.n_epochs))
+
     for inputs, labels in train_iterator:
         binary_model.softmax = args.with_softmax
         loss = 0
@@ -139,9 +141,6 @@ for epoch in range(args.n_epochs):
         readout_hist = train_on_example_bbsnn(binary_model, optimizer, decolle_loss, inputs, labels, burnin, T)
         acc = get_acc(torch.sum(readout_hist[-1], dim=0).argmax(dim=1), labels, args.batch_size)
         print(acc)
-        # acc = get_acc(torch.sum(readout_hist[-2], dim=0).argmax(dim=1), labels, args.batch_size)
-        # print(acc)
-
 
         torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')
         torch.save(latent_model.state_dict(), results_path + '/latent_model_weights.pt')

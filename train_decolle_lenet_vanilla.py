@@ -61,7 +61,7 @@ else:
 sample_length = 2e6  # length of samples during training in mus
 dt = 5000  # us
 T = int(sample_length / dt)
-burnin = 50
+burnin = 100
 
 
 if args.dataset == 'mnist_dvs':
@@ -155,9 +155,11 @@ for epoch in range(args.n_epochs):
             print(acc)
 
 
+        torch.save(model.state_dict(), results_path + '/model_weights.pt')
+
+
     if (epoch + 1) % (args.n_epochs//5) == 0:
-        torch.save(model.state_dict(), results_path + '/binary_model_weights_%d.pt' % (1 + epoch))
-        torch.save(model.state_dict(), results_path + '/latent_model_weights_%d.pt' % (1 + epoch))
+        torch.save(model.state_dict(), results_path + '/model_weights_%d.pt' % (1 + epoch))
 
 
     if (epoch + 1) % args.test_period == 0:
