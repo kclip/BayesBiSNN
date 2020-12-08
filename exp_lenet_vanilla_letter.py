@@ -147,11 +147,12 @@ for inputs, labels in train_iterator:
         # calculate the loss
         loss = decolle_loss(s, r, u, target=labels[:, :, t])
 
-        with torch.no_grad():
+        try:
             gradients_means.append(torch.mean(torch.abs(torch.cat([w.grad.flatten().cpu() for w in model.get_trainable_parameters() if w.grad is not None]))).numpy())
             gradients_stds.append(torch.std(torch.abs(torch.cat([w.grad.flatten().cpu() for w in model.get_trainable_parameters() if w.grad is not None]))).numpy())
             true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
-
+        except RuntimeError:
+            pass
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()

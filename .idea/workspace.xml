@@ -42,8 +42,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/exp_lenet_vanilla_letter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="263">
-              <caret line="151" column="123" selection-start-line="151" selection-start-column="123" selection-end-line="151" selection-end-column="123" />
+            <state relative-caret-position="314">
+              <caret line="154" column="16" selection-start-line="154" selection-start-column="16" selection-end-line="154" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -375,12 +375,12 @@
       <workItem from="1606465624420" duration="86611000" />
       <workItem from="1607017895333" duration="33516000" />
       <workItem from="1607108070483" duration="9085000" />
-      <workItem from="1607329512177" duration="37316000" />
+      <workItem from="1607329512177" duration="37581000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1034973000" />
+    <option name="totallyTimeSpent" value="1035238000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -822,8 +822,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/exp_lenet_vanilla_letter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="151" column="123" selection-start-line="151" selection-start-column="123" selection-end-line="151" selection-end-column="123" />
+        <state relative-caret-position="314">
+          <caret line="154" column="16" selection-start-line="154" selection-start-column="16" selection-end-line="154" selection-end-column="16" />
         </state>
       </provider>
     </entry>
