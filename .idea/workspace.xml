@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="" />
+    <list default="true" id="f6ec34bd-aeb6-4c17-b82f-c086570e1ad2" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/exp_lenet_vanilla_letter.py" beforeDir="false" afterPath="$PROJECT_DIR$/exp_lenet_vanilla_letter.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,8 +42,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/exp_lenet_vanilla_letter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="152" column="140" selection-start-line="152" selection-start-column="140" selection-end-line="152" selection-end-column="140" />
+            <state relative-caret-position="255">
+              <caret line="160" lean-forward="true" selection-start-line="160" selection-end-line="160" />
             </state>
           </provider>
         </entry>
@@ -373,12 +375,12 @@
       <workItem from="1606465624420" duration="86611000" />
       <workItem from="1607017895333" duration="33516000" />
       <workItem from="1607108070483" duration="9085000" />
-      <workItem from="1607329512177" duration="38548000" />
+      <workItem from="1607329512177" duration="38864000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1036205000" />
+    <option name="totallyTimeSpent" value="1036521000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -820,8 +822,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/exp_lenet_vanilla_letter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="152" column="140" selection-start-line="152" selection-start-column="140" selection-end-line="152" selection-end-column="140" />
+        <state relative-caret-position="255">
+          <caret line="160" lean-forward="true" selection-start-line="160" selection-end-line="160" />
         </state>
       </provider>
     </entry>
