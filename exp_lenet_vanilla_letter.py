@@ -30,7 +30,7 @@ if __name__ == "__main__":
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=500)
     parser.add_argument('--test_period', type=int, default=50)
-    parser.add_argument('--batch_size', type=int, default=64)
+    parser.add_argument('--batch_size', type=int, default=1)
 
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--with_softmax', type=str, default='true')
@@ -126,7 +126,7 @@ gradients_means = []
 gradients_stds = []
 true_labels = []
 
-for inputs, labels in train_iterator:
+for i, inputs, labels in enumerate(train_iterator):
     model.softmax = args.with_softmax
 
     inputs = inputs.transpose(0, 1).to(args.device)
@@ -161,6 +161,9 @@ for inputs, labels in train_iterator:
         acc = torch.sum(torch.sum(readout_hist[-1], dim=0).argmax(dim=1) == torch.sum(labels.cpu(), dim=-1).argmax(dim=1)).float() / args.batch_size
         # backward pass: compute gradient of the loss with respect to model parameters
         print(acc)
+
+    if i > 10:
+        break
 
 np.save(os.path.join(results_path, 'gradients_means'), np.array(gradients_means))
 np.save(os.path.join(results_path, 'gradients_stds'), np.array(gradients_stds))
