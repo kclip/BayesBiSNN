@@ -153,4 +153,4 @@ for epoch in range(args.n_epochs):
 
     if (epoch + 1) % args.test_period == 0:
         binary_model.softmax = False
-        launch_tests(binary_model, optimizer, burnin, None, test_iterator, T, epoch, args, results_path, output=-1)
+        launch_tests(binary_model, optimizer, burnin, None, test_dl, T, epoch, args, results_path, output=-1)

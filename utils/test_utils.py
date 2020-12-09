@@ -4,24 +4,24 @@ from data_preprocessing.load_data_old import get_batch_example
 import os
 from collections import Counter
 
-def launch_tests(binary_model, optimizer, burnin, train_iterator, test_iterator, T, epoch, args, results_path, output=-1):
+def launch_tests(binary_model, optimizer, burnin, train_dl, test_dl, T, epoch, args, results_path, output=-1):
     if train_iterator is not None:
         print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
-        mode_testing_dataset(binary_model, optimizer, burnin, train_iterator, T, args.device, results_path, 'train', output)
+        mode_testing_dataset(binary_model, optimizer, burnin, iter(train_dl), T, args.device, results_path, 'train', output)
 
         print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
-        mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.classes), train_iterator, T, args.device, results_path, 'train', output)
+        mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.classes), iter(train_dl), T, args.device, results_path, 'train', output)
 
     if test_iterator is not None:
         print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
-        mode_testing_dataset(binary_model, optimizer, burnin, test_iterator, T, args.device, results_path, 'test', output)
+        mode_testing_dataset(binary_model, epoch, optimizer, burnin, iter(test_dl), T, args.device, results_path, 'test', output)
 
         print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
-        mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.classes), test_iterator, T, args.device, results_path, 'test', output)
+        mean_testing_dataset(binary_model, epoch, optimizer, burnin, args.n_samples, len(args.classes), iter(test_dl), T, args.device, results_path, 'test', output)
 
 
 
-def mode_testing_dataset(binary_model, optimizer, burnin, iterator, T, device, results_path, data_name, output=-1):
+def mode_testing_dataset(binary_model, epoch, optimizer, burnin, iterator, T, device, results_path, data_name, output=-1):
     with torch.no_grad():
         optimizer.get_concrete_weights_mode()
 
@@ -45,11 +45,11 @@ def mode_testing_dataset(binary_model, optimizer, burnin, iterator, T, device, r
             predictions = torch.cat((predictions, readout_hist[output].transpose(0, 1)))
             true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
 
-    np.save(os.path.join(results_path, data_name + '_predictions_latest_mode'), predictions.numpy())
-    np.save(os.path.join(results_path, data_name + '_true_labels_mode'), true_labels.numpy())
+    np.save(os.path.join(results_path, data_name + '_predictions_latest_mode_epoch_%d' % epoch), predictions.numpy())
+    np.save(os.path.join(results_path, data_name + '_true_labels_mode_epoch_%d' % epoch), true_labels.numpy())
 
 
-def mean_testing_dataset(binary_model, optimizer, burnin, n_samples, n_outputs, iterator, T, device, results_path, data_name, output=-1):
+def mean_testing_dataset(binary_model, epoch, optimizer, burnin, n_samples, n_outputs, iterator, T, device, results_path, data_name, output=-1):
     with torch.no_grad():
 
         predictions = torch.FloatTensor()
@@ -64,7 +64,6 @@ def mean_testing_dataset(binary_model, optimizer, burnin, n_samples, n_outputs, 
 
             for j in range(n_samples):
                 optimizer.update_concrete_weights(test=True)
-                # print([Counter(w.detach().numpy().flatten()) for w in binary_model.parameters()])
 
                 binary_model.init(inputs, burnin=burnin)
 
@@ -82,8 +81,8 @@ def mean_testing_dataset(binary_model, optimizer, burnin, n_samples, n_outputs, 
             predictions = torch.cat((predictions, predictions_batch))
             true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
 
-    np.save(os.path.join(results_path, data_name + '_predictions_latest_mean'), predictions.numpy())
-    np.save(os.path.join(results_path, data_name + '_true_labels_mean'), true_labels.numpy())
+    np.save(os.path.join(results_path, data_name + '_predictions_latest_mean_epoch_%d' % epoch), predictions.numpy())
+    np.save(os.path.join(results_path, data_name + '_true_labels_mean_epoch_%d' % epoch), true_labels.numpy())
 
 
 def mode_testing(binary_model, optimizer, burnin, n_examples, batch_size, data, T, device):
