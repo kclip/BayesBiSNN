@@ -5,14 +5,14 @@ import os
 from collections import Counter
 
 def launch_tests(binary_model, optimizer, burnin, train_dl, test_dl, T, epoch, args, results_path, output=-1):
-    if train_iterator is not None:
+    if train_dl is not None:
         print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
         mode_testing_dataset(binary_model, optimizer, burnin, iter(train_dl), T, args.device, results_path, 'train', output)
 
         print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
         mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.classes), iter(train_dl), T, args.device, results_path, 'train', output)
 
-    if test_iterator is not None:
+    if test_dl is not None:
         print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
         mode_testing_dataset(binary_model, epoch, optimizer, burnin, iter(test_dl), T, args.device, results_path, 'test', output)
 
