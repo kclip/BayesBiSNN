@@ -60,7 +60,7 @@ def mean_testing_dataset(binary_model, epoch, optimizer, burnin, n_samples, n_ou
 
             binary_model.init(inputs, burnin=burnin)
 
-            predictions_batch = torch.zeros([inputs.shape[0], n_samples, T - burnin, n_outputs])
+            predictions_batch = torch.zeros([inputs.shape[1], n_samples, T - burnin, n_outputs])
 
             for j in range(n_samples):
                 optimizer.update_concrete_weights(test=True)
