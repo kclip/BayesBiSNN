@@ -30,7 +30,7 @@ if __name__ == "__main__":
     parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
     parser.add_argument('--n_epochs', type=int, default=30)
     parser.add_argument('--batch_size', type=int, default=64)
-    parser.add_argument('--dataset', default=r"mnist_dvs")
+    parser.add_argument('--dataset', default=r"dvs_gestures")
 
 
     parser.add_argument('--temperature', type=float, default=1)
@@ -85,7 +85,7 @@ train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, 
                                       sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
 
 
-lr_list = np.logspace(1, 3, 15, endpoint=True)
+lr_list = np.logspace(1, 8, 8, endpoint=True)
 rho_list = np.logspace(-10, -5, 6, endpoint=True)
 
 results_l1 = {i: {j: [] for j in rho_list} for i in lr_list}
