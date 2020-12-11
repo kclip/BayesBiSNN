@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument('--dataset', default=r"dvs_gestures")
 
 
-    parser.add_argument('--temperature', type=float, default=1)
+    parser.add_argument('--temperature', type=float, default=0.1)
     parser.add_argument('--prior_p', type=float, default=0.5)
     parser.add_argument('--with_softmax', type=str, default='true')
     parser.add_argument('--polarity', type=str, default='true')
@@ -85,7 +85,7 @@ train_dl, test_dl = create_dataloader(dataset_path, batch_size=args.batch_size, 
                                       sample_length_test=sample_length, dt=dt, polarity=args.polarity, num_workers=2)
 
 
-lr_list = np.logspace(1, 8, 8, endpoint=True)
+lr_list = np.logspace(3, 8, 6, endpoint=True)
 rho_list = np.logspace(-10, -5, 6, endpoint=True)
 
 results_l1 = {i: {j: [] for j in rho_list} for i in lr_list}
