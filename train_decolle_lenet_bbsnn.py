@@ -126,6 +126,10 @@ for epoch in range(args.n_epochs):
     train_iterator = iter(train_dl)
     test_iterator = iter(test_dl)
 
+    if epoch % (args.n_epochs // 5) == 0:
+        args.lr = args.lr / 2
+    optimizer = BayesBiSNNRP(binary_model.parameters(), latent_model.parameters(), lr=args.lr, temperature=args.temperature, prior_p=args.prior_p, rho=args.rho, device=args.device)
+
     print('Epoch %d/%d' % (epoch, args.n_epochs))
 
     for inputs, labels in train_iterator:

@@ -123,6 +123,11 @@ for epoch in range(args.n_epochs):
     train_iterator = iter(train_dl)
     test_iterator = iter(test_dl)
 
+    if epoch % (args.n_epochs // 5) == 0:
+        args.lr = args.lr / 2
+
+    optimizer = BiSGD(binary_model.parameters(), latent_model.parameters(), lr=args.lr, binarizer=binarize)
+
     print('Epoch %d/%d' % (epoch, args.n_epochs))
     for inputs, labels in train_iterator:
         binary_model.softmax = args.with_softmax
