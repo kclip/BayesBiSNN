@@ -19,13 +19,8 @@ if __name__ == "__main__":
     # setting the hyper parameters
     parser = argparse.ArgumentParser(description='Train probabilistic multivalued SNNs using Pytorch')
 
-    # Training arguments
-    parser.add_argument('--home', default=r"C:/Users/K1804053/OneDrive - King's College London/PycharmProjects")
+    parser.add_argument('--home', default=r"\home")
     parser.add_argument('--params_file', default=r"BayesBiSNN\experiments\parameters\params_decolle_mnistdvs_bbisnn.yml")
-    parser.add_argument('--save_path', type=str, default=None, help='Path to where weights are stored (relative to home)')
-    parser.add_argument('--weights', type=str, default=None, help='Path to existing weights (relative to home)')
-
-    # Arguments common to all models
 
     args = parser.parse_args()
 
