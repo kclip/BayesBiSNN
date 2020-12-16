@@ -1,18 +1,18 @@
 dataset: /datasets/mnist-dvs/mnist_dvs_events.hdf5 # Path relative to home specified in args
+optimizer_type: STBiSNN
 test_period: 100
+batch_size: 64
+n_epochs: 500
 
 disable_cuda: False
 
-T: 100
-n_examples_train: 200
-n_examples_per_dim_test: 100
-n_neurons_per_dim: 10
-n_samples: 10  # For ensemble testing
-burnin: 10
+sample_length_train: 2000000 # in mus
+sample_length_test: 2000000 # in mus
+dt: 5000
+burnin: 100
+ds: 1
 
-lr: 0.1
-tau: 1
-rho: 5e-4
+lr: 500
 prior_p: 0.5
 
 with_softmax: False
