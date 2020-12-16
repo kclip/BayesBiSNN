@@ -1,7 +1,7 @@
 from model.LIF_base import *
-from utils.activations import smooth_step, smooth_sigmoid
+from utils.activations import smooth_step
 from torch.nn.init import _calculate_correct_fan, calculate_gain
-
+from utils.misc import get_scale
 
 class LIFMLP(LIFNetwork):
     def __init__(self,
@@ -15,17 +15,13 @@ class LIFMLP(LIFNetwork):
                  activation=smooth_step,
                  num_layers=1,
                  lif_layer_type=LIFLayer,
-                 with_output_layer=True,
                  with_bias=True,
                  scaling=True,
                  softmax=True
                  ):
 
         self.softmax = softmax
-        self.scales = []
-        self.with_output_layer = with_output_layer
-        if with_output_layer:
-            n_neurons += [output_shape]
+        self.scales = []  # Scaling factors for readout layers
 
         num_layers = max(num_layers, max([len(n_neurons), len(tau_mem), len(tau_syn), len(tau_ref)]))
         self.num_layers = num_layers
@@ -46,9 +42,11 @@ class LIFMLP(LIFNetwork):
 
         Mhid = input_shape + n_neurons
 
+        # Creates LIF linear layers
         for i in range(num_layers):
             base_layer = nn.Linear(Mhid[i], Mhid[i+1], bias=with_bias)
-            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 10  # / Mhid[i]
+            # Initialize weights in {-10, 10} with probas following a Bernoulli distribution and probability prior_
+            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 10
             if with_bias:
                 base_layer.bias.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.bias.shape) * prior_p) - 1) * 10
 
@@ -60,48 +58,35 @@ class LIFMLP(LIFNetwork):
                                    scaling=scaling,
                                    )
 
-            if self.with_output_layer and (i+1 == num_layers):
-                readout = nn.Identity()
-                # layer.activation = torch.sigmoid
-            else:
-                readout = nn.Linear(Mhid[i+1], output_shape, bias=with_bias)
-                readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1) * 10
-                if with_bias:
-                    readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1) * 10
-
-                for param in readout.parameters():
-                    param.requires_grad = False
+            readout = nn.Linear(Mhid[i+1], output_shape, bias=with_bias)
+            # Initialize readout weights in {-1, 1} with probas following a Bernoulli distribution and probability prior_p
+            readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1) * 10
+            if with_bias:
+                readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1) * 10
+            for param in readout.parameters():
+                param.requires_grad = False
 
             self.LIF_layers.append(layer)
             self.readout_layers.append(readout)
-            if scaling and hasattr(readout, 'weight'):
-                fan = _calculate_correct_fan(readout.weight, mode='fan_in')
-                gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
-                std = gain / math.sqrt(fan)
-                self.scales.append(math.sqrt(3.0) * std)
-                # self.scales.append(1. / np.prod(readout.in_features))
-            else:
-                self.scales.append(1.)
+            self.scales.append(get_scale(readout, scaling))
+
 
     def forward(self, inputs):
         s_out = []
         r_out = []
         u_out = []
 
+        # Forward propagates the signal through all layers
         inputs = inputs.view(inputs.size(0), -1)
         for lif, ro, scale in zip(self.LIF_layers, self.readout_layers, self.scales):
             s, u = lif(inputs)
-            r_ = ro(s) * scale
-
-            inputs = s.detach()
-
+            r_ = ro(s) * scale  # Readout outputs are scaled down
+            inputs = s.detach()  # Gradients are not propagated through the layers
             s_out.append(s)
-            # print(r_)
+
             if self.softmax:
                 r_ = torch.softmax(r_, dim=-1)
             r_out.append(r_)
             u_out.append(u)
-
-        # print('/////////////')
 
         return s_out, r_out, u_out

@@ -1,7 +1,6 @@
 from optimizer.BiOptimizer import BiOptimizer
 import torch
 from torch.optim.optimizer import required
-from utils.binarize import binarize, binarize_stochastic, clip
 
 
 class BiSGD(BiOptimizer):
@@ -21,10 +20,12 @@ class BiSGD(BiOptimizer):
                     continue
 
                 d_p = p.grad
-                # clip(d_p)
-                # print(p.grad.shape, torch.max(torch.abs(d_p)), torch.max(torch.abs(self.param_groups[i]['params'][j])))
-
                 self.param_groups[i]['params'][j].add_(d_p, alpha=-group['lr'])
-
                 p.data.copy_(self.param_groups[i]['params'][j])
+
+    @torch.no_grad()
+    def update_binary_weights(self):
+        for i, group in enumerate(self.binary_param_groups):
+            for j, p in enumerate(group['params']):
                 group['binarizer'](p)
+

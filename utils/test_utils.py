@@ -1,168 +1,171 @@
 import numpy as np
-import torch
-from data_preprocessing.load_data_old import get_batch_example
 import os
-from collections import Counter
+import torch
 
-def launch_tests(binary_model, optimizer, burnin, train_dl, test_dl, T, epoch, args, results_path, output=-1):
+from optimizer.BBSNN import BayesBiSNNRP
+from optimizer.STBiSNN import BiSGD
+
+
+def launch_tests(binary_model, optimizer, burnin, train_dl, test_dl, T, epoch, params, device, results_path, output=-1):
+    # Wrapper to launch tests
+    if isinstance(optimizer, BiSGD):
+        launch_test_stbisnn(binary_model, optimizer, burnin, train_dl, test_dl, T, epoch, params, device, results_path, output)
+    elif isinstance(optimizer, BayesBiSNNRP):
+        launch_test_bbisnn(binary_model, optimizer, burnin, train_dl, test_dl, T, epoch, params, device, results_path, output)
+    else:
+        raise NotImplementedError
+
+def launch_test_stbisnn(binary_model, optimizer, burnin, train_dl, test_dl, T, epoch, params, device, results_path, output=-1):
     if train_dl is not None:
-        print('Mode testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
-        mode_testing_dataset(binary_model, optimizer, burnin, iter(train_dl), T, args.device, results_path, 'train', output)
-
-        print('Mean testing on train data epoch %d/%d' % (epoch + 1, args.n_epochs))
-        mean_testing_dataset(binary_model, optimizer, burnin, args.n_samples, len(args.classes), iter(train_dl), T, args.device, results_path, 'train', output)
+        print('Testing on train data epoch %d/%d' % (epoch + 1, params['n_epochs']))
+        test_stbisnn(binary_model, optimizer, burnin, train_dl, T, epoch, params, device, results_path, 'train', output)
 
     if test_dl is not None:
-        print('Mode testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
-        mode_testing_dataset(binary_model, epoch, optimizer, burnin, iter(test_dl), T, args.device, results_path, 'test', output)
-
-        print('Mean testing on test data epoch %d/%d' % (epoch + 1, args.n_epochs))
-        mean_testing_dataset(binary_model, epoch, optimizer, burnin, args.n_samples, len(args.classes), iter(test_dl), T, args.device, results_path, 'test', output)
+        print('Testing on test data epoch %d/%d' % (epoch + 1, params['n_epochs']))
+        test_stbisnn(binary_model, optimizer, burnin, test_dl, T, epoch, params, device, results_path, 'test', output)
 
 
 
-def mode_testing_dataset(binary_model, epoch, optimizer, burnin, iterator, T, device, results_path, data_name, output=-1):
+def launch_test_bbisnn(binary_model, optimizer, burnin, train_dl, test_dl, T, epoch, params, device, results_path, output=-1):
+    if train_dl is not None:
+        print('Mode testing on train data epoch %d/%d' % (epoch + 1, params['n_epochs']))
+        mode_testing(binary_model, optimizer, burnin, iter(train_dl), T, device, results_path, 'train', output)
+
+        print('Mean testing on train data epoch %d/%d' % (epoch + 1, params['n_epochs']))
+        mean_testing(binary_model, optimizer, burnin, params['n_samples'], len(params['classes']), iter(train_dl), T, device, results_path, 'train', output)
+
+    if test_dl is not None:
+        print('Mode testing on test data epoch %d/%d' % (epoch + 1, params['n_epochs']))
+        mode_testing(binary_model, epoch, optimizer, burnin, iter(test_dl), T, device, results_path, 'test', output)
+
+        print('Mean testing on test data epoch %d/%d' % (epoch + 1, params['n_epochs']))
+        mean_testing(binary_model, epoch, optimizer, burnin, params['n_samples'], len(params['classes']), iter(test_dl), T, device, results_path, 'test', output)
+
+
+def mode_testing(binary_model, epoch, optimizer, burnin, iterator, T, device, results_path, data_name, output=-1):
+    # MAP testing for Bayes-BiSNN
     with torch.no_grad():
-        optimizer.get_concrete_weights_mode()
+        # Generate MAP binary weights
+        optimizer.update_binary_weights_map()
 
+        # Placeholders to record the order of labels (useful if shuffle is True in the dataloader)
         predictions = torch.FloatTensor()
         true_labels = torch.FloatTensor()
+
 
         for inputs, labels in iterator:
             inputs = inputs.transpose(0, 1).to(device)
 
+            # Initialize network state
             binary_model.init(inputs, burnin=burnin)
 
+            # Placeholders for the readout layers outputs
             readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
 
             for t in range(burnin, T):
-                # forward pass: compute predicted outputs by passing inputs to the model
+                # Forward pass
                 s, r, u = binary_model(inputs[t])
 
+                # Record readouts outputs
                 for l, ro_h in enumerate(readout_hist):
                     readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
+            # Record network outputs (from the desired readout layer given by output) and true labels
             predictions = torch.cat((predictions, readout_hist[output].transpose(0, 1)))
-            true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
+            if len(labels.shape) == 3:
+                true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
+            else:
+                true_labels = torch.cat((true_labels, labels.type_as(true_labels)))
 
     np.save(os.path.join(results_path, data_name + '_predictions_latest_mode_epoch_%d' % epoch), predictions.numpy())
     np.save(os.path.join(results_path, data_name + '_true_labels_mode_epoch_%d' % epoch), true_labels.numpy())
 
 
-def mean_testing_dataset(binary_model, epoch, optimizer, burnin, n_samples, n_outputs, iterator, T, device, results_path, data_name, output=-1):
+def mean_testing(binary_model, epoch, optimizer, burnin, n_samples, n_classes, iterator, T, device, results_path, data_name, output=-1):
+    # Ensemble testing for Bayes-BiSNN
     with torch.no_grad():
-
+        # Placeholders to record the order of labels (useful if shuffle is True in the dataloader)
         predictions = torch.FloatTensor()
         true_labels = torch.FloatTensor()
 
         for inputs, labels in iterator:
             inputs = inputs.transpose(0, 1).to(device)
 
-            binary_model.init(inputs, burnin=burnin)
+            # Temporary tensor to record network outputs in the current batch, shape is [batch_size, num MC samples, example length, num of outputs neurons]
+            if len(labels.shape) == 3:
+                predictions_batch = torch.zeros([inputs.shape[1], n_samples, T - burnin, labels.shape[1]])
+            else:
+                predictions_batch = torch.zeros([inputs.shape[1], n_samples, T - burnin, n_classes])
 
-            predictions_batch = torch.zeros([inputs.shape[1], n_samples, T - burnin, n_outputs])
-
+            # Repeat the prediction task n_samples times
             for j in range(n_samples):
-                optimizer.update_concrete_weights(test=True)
+                # Sample new binary weights following the Bernoulli distribution
+                optimizer.update_binary_weights(test=True)
 
+                # Initialize network state
                 binary_model.init(inputs, burnin=burnin)
 
+                # Placeholders for the readout layers outputs
                 readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
 
                 for t in range(burnin, T):
-                    # forward pass: compute predicted outputs by passing inputs to the model
+                    # Forward pass
                     s, r, u = binary_model(inputs[t])
 
+                    # Record readouts outputs
                     for l, ro_h in enumerate(readout_hist):
                         readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
+                # Record current realization of the predictions
                 predictions_batch[:, j] = readout_hist[output].transpose(0, 1)
 
+            # Record network batch outputs (from the desired readout layer given by output) and true labels
             predictions = torch.cat((predictions, predictions_batch))
-            true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
+            if len(labels.shape) == 3:
+                true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
+            else:
+                true_labels = torch.cat((true_labels, labels.type_as(true_labels)))
 
     np.save(os.path.join(results_path, data_name + '_predictions_latest_mean_epoch_%d' % epoch), predictions.numpy())
     np.save(os.path.join(results_path, data_name + '_true_labels_mean_epoch_%d' % epoch), true_labels.numpy())
 
 
-def mode_testing(binary_model, optimizer, burnin, n_examples, batch_size, data, T, device):
+def test_stbisnn(binary_model, optimizer, burnin, dataloader, T, epoch, params, device, results_path, data_name, output=-1):
+    # Testing for ST-BiSNN
     with torch.no_grad():
-        optimizer.get_concrete_weights_mode()
-        # print([Counter(w.detach().numpy().flatten()) for w in binary_model.parameters()])
-        n_batchs = n_examples // batch_size + (1 - (n_examples % batch_size == 0))
-        idx_avail = np.arange(n_examples)
-        idxs_used = []
+        # Generate binary weights
+        optimizer.update_binary_weights()
 
+        print('Testing epoch %d/%d' % (epoch + 1, params['n_epochs']))
+        # Placeholders to record the order of labels (useful if shuffle is True in the dataloader)
         predictions = torch.FloatTensor()
+        true_labels = torch.FloatTensor()
 
-        for i in range(n_batchs):
-            if (i == (n_batchs - 1)) & (n_examples % batch_size != 0):
-                batch_size_curr = n_examples % batch_size
-            else:
-                batch_size_curr = batch_size
+        iterator = iter(dataloader)
 
-            idxs = np.random.choice(idx_avail, [batch_size_curr], replace=False)
-            idxs_used += list(idxs)
-            idx_avail = [i for i in idx_avail if i not in idxs_used]
+        for inputs, labels in iterator:
+            inputs = inputs.transpose(0, 1).to(device)
 
-            inputs = data[idxs].transpose(0, 1).to(device)
-
+            # Initialize network state
             binary_model.init(inputs, burnin=burnin)
 
+            # Placeholders for the readout layers outputs
             readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
 
             for t in range(burnin, T):
-                # forward pass: compute predicted outputs by passing inputs to the model
+                # Forward pass
                 s, r, u = binary_model(inputs[t])
 
+                # Record readouts outputs
                 for l, ro_h in enumerate(readout_hist):
                     readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
 
-            predictions = torch.cat((predictions, readout_hist[-1].transpose(0, 1)))
-
-        return predictions, idxs_used
-
-
-def mean_testing(binary_model, optimizer, burnin, n_samples, n_outputs, n_examples, batch_size, data, T, device):
-    with torch.no_grad():
-        n_batchs = n_examples // batch_size + (1 - (n_examples % batch_size == 0))
-        idx_avail = np.arange(n_examples)
-        idxs_used = []
-
-        predictions = torch.FloatTensor()
-
-        for i in range(n_batchs):
-            if (i == (n_batchs - 1)) & (n_examples % batch_size != 0):
-                batch_size_curr = n_examples % batch_size
+            # Record network outputs (from the desired readout layer given by output) and true labels
+            predictions = torch.cat((predictions, readout_hist[output].transpose(0, 1)))
+            if len(labels.shape) == 3:
+                true_labels = torch.cat((true_labels, torch.sum(labels.cpu(), dim=-1).argmax(dim=1).type_as(true_labels)))
             else:
-                batch_size_curr = batch_size
+                true_labels = torch.cat((true_labels, labels.type_as(true_labels)))
 
-            idxs = np.random.choice(idx_avail, [batch_size_curr], replace=False)
-            idxs_used += list(idxs)
-            idx_avail = [i for i in idx_avail if i not in idxs_used]
-
-            inputs = data[idxs].transpose(0, 1).to(device)
-
-            binary_model.init(inputs, burnin=burnin)
-
-            predictions_batch = torch.zeros([batch_size_curr, n_samples, T - burnin, n_outputs])
-
-            for j in range(n_samples):
-                optimizer.update_concrete_weights(test=True)
-
-                binary_model.init(inputs, burnin=burnin)
-
-                readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
-
-                for t in range(burnin, T):
-                    # forward pass: compute predicted outputs by passing inputs to the model
-                    s, r, u = binary_model(inputs[t])
-
-                    for l, ro_h in enumerate(readout_hist):
-                        readout_hist[l] = torch.cat((ro_h, r[l].cpu().unsqueeze(0)), dim=0)
-
-                predictions_batch[:, j] = readout_hist[-1].transpose(0, 1)
-
-            predictions = torch.cat((predictions, predictions_batch))
-
-        return predictions, idxs_used
+        np.save(os.path.join(results_path, data_name + '_predictions_latest_epoch_%d' % epoch), predictions.numpy())
+        np.save(os.path.join(results_path, data_name + '_true_labels_epoch_%d' % epoch), true_labels.numpy())

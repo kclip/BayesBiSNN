@@ -1,7 +1,11 @@
 from model.LIF_base import *
 from utils.activations import smooth_step
-from torch.nn.init import _calculate_correct_fan, calculate_gain
+from utils.misc import get_output_shape, get_scale
 
+'''
+LIF SNN with local errors and LeNet architecture
+Adapted from https://github.com/nmi-lab/decolle-public
+'''
 
 class LenetLIF(LIFNetwork):
     def __init__(self,
@@ -20,16 +24,16 @@ class LenetLIF(LIFNetwork):
                  dropout=[0.5],
                  num_conv_layers=2,
                  num_mlp_layers=1,
-                 lc_ampl=.5,
                  lif_layer_type=LIFLayer,
                  with_bias=True,
                  scaling=True,
-                 with_output_layer=True,
                  softmax=True):
 
-        self.softmax = softmax
+        self.softmax = softmax  # Apply softmax to outputs of readout layers
         self.num_layers = num_conv_layers + num_mlp_layers
-        self.activation = activation
+
+        self.activation = activation # Activation function of LIF neurons
+
         # If only one value provided, then it is duplicated for each layer
         if len(kernel_size) == 1:
             kernel_size = kernel_size * num_conv_layers
@@ -57,8 +61,7 @@ class LenetLIF(LIFNetwork):
         feature_height = input_shape[1]
         feature_width = input_shape[2]
 
-        # THe following lists need to be nn.ModuleList in order for pytorch to properly load and save the state_dict
-        self.scales = []
+        self.scales = []  # Downscaling of the readout outputs
         self.pool_layers = nn.ModuleList()
         self.dropout_layers = nn.ModuleList()
         self.input_shape = input_shape
@@ -67,8 +70,7 @@ class LenetLIF(LIFNetwork):
         self.num_conv_layers = num_conv_layers
         self.num_mlp_layers = num_mlp_layers
 
-        self.with_output_layer = with_output_layer
-
+        # Creates LIF convolutional layers
         for i in range(num_conv_layers):
             feature_height, feature_width = get_output_shape(
                 [feature_height, feature_width],
@@ -79,7 +81,9 @@ class LenetLIF(LIFNetwork):
             feature_height //= pool_size[i]
             feature_width //= pool_size[i]
             base_layer = nn.Conv2d(Nhid_conv[i], Nhid_conv[i + 1], kernel_size[i], stride[i], padding[i], bias=with_bias)
-            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 5  # / Mhid[i]
+
+            # Initialize weights in {-5, 5} with probas following a Bernoulli distribution and probability prior_
+            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 5
             if with_bias:
                 base_layer.bias.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.bias.shape) * prior_p) - 1) * 5
 
@@ -92,6 +96,8 @@ class LenetLIF(LIFNetwork):
                                    )
 
             pool = nn.MaxPool2d(kernel_size=pool_size[i])
+
+            # Initialize readout weights in {-1, 1} with probas following a Bernoulli distribution and probability prior_p
             readout = nn.Linear(int(feature_height * feature_width * Nhid_conv[i + 1]), out_channels, bias=with_bias)
             readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1)
             if with_bias:
@@ -108,21 +114,18 @@ class LenetLIF(LIFNetwork):
             self.readout_layers.append(readout)
             self.dropout_layers.append(dropout_layer)
 
-            if scaling and hasattr(readout, 'in_features'):
-                fan = _calculate_correct_fan(readout.weight, mode='fan_in')
-                gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
-                std = gain / math.sqrt(fan)
-                self.scales.append(math.sqrt(3.0) * std)
-                # self.scales.append(1. / np.prod(readout.in_features))
-            else:
-                self.scales.append(1.)
+            self.scales.append(get_scale(readout, scaling))
 
 
         mlp_in = int(feature_height * feature_width * Nhid_conv[-1])
         Nhid_mlp = [mlp_in] + Nhid_mlp
+
+        # Creates LIF linear layers
         for i in range(num_mlp_layers):
             base_layer = nn.Linear(Nhid_mlp[i], Nhid_mlp[i + 1])
-            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 5  # / Mhid[i]
+
+            # Initialize weights in {-5, 5} with probas following a Bernoulli distribution and probability prior_
+            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 5
             if with_bias:
                 base_layer.bias.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.bias.shape) * prior_p) - 1) * 5
             layer = lif_layer_type(base_layer,
@@ -132,28 +135,24 @@ class LenetLIF(LIFNetwork):
                                    tau_ref=tau_ref[i]
                                    )
 
-            if self.with_output_layer and (i+1 == self.num_mlp_layers):
-                readout = nn.Identity()
-                dropout_layer = nn.Identity()
-                # layer.activation = torch.sigmoid
-            else:
-                readout = nn.Linear(Nhid_mlp[i + 1], out_channels)
+            # Initialize readout weights in {-1, 1} with probas following a Bernoulli distribution and probability prior_p
+            readout = nn.Linear(Nhid_mlp[i + 1], out_channels)
+            readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1)
+            if with_bias:
+                readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1)
 
-                # Readout layer has random fixed weights
-                for param in readout.parameters():
-                    param.requires_grad = False
+            # Readout layer has random fixed weights
+            for param in readout.parameters():
+                param.requires_grad = False
 
-                dropout_layer = nn.Dropout(dropout[self.num_conv_layers + i])
+            dropout_layer = nn.Dropout(dropout[self.num_conv_layers + i])
 
             self.LIF_layers.append(layer)
             self.pool_layers.append(nn.Sequential())
             self.readout_layers.append(readout)
             self.dropout_layers.append(dropout_layer)
 
-            if scaling and hasattr(readout, 'in_features'):
-                self.scales.append(1. / np.prod(readout.in_features))
-            else:
-                self.scales.append(1.)
+            self.scales.append(get_scale(readout, scaling))
 
 
     def forward(self, inputs):
@@ -161,6 +160,8 @@ class LenetLIF(LIFNetwork):
         r_out = []
         u_out = []
         i = 0
+
+        # Forward propagates the signal through all layers
         for lif, pool, ro, do, scale in zip(self.LIF_layers, self.pool_layers, self.readout_layers, self.dropout_layers, self.scales):
             if i == self.num_conv_layers:
                 inputs = inputs.view(inputs.size(0), -1)
@@ -168,12 +169,12 @@ class LenetLIF(LIFNetwork):
             u_p = pool(u)
             s_ = self.activation(u_p)
             sd_ = do(s_)
-            r_ = ro(sd_.reshape(sd_.size(0), -1)) * scale
+            r_ = ro(sd_.reshape(sd_.size(0), -1)) * scale  # Readout outputs are scaled down
             s_out.append(s_)
             if self.softmax:
                 r_ = torch.softmax(r_, dim=-1)
             r_out.append(r_)
             u_out.append(u_p)
-            inputs = s_.detach()
+            inputs = s_.detach()  # Gradients are not propagated through the layers
             i += 1
         return s_out, r_out, u_out

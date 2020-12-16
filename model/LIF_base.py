@@ -1,13 +1,11 @@
 import torch.nn as nn
-from torch.nn import functional as F
 import torch
 import numpy as np
 from collections import namedtuple
 from itertools import chain
 import warnings
-from utils.misc import get_output_shape
-import math
-from torch.nn.init import _calculate_correct_fan, calculate_gain
+from utils.misc import get_scale, get_output_shape
+
 
 """"
 LIF SNN with local errors
@@ -18,31 +16,27 @@ dtype = torch.float32
 
 
 class LIFLayer(nn.Module):
+    ''''
+    Implements a layer of LIF Neurons
+    '''
+
     NeuronState = namedtuple('NeuronState', ['P', 'Q', 'R', 'S'])
 
     def __init__(self, layer, activation, tau_mem=10, tau_syn=2, tau_ref=8, scaling=True):
         super(LIFLayer, self).__init__()
         self.base_layer = layer
 
+        # Filters
         self.alpha = torch.exp(torch.FloatTensor([-1/tau_mem])).to(self.base_layer.weight.device)
         self.beta = torch.exp(torch.FloatTensor([-1/tau_syn])).to(self.base_layer.weight.device)
         self.alpharp = torch.exp(torch.FloatTensor([-1/tau_ref])).to(self.base_layer.weight.device)
 
+        # Neurons state / activation
         self.state = None
         self.activation = activation
 
-        if scaling:
-            if type(layer) == nn.Conv2d:
-                fan = _calculate_correct_fan(layer.weight, mode='fan_in')
-                gain = calculate_gain(nonlinearity='leaky_relu', param=math.sqrt(5))
-                std = gain / math.sqrt(fan)
-                self.scale = (math.sqrt(3.0) * std)
-
-            elif hasattr(layer, 'in_features'):
-                self.scale = 1. / np.prod(self.base_layer.in_features)
-        else:
-            self.scale = 1.
-
+        # Scaling factor of the base layer's outputs
+        self.scale = get_scale(layer, scaling)
 
     def cuda(self, device=None):
         '''
@@ -73,47 +67,19 @@ class LIFLayer(nn.Module):
             conv_layer.weight.data.uniform_(-stdv * 1e-2, stdv * 1e-2)
             if conv_layer.bias is not None:
                 conv_layer.bias.data.uniform_(-stdv, stdv)
-        # elif hasattr(layer, 'out_features'):
-        #     layer.weight.data[:] *= 0
-        #     if layer.bias is not None:
-        #         layer.bias.data[:] *= 0
-        # layer.bias.data.uniform_(-1e-3, 1e-3)
-        # else:
-        #     warnings.warn('Unhandled data type, not resetting parameters')
-
-
-    @staticmethod
-    def get_out_channels(layer):
-        '''
-        Wrapper for returning number of output channels in a LIFLayer
-        '''
-        if hasattr(layer, 'out_features'):
-            return layer.out_features
-        elif hasattr(layer, 'out_channels'):
-            return layer.out_channels
-        elif hasattr(layer, 'get_out_channels'):
-            return layer.get_out_channels()
-        else:
-            raise Exception('Unhandled base layer type')
-
-
-    @staticmethod
-    def get_out_shape(layer, input_shape):
-        if hasattr(layer, 'out_channels'):
-            return get_output_shape(input_shape,
-                                    kernel_size=layer.kernel_size,
-                                    stride=layer.stride,
-                                    padding=layer.padding,
-                                    dilation=layer.dilation)
         elif hasattr(layer, 'out_features'):
-            return []
-        elif hasattr(layer, 'get_out_shape'):
-            return layer.get_out_shape()
+            layer.weight.data[:] *= 0
+            if layer.bias is not None:
+                layer.bias.data[:] *= 0
+            layer.bias.data.uniform_(-1e-3, 1e-3)
         else:
-            raise Exception('Unhandled base layer type')
+            warnings.warn('Unhandled data type, not resetting parameters')
 
 
     def init_state(self, input_shape):
+        ''''
+        Initialize different state variables to vectors of zeroes
+        '''
         device = self.base_layer.weight.device
         out_ch = self.get_out_channels(self.base_layer)
         out_shape = self.get_out_shape(self.base_layer, input_shape)
@@ -132,6 +98,10 @@ class LIFLayer(nn.Module):
 
 
     def forward(self, Sin_t):
+        ''''
+        Computes the forward mechanism of the LIF neurons in the layer
+        '''
+
         if self.state is None:
             self.init_state(list(Sin_t.shape))
 
@@ -143,7 +113,6 @@ class LIFLayer(nn.Module):
 
         self.state = self.NeuronState(P=P.detach(), Q=Q.detach(), R=R.detach(), S=S.detach())
         return S, U
-
 
     def get_output_shape(self, input_shape):
         layer = self.base_layer
@@ -158,11 +127,44 @@ class LIFLayer(nn.Module):
         else:
             return layer.out_features
 
+    @staticmethod
+    def get_out_channels(layer):
+        '''
+        Wrapper for returning number of output channels in a LIFLayer
+        '''
+        if hasattr(layer, 'out_features'):
+            return layer.out_features
+        elif hasattr(layer, 'out_channels'):
+            return layer.out_channels
+        elif hasattr(layer, 'get_out_channels'):
+            return layer.get_out_channels()
+        else:
+            raise Exception('Unhandled base layer type')
+
+    @staticmethod
+    def get_out_shape(layer, input_shape):
+        if hasattr(layer, 'out_channels'):
+            return get_output_shape(input_shape,
+                                    kernel_size=layer.kernel_size,
+                                    stride=layer.stride,
+                                    padding=layer.padding,
+                                    dilation=layer.dilation)
+        elif hasattr(layer, 'out_features'):
+            return []
+        elif hasattr(layer, 'get_out_shape'):
+            return layer.get_out_shape()
+        else:
+            raise Exception('Unhandled base layer type')
+
     def get_device(self):
         return self.base_layer.weight.device
 
 
 class LIFNetwork(nn.Module):
+    ''''
+    Base class of a network of LIF layers
+    '''
+
     requires_init = True
 
     def __init__(self):
@@ -170,27 +172,21 @@ class LIFNetwork(nn.Module):
         self.LIF_layers = nn.ModuleList()
         self.readout_layers = nn.ModuleList()
 
-
-
     def __len__(self):
         return len(self.LIF_layers)
-
 
     def forward(self, input):
         raise NotImplemented('')
 
-
     @property
     def output_layer(self):
         return self.readout_layers[-1]
-
 
     def get_trainable_parameters(self, layer=None):
         if layer is None:
             return chain(*[l.parameters() for l in self.LIF_layers])
         else:
             return self.LIF_layers[layer].parameters()
-
 
     def init(self, data_batch=None, burnin=0):
 
@@ -207,11 +203,9 @@ class LIFNetwork(nn.Module):
             for i in range(max(len(self), burnin)):
                 self.forward(data_batch[i])
 
-
     def init_parameters(self):
         for i, l in enumerate(self.LIF_layers):
             l.init_parameters()
-
 
     def reset_lc_parameters(self, layer, lc_ampl):
         stdv = lc_ampl / np.sqrt(layer.weight.size(1))
@@ -219,13 +213,11 @@ class LIFNetwork(nn.Module):
         if layer.bias is not None:
             layer.bias.data.uniform_(-stdv, stdv)
 
-
     def get_input_layer_device(self):
         if hasattr(self.LIF_layers[0], 'get_device'):
             return self.LIF_layers[0].get_device()
         else:
             return list(self.LIF_layers[0].parameters())[0].device
-
 
     def get_output_layer_device(self):
         return self.output_layer.weight.device

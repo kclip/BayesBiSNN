@@ -1,0 +1,28 @@
+dataset: /datasets/mnist-dvs/mnist_dvs_events_new.hdf5 # Path relative to home specified in args
+optimizer_type: BayesBiSNN
+test_period: 1
+batch_size: 64
+n_epochs: 500
+
+disable_cuda: False
+
+sample_length_train: 2000000 # in mus
+sample_length_test: 2000000 # in mus
+dt: 5000
+
+n_examples_train: 200
+n_examples_per_dim_test: 100
+n_neurons_per_dim: 10
+n_samples: 10  # For ensemble testing
+burnin: 100
+ds: 1
+
+lr: 150
+tau: 1
+rho: 0.0000001
+polarity: True
+prior_p: 0.5
+
+with_softmax: True
+
+classes: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]

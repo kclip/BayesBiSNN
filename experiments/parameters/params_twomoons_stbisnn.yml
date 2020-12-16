@@ -1,0 +1,20 @@
+optimizer_type: STBiSNN
+
+test_period: 1
+n_epochs: 5000
+batch_size: 32
+
+
+T: 100
+n_examples_train: 200
+n_examples_per_dim_test: 100
+n_neurons_per_dim: 10
+n_samples: 10  # For ensemble testing
+burnin: 10
+
+lr: 750
+prior_p: 0.5
+
+disable_cuda: False
+
+classes: [0, 1]

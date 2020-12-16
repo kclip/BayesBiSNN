@@ -1,11 +1,14 @@
 import torch
 
-def train_on_example_bbsnn(binary_model, optimizer, decolle_loss, inputs, labels, burnin, T):
+def train_on_example(binary_model, optimizer, decolle_loss, inputs, labels, burnin, T):
+    optimizer.update_binary_weights()
+    binary_model.init(inputs, burnin=burnin)
+
     readout_hist = [torch.Tensor() for _ in range(len(binary_model.readout_layers))]
 
     for t in range(burnin, T):
         # forward pass: compute new pseudo-binary weights
-        optimizer.update_concrete_weights()
+        optimizer.update_binary_weights()
 
         # forward pass: compute predicted outputs by passing inputs to the model
         s, r, u = binary_model(inputs[t])

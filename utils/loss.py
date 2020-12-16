@@ -4,6 +4,7 @@ from torch.nn.modules.loss import _Loss
 
 
 def vrdistance(f, g, tau):
+    # Computes the Van Rossum distance between f and g
     assert f.shape == g.shape, 'Spike trains must have the same shape, had f: ' + str(f.shape) + ', g: ' + str(g.shape)
 
     kernel = torch.FloatTensor(np.exp([-t / tau for t in range(f.shape[-1])])).flip(0)  # Flip because conv1d computes cross-correlations
@@ -12,6 +13,7 @@ def vrdistance(f, g, tau):
 
 
 class VRDistance(_Loss):
+    # Van Rossum distance loss
     def __init__(self, tau, size_average=None, reduce=None, reduction='mean'):
         super(VRDistance, self).__init__(size_average, reduce, reduction)
         self.tau = tau
@@ -21,10 +23,17 @@ class VRDistance(_Loss):
 
 
 def one_hot_crossentropy(input, label):
+    # Computes Cross Entropy Loss from a one-hot encoded label vector
     label = torch.argmax(label, dim=-1)
     return torch.nn.CrossEntropyLoss()(input, label)
 
+
 class DECOLLELoss(object):
+    '''
+    From https://github.com/nmi-lab/decolle-public
+    Computes the DECOLLE Loss for the model, defined as the sum of the per-layer local pseudo-losses + regularizations
+    '''
+
     def __init__(self, loss_fn, net, reg_l=None):
         self.nlayers = len(net)
         if len(loss_fn) == 1:
