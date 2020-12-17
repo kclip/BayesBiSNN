@@ -7,3 +7,5 @@ Experiments from the paper can be run from the three scripts at the project root
 
 # Data 
 To run experiments on MNIST-DVS, please preprocess the dataset by downloading our `neurodata` data preprocessing and loading package. 
+
+Author: Nicolas Skatchkovsky

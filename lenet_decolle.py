@@ -34,6 +34,7 @@ results_path = make_experiment_dir(args.home + '/results', 'twomoons_bbsnn', par
 
 
 # Activate cuda if relevant
+print(params['disable_cuda'])
 if not params['disable_cuda'] and torch.cuda.is_available():
     device = torch.device('cuda')
 else:
