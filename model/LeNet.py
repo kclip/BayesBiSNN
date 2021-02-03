@@ -26,6 +26,7 @@ class LenetLIF(LIFNetwork):
                  num_mlp_layers=1,
                  lif_layer_type=LIFLayer,
                  with_bias=True,
+                 with_readout=True,
                  scaling=True,
                  softmax=True):
 
@@ -97,15 +98,18 @@ class LenetLIF(LIFNetwork):
 
             pool = nn.MaxPool2d(kernel_size=pool_size[i])
 
-            # Initialize readout weights in {-1, 1} with probas following a Bernoulli distribution and probability prior_p
-            readout = nn.Linear(int(feature_height * feature_width * Nhid_conv[i + 1]), out_channels, bias=with_bias)
-            readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1)
-            if with_bias:
-                readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1)
+            if with_readout:
+                # Initialize readout weights in {-1, 1} with probas following a Bernoulli distribution and probability prior_p
+                readout = nn.Linear(int(feature_height * feature_width * Nhid_conv[i + 1]), out_channels, bias=with_bias)
+                readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1)
+                if with_bias:
+                    readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1)
+            else:
+                readout = nn.Identity()
 
-            # Readout layer has random fixed weights
             for param in readout.parameters():
                 param.requires_grad = False
+
 
             dropout_layer = nn.Dropout(dropout[i])
 
@@ -135,15 +139,18 @@ class LenetLIF(LIFNetwork):
                                    tau_ref=tau_ref[i]
                                    )
 
-            # Initialize readout weights in {-1, 1} with probas following a Bernoulli distribution and probability prior_p
-            readout = nn.Linear(Nhid_mlp[i + 1], out_channels)
-            readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1)
-            if with_bias:
-                readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1)
+            if with_readout:
+                # Initialize readout weights in {-1, 1} with probas following a Bernoulli distribution and probability prior_p
+                readout = nn.Linear(Nhid_mlp[i + 1], out_channels)
+                readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1)
+                if with_bias:
+                    readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1)
+                # Readout layer has random fixed weights
+                for param in readout.parameters():
+                    param.requires_grad = False
+            else:
+                readout = nn.Identity()
 
-            # Readout layer has random fixed weights
-            for param in readout.parameters():
-                param.requires_grad = False
 
             dropout_layer = nn.Dropout(dropout[self.num_conv_layers + i])
 

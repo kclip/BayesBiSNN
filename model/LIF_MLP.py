@@ -17,10 +17,13 @@ class LIFMLP(LIFNetwork):
                  lif_layer_type=LIFLayer,
                  with_bias=True,
                  scaling=True,
+                 with_readout=True,
+                 with_out_layer=False,
                  softmax=True
                  ):
 
         self.softmax = softmax
+        self.with_readout = with_readout
         self.scales = []  # Scaling factors for readout layers
 
         num_layers = max(num_layers, max([len(n_neurons), len(tau_mem), len(tau_syn), len(tau_ref)]))
@@ -58,17 +61,43 @@ class LIFMLP(LIFNetwork):
                                    scaling=scaling,
                                    )
 
-            readout = nn.Linear(Mhid[i+1], output_shape, bias=with_bias)
-            # Initialize readout weights in {-1, 1} with probas following a Bernoulli distribution and probability prior_p
-            readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1) * 10
-            if with_bias:
-                readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1) * 10
-            for param in readout.parameters():
-                param.requires_grad = False
+            if with_readout:
+                readout = nn.Linear(Mhid[i+1], output_shape, bias=with_bias)
+                # Initialize readout weights in {-1, 1} with probas following a Bernoulli distribution and probability prior_p
+                readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1) * 10
+                if with_bias:
+                    readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1) * 10
+                for param in readout.parameters():
+                    param.requires_grad = False
+            else:
+                readout = nn.Identity()
 
             self.LIF_layers.append(layer)
             self.readout_layers.append(readout)
             self.scales.append(get_scale(readout, scaling))
+
+        if with_out_layer:
+            self.num_layers += 1
+            base_layer = nn.Linear(Mhid[-1], output_shape, bias=with_bias)
+            # Initialize weights in {-10, 10} with probas following a Bernoulli distribution and probability prior_
+            base_layer.weight.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.weight.shape) * prior_p) - 1) * 10
+            if with_bias:
+                base_layer.bias.data[:] = (2 * torch.bernoulli(torch.ones(base_layer.bias.shape) * prior_p) - 1) * 10
+
+            layer = lif_layer_type(base_layer,
+                                   activation=activation,
+                                   tau_mem=tau_mem[-1],
+                                   tau_syn=tau_syn[-1],
+                                   tau_ref=tau_ref[-1],
+                                   scaling=scaling,
+                                   )
+
+            readout = nn.Identity()
+
+            self.LIF_layers.append(layer)
+            self.readout_layers.append(readout)
+            self.scales.append(get_scale(readout, scaling))
+
 
 
     def forward(self, inputs):
@@ -81,7 +110,10 @@ class LIFMLP(LIFNetwork):
         for lif, ro, scale in zip(self.LIF_layers, self.readout_layers, self.scales):
             s, u = lif(inputs)
             r_ = ro(s) * scale  # Readout outputs are scaled down
-            inputs = s.detach()  # Gradients are not propagated through the layers
+            if self.with_readout:
+                inputs = s.detach()  # Gradients are not propagated through the layers in decolle
+            else:
+                inputs = s
             s_out.append(s)
 
             if self.softmax:
