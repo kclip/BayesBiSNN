@@ -6,7 +6,7 @@ import torch
 import yaml
 
 from model.LIF_MLP import LIFMLP
-
+from model.LIF_base import LIFLoihi
 from utils.data_utils import make_moon_dataset, make_moon_test, CustomDataset
 from utils.loss import DECOLLELoss
 from utils.misc import make_experiment_dir, get_optimizer
@@ -60,8 +60,9 @@ binary_model = LIFMLP(input_size,
                       with_bias=False,
                       prior_p=params['prior_p'],
                       softmax=False,
-                      with_readout=True,
-                      with_out_layer=True
+                      with_readout=False,
+                      with_out_layer=True,
+                      lif_layer_type=LIFLoihi
                       ).to(device)
 
 latent_model = deepcopy(binary_model)

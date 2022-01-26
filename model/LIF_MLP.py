@@ -64,9 +64,9 @@ class LIFMLP(LIFNetwork):
             if with_readout:
                 readout = nn.Linear(Mhid[i+1], output_shape, bias=with_bias)
                 # Initialize readout weights in {-1, 1} with probas following a Bernoulli distribution and probability prior_p
-                readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1) * 10
+                readout.weight.data[:] = (2 * torch.bernoulli(torch.ones(readout.weight.shape) * prior_p) - 1)
                 if with_bias:
-                    readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1) * 10
+                    readout.bias.data[:] = (2 * torch.bernoulli(torch.ones(readout.bias.shape) * prior_p) - 1)
                 for param in readout.parameters():
                     param.requires_grad = False
             else:

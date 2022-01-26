@@ -1,6 +1,6 @@
 optimizer_type: BayesBiSNN
 
-test_period: 500
+test_period: 1000
 n_epochs: 5000
 batch_size: 40
 
@@ -12,7 +12,7 @@ n_neurons_per_dim: 10
 n_samples: 10  # For ensemble testing
 burnin: 10
 
-lr: 0.1
+lr: 0.01
 tau: 1
 rho: 0.0005
 prior_p: 0.5

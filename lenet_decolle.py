@@ -19,7 +19,7 @@ if __name__ == "__main__":
     # setting the hyper parameters
     parser = argparse.ArgumentParser(description='Train probabilistic multivalued SNNs using Pytorch')
 
-    parser.add_argument('--home', default=r"\home")
+    parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
     parser.add_argument('--params_file', default=r"BayesBiSNN\experiments\parameters\params_decolle_mnistdvs_bbisnn.yml")
 
     args = parser.parse_args()
@@ -54,18 +54,27 @@ train_dl, test_dl = create_dataloader(dataset_path, batch_size=params['batch_siz
                                       sample_length_test=params['sample_length_test'], dt=params['dt'], polarity=params['polarity'], ds=params['ds'], num_workers=0)
 
 # Create (relaxed) binary model and latent model
+# binary_model = LenetLIF(input_size,
+#                         Nhid_conv=[64, 128, 128],
+#                         Nhid_mlp=[],
+#                         out_channels=len(params['classes']),
+#                         kernel_size=[7],
+#                         stride=[1],
+#                         pool_size=[2, 1, 2],
+#                         dropout=[0.],
+#                         num_conv_layers=3,
+#                         num_mlp_layers=0,
+#                         with_bias=True,
+#                         softmax=params['with_softmax']).to(device)
 binary_model = LenetLIF(input_size,
-                        Nhid_conv=[64, 128, 128],
-                        Nhid_mlp=[],
+                        Nhid_conv=[],
+                        Nhid_mlp=[256, 256],
                         out_channels=len(params['classes']),
-                        kernel_size=[7],
-                        stride=[1],
-                        pool_size=[2, 1, 2],
-                        dropout=[0.],
-                        num_conv_layers=3,
-                        num_mlp_layers=0,
+                        num_conv_layers=0,
+                        num_mlp_layers=2,
                         with_bias=True,
                         softmax=params['with_softmax']).to(device)
+
 latent_model = deepcopy(binary_model)
 
 # specify loss function
@@ -84,6 +93,8 @@ for epoch in range(params['n_epochs']):
     print('Epoch %d/%d' % (epoch, params['n_epochs']))
 
     for inputs, labels in train_iterator:
+        print([torch.mean(w) for w in latent_model.parameters() if w.requires_grad])
+
         binary_model.softmax = params['with_softmax']
         loss = 0
 

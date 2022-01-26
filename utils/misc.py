@@ -72,3 +72,6 @@ def get_scale(layer, scaling=True):
         scale = 1.
 
     return scale
+
+def syn_filter(T, tau_u):
+    return torch.tensor(1 / tau_u * np.exp([-t / tau_u for t in range(T)]), dtype=torch.float)

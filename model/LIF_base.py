@@ -4,7 +4,7 @@ import numpy as np
 from collections import namedtuple
 from itertools import chain
 import warnings
-from utils.misc import get_scale, get_output_shape
+from utils.misc import get_scale, get_output_shape, syn_filter
 
 
 """"
@@ -200,8 +200,8 @@ class LIFNetwork(nn.Module):
             l.state = None
 
         if data_batch is not None:
-            for i in range(max(len(self), burnin)):
-                self.forward(data_batch[i])
+            for t in range(max(len(self), burnin)):
+                self.forward(data_batch[t])
 
     def init_parameters(self):
         for i, l in enumerate(self.LIF_layers):

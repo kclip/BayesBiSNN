@@ -13,13 +13,18 @@ from utils.misc import make_experiment_dir, get_optimizer
 from utils.test_utils import launch_tests
 from utils.train_utils import train_on_example
 
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
 
 if __name__ == "__main__":
     # setting the hyper parameters
     parser = argparse.ArgumentParser(description='Train probabilistic multivalued SNNs using Pytorch')
 
-    parser.add_argument('--home', default=r"\home")
-    parser.add_argument('--params_file', default=r"BayesBiSNN\experiments\parameters\params_twomoons_stbisnn.yml")
+    parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
+    parser.add_argument('--params_file', default=r"BayesBiSNN\experiments\parameters\params_twomoons_bbisnn.yml")
 
     args = parser.parse_args()
 
@@ -27,7 +32,7 @@ print(args)
 
 params_file = os.path.join(args.home, args.params_file)
 with open(params_file, 'r') as f:
-    params = yaml.load(f)
+    params = yaml.load(f, Loader=Loader)
 
 results_path = make_experiment_dir(args.home + r'/results', 'twomoons_bbsnn', params)
 
