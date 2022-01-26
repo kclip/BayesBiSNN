@@ -23,7 +23,7 @@ if __name__ == "__main__":
     # setting the hyper parameters
     parser = argparse.ArgumentParser(description='Train probabilistic multivalued SNNs using Pytorch')
 
-    parser.add_argument('--home', default=r"C:\Users\K1804053\OneDrive - King's College London\PycharmProjects")
+    parser.add_argument('--home', default=r"\home")
     parser.add_argument('--params_file', default=r"BayesBiSNN\experiments\parameters\params_twomoons_bbisnn.yml")
 
     args = parser.parse_args()
