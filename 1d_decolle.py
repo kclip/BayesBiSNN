@@ -4,6 +4,7 @@ import numpy as np
 import os
 import torch
 import yaml
+import tqdm
 
 from model.LIF_MLP import LIFMLP
 
@@ -27,7 +28,7 @@ print(args)
 
 params_file = os.path.join(args.home, args.params_file)
 with open(params_file, 'r') as f:
-    params = yaml.load(f)
+    params = yaml.safe_load(f)
 
 results_path = make_experiment_dir(args.home + '/results', '1d_experiment', params)
 
@@ -39,7 +40,8 @@ else:
 
 
 # Create dataloaders
-x_train, y_train, x_test, y_test, x_train_bin, x_test_bin = make_1d_signal(T=params['T'], step_train=20, step_test=100, n_neuron_per_dim=params['n_neurons_per_dim'])
+x_train, y_train, x_test, y_test, x_train_bin, x_test_bin = make_1d_signal(T=params['T'], step_train=20, step_test=100,
+                                                                           n_neuron_per_dim=params['n_neurons_per_dim'])
 train_dataset = CustomDataset(x_train_bin, y_train)
 train_dl = torch.utils.data.DataLoader(train_dataset, batch_size=params['batch_size'], shuffle=True)
 
@@ -67,7 +69,7 @@ binary_model = LIFMLP(input_size,
 latent_model = deepcopy(binary_model)
 
 # specify loss function
-criterion = [torch.nn.SmoothL1Loss() for _ in range(binary_model.num_layers)]
+criterion = [torch.nn.BCEWithLogitsLoss() for _ in range(binary_model.num_layers)]
 
 decolle_loss = DECOLLELoss(criterion, latent_model)
 
@@ -75,8 +77,7 @@ decolle_loss = DECOLLELoss(criterion, latent_model)
 optimizer = get_optimizer(params, binary_model, latent_model, device)
 
 # Training
-for epoch in range(params['n_epochs']):
-    print('Epoch %d/%d' % (epoch + 1, params['n_epochs']))
+for epoch in tqdm.tqdm(range(params['n_epochs'])):
     preds = torch.FloatTensor()
     true_labels = torch.FloatTensor()
 
@@ -92,12 +93,11 @@ for epoch in range(params['n_epochs']):
     torch.save(binary_model.state_dict(), results_path + '/binary_model_weights.pt')
     torch.save(latent_model.state_dict(), results_path + '/latent_model_weights.pt')
 
-
     if (epoch + 1) % (params['n_epochs'] // 5) == 0:
         torch.save(binary_model.state_dict(), results_path + '/binary_model_weights_%d.pt' % (1 + epoch))
         torch.save(latent_model.state_dict(), results_path + '/latent_model_weights_%d.pt' % (1 + epoch))
 
-
     # Testing
     if (epoch + 1) % params['test_period'] == 0:
-        launch_tests(binary_model, optimizer, params['burnin'], None, test_dl, params['T'], epoch, params, device, results_path)
+        launch_tests(binary_model, optimizer, params['burnin'], None, test_dl,
+                     params['T'], epoch, params, device, results_path)

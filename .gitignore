@@ -2,3 +2,4 @@ _old/
 .ipynb_checkpoints/
 .idea/
 results/
+*.ipynb
