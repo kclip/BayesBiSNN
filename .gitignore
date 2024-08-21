@@ -4,3 +4,4 @@ _old/
 results/
 *.ipynb
 __pycache__/
+*.pyc
