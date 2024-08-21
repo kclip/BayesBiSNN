@@ -3,3 +3,4 @@ _old/
 .idea/
 results/
 *.ipynb
+__pycache__/
